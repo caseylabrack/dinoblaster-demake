@@ -7,7 +7,6 @@ void setup () {
   colorMode(HSB, 360, 100, 100);
   earth = new Earth(width/2,height/2);
   player = new Player(width/2, 105);
-  //player = new Player(25, 25);
   earth.addChild(player);
 }
 
@@ -17,7 +16,7 @@ void draw () {
   
   earth.update();
   earth.render();
-  //player.update();
+  player.update();
   player.render();
   
   //saveFrame("output/dino-####.png");

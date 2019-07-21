@@ -9,5 +9,14 @@ class Entity {
   
   void addChild (Entity obj) {
     children.add(obj);
-  }  
+  } 
+  
+  void setPosition (PVector pos) {
+    x = pos.x;
+    y = pos.y;
+  }
+  
+  PVector getPosition () {
+    return new PVector(x, y);
+  }
 }

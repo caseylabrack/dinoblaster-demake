@@ -4,7 +4,6 @@ class Earth extends Entity {
     x = xpos;
     y = ypos;
     rx = 2;
-
     model = loadImage("earth.png");
   }
 
@@ -15,12 +14,7 @@ class Earth extends Entity {
     for (Entity child : children) {
       child.x += dx;
       child.y += dy;
-      float angle = degrees(atan2(y - child.y, x - child.x));
-      float dist = dist(x, y, child.x, child.y);
-      angle += rx;
-      child.x = x - cos(radians(angle)) * dist;
-      child.y = y - sin(radians(angle)) * dist;
-      child.r += rx;
+      child.setPosition(utils.rotateAroundPoint(child.getPosition(), getPosition(), rx));
     }
   }
 
