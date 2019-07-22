@@ -3,7 +3,7 @@ class Earth extends Entity {
   Earth (float xpos, float ypos) {
     x = xpos;
     y = ypos;
-    rx = 2;
+    rx = 2.3;
     model = loadImage("earth.png");
   }
 
