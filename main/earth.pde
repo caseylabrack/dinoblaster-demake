@@ -16,6 +16,7 @@ class Earth extends Entity {
     for (Entity child : children) {
       child.x += dx;
       child.y += dy;
+      child.r += rx;
       child.setPosition(utils.rotateAroundPoint(child.getPosition(), getPosition(), rx));
     }
   }

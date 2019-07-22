@@ -11,11 +11,12 @@ class Explosion extends Entity {
     radius = model.width/2;
     earth.addChild(this);
     splodes.add(this);
+    r = degrees(atan2(y - earth.y, x - earth.x)) + 90;
   }
   
   void update () {
     if(dist(player.x, player.y, x, y) < radius) {
-      println("hit!");
+      //println("hit!", radius);
     }
   }
   

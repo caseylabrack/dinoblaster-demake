@@ -3,7 +3,7 @@ class Roid extends Entity {
   PImage[] roids;
   PImage model;
   float speed = 5;
-  boolean visible = false;
+  boolean enabled = false;
   
   Roid () {
     rx = .1;
@@ -13,7 +13,7 @@ class Roid extends Entity {
   }
   
   void fire () {
-    visible = true;
+    enabled = true;
     float radius = width/2;
     float angle = random(0,359);
     x = width / 2 + cos(radians(angle)) * radius;
@@ -24,18 +24,23 @@ class Roid extends Entity {
   }
 
   void update () {
+    
+    if(!enabled) return; 
     x += dx;
     y += dy;
     r += rx;
     
     if(dist(x, y, earth.x, earth.y) < earth.radius) {
-      visible = false;
+      enabled = false;
+      if(dist(x,y,player.x,player.y) < 15) {
+        println("dead!", frameCount);
+      } 
       Explosion splode = new Explosion(x, y);
     }
   }
 
   void render() {
-    if(!visible) return;
+    if(!enabled) return;
     pushMatrix();
     translate(x, y);
     rotate(r);

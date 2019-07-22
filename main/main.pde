@@ -25,5 +25,5 @@ void draw () {
   for(Explosion s : splodes) s.render();
   //if(frameCount % 200 == 0) { println(frameRate); }
   saveFrame("spoofs and goofs/frames/dino-####.png");
-  if(frameCount==180) exit();
+  if(frameCount==400) exit();
 }
