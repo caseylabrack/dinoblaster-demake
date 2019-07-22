@@ -1,10 +1,12 @@
 class Earth extends Entity {
   PImage model;
+  float radius;
   Earth (float xpos, float ypos) {
     x = xpos;
     y = ypos;
     rx = 2.3;
     model = loadImage("earth.png");
+    radius = model.width/2 * .5;
   }
 
   void update() {

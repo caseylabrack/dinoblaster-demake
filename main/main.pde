@@ -1,7 +1,7 @@
 Earth earth;
 Player player;
-Roid testRoid;
-Roid[] roids = new Roid[100];
+RoidManager roids;
+ArrayList<Explosion> splodes = new ArrayList<Explosion>();
 
 void setup () {
   //fullScreen();
@@ -10,28 +10,20 @@ void setup () {
   earth = new Earth(width/2, height/2);
   player = new Player(width/2, 105);
   earth.addChild(player);
-  for(int r = 0; r < roids.length; r++) roids[r] = new Roid();
-  //testRoid = new Roid(100, 200);
+  roids = new RoidManager(3000, 100);
 }
 
 void draw () {
 
   background(0);
-
+  roids.update();
   earth.update();
   earth.render();
   player.update();
   player.render();
-  for (Roid r : roids) {
-    r.update();
-  }
-  for (Roid r : roids) {
-    r.render();
-  }
-  //testRoid.update();
-  //testRoid.render();
-  if(frameCount % 200 == 0) { println(frameRate); }
-
-  //saveFrame("output/dino-####.png");
-  //if(frameCount==180) exit();
+  for(Explosion s : splodes) s.update();
+  for(Explosion s : splodes) s.render();
+  //if(frameCount % 200 == 0) { println(frameRate); }
+  saveFrame("spoofs and goofs/frames/dino-####.png");
+  if(frameCount==180) exit();
 }
