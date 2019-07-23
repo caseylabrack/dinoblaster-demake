@@ -1,5 +1,5 @@
 class RoidManager {
-  float rate = 3000;
+  float rate = 7000;
   Roid[] roids;
   float lastFire;
   int index = 0;
@@ -14,9 +14,7 @@ class RoidManager {
   }
   
   void update () {
-    if(millis() - lastFire > rate) {
-      fire();
-    }
+    if(millis() - lastFire > rate) fire();
     
     for(Roid r : roids) r.update();
     for(Roid r : roids) r.render();

@@ -2,6 +2,9 @@ class Explosion extends Entity {
   //PImage[] frames;
   PImage model;
   float radius;
+  float start = millis();
+  float duration = 125;
+  boolean visible = true;
   
   Explosion (float xpos, float ypos) {
     x = xpos;
@@ -10,17 +13,18 @@ class Explosion extends Entity {
     model = loadImage("splode.png");
     radius = model.width/2;
     earth.addChild(this);
-    splodes.add(this);
+    splodesManager.splodes.add(this);
     r = degrees(atan2(y - earth.y, x - earth.x)) + 90;
   }
   
   void update () {
-    if(dist(player.x, player.y, x, y) < radius) {
-      //println("hit!", radius);
+    if(millis() - start > duration) {
+      visible = false;
     }
   }
   
   void render () {
+    if(!visible) return;
     pushMatrix();
     translate(x, y);
     rotate(radians(r));

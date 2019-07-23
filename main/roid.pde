@@ -2,7 +2,7 @@ class Roid extends Entity {
   PImage sheet;
   PImage[] roids;
   PImage model;
-  float speed = 5;
+  float speed = 2;
   boolean enabled = false;
   
   Roid () {
@@ -34,6 +34,7 @@ class Roid extends Entity {
       enabled = false;
       if(dist(x,y,player.x,player.y) < 15) {
         println("dead!", frameCount);
+        eventManager.dispatchGameOver();
       } 
       Explosion splode = new Explosion(x, y);
     }

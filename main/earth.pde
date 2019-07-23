@@ -1,4 +1,4 @@
-class Earth extends Entity {
+class Earth extends Entity implements gameOverEvent {
   PImage model;
   float radius;
   Earth (float xpos, float ypos) {
@@ -7,6 +7,11 @@ class Earth extends Entity {
     rx = 2.3;
     model = loadImage("earth.png");
     radius = model.width/2 * .5;
+    eventManager.gameOverSubscribers.add(this);
+  }
+
+  void gameOverHandle () {
+    rx = 0;
   }
 
   void update() {
