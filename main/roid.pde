@@ -16,8 +16,8 @@ class Roid extends Entity {
     enabled = true;
     float radius = width/2;
     float angle = random(0,359);
-    x = width / 2 + cos(radians(angle)) * radius;
-    y = height / 2 + sin(radians(angle)) * radius;
+    x = earth.x + cos(radians(angle)) * radius;
+    y = earth.y + sin(radians(angle)) * radius;
     
     dx = cos(radians(angle+180)) * speed;
     dy = sin(radians(angle+180)) * speed;
@@ -33,17 +33,17 @@ class Roid extends Entity {
     if(dist(x, y, earth.x, earth.y) < earth.radius) {
       enabled = false;
       if(dist(x,y,player.x,player.y) < 15) {
-        println("dead!", frameCount);
         eventManager.dispatchGameOver();
       } 
       Explosion splode = new Explosion(x, y);
+      earth.addChild(splode);
     }
   }
 
   void render() {
     if(!enabled) return;
     pushMatrix();
-    translate(x, y);
+    translate(width/2 + x - camera.x, height/2 + y - camera.y);
     rotate(r);
     imageMode(CENTER);
     image(model, 0, 0, model.width/2, model.height/2);

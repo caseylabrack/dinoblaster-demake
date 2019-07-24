@@ -1,5 +1,5 @@
 class RoidManager {
-  float rate = 7000;
+  float rate = 300;
   Roid[] roids;
   float lastFire;
   int index = 0;
@@ -21,7 +21,7 @@ class RoidManager {
   }
   
   void fire () {
-    roids[index].fire();
+    roids[index % roids.length].fire();
     lastFire = millis();
     index++;
   }

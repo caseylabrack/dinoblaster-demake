@@ -18,4 +18,8 @@ static class utils {
     }
     return sprites;
   }
+  
+  static int cycleRangeWithDelay (int framesTotal, int delay, int seed) {
+    return floor((seed % floor(framesTotal * delay))/delay);
+  }
 } 
