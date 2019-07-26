@@ -9,6 +9,7 @@ class RoidManager {
     roids = new Roid[poolsize];
     for(int i = 0; i < poolsize; i++) {
       roids[i] = new Roid();
+      earth.addChild(roids[i]);
     }
     fire();
   }

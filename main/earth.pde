@@ -1,10 +1,47 @@
+//class Orbiter extends Entity {
+//  float angle;
+//  Orbiter (float startAngle) {
+//    angle = startAngle;
+//  }
+
+//  void update() {
+//  }
+//}
+
+class Orbiter extends Entity {
+  float cx, cy, radius, angle, angleStep;
+  Orbiter (float _x, float _y, float _cx, float _cy, float _step) {
+    x = _x;
+    y = _y;
+    cx = _cx;
+    cy = _cy;
+    angleStep = _step;
+    angle = atan2(y - cy, x - cx);
+    radius = dist(x, y, cx, cy);
+  }
+
+  void update () {
+    dx = cos(angle) * radius - x;
+    dy = sin(angle) * radius - y;
+    angle += angleStep;
+
+    x += dx;
+    y += dy;
+
+    for (Entity child : children) {
+      child.dx += dx;
+      child.dy += dy;
+    }
+  }
+}
+
 class Earth extends Entity implements gameOverEvent {
   PImage model;
   float radius;
   Earth (float xpos, float ypos) {
     x = xpos;
     y = ypos;
-    dx = .5;
+    dx = 0;
     dy = 0;
     rx = 2.3;
     model = loadImage("earth.png");
@@ -13,7 +50,7 @@ class Earth extends Entity implements gameOverEvent {
   }
 
   void gameOverHandle () {
-    rx = 0;
+    //rx = 0;
   }
 
   void update() {
