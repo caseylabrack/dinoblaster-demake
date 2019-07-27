@@ -1,5 +1,11 @@
-class RoidManager {
-  float rate = 300;
+
+interface updateable {
+
+  void update();
+}
+
+class RoidManager implements updateable {
+  float rate;
   Roid[] roids;
   float lastFire;
   int index = 0;
