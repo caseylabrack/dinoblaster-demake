@@ -44,8 +44,9 @@ class Player extends Entity implements gameOverEvent {
   }
 
   void update () {
-    if(frameCount==1) { init(); }
-    if ((leftKey || rightKey) && !(leftKey && rightKey)) {
+    if (frameCount==1) init();
+
+    if (leftKey != rightKey) { // logical XOR
       model = runFrames[utils.cycleRangeWithDelay(runFrames.length, 4, frameCount)];
       if (leftKey) {
         setPosition(utils.rotateAroundPoint(getPosition(), earth.getPosition(), runSpeed * -1));
@@ -57,10 +58,10 @@ class Player extends Entity implements gameOverEvent {
     } else {
       model = idle;
     }
-    
+
     x += dx;
     y += dy;
-    
+
     dx = 0;
     dy = 0;
   }

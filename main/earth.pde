@@ -1,12 +1,4 @@
-//class Orbiter extends Entity {
-//  float angle;
-//  Orbiter (float startAngle) {
-//    angle = startAngle;
-//  }
 
-//  void update() {
-//  }
-//}
 
 class Orbiter extends Entity {
   float cx, cy, radius, angle, angleStep;
@@ -28,10 +20,16 @@ class Orbiter extends Entity {
     x += dx;
     y += dy;
 
-    for (Entity child : children) {
-      child.dx += dx;
-      child.dy += dy;
-    }
+  updateChildren();
+    //for (Entity child : children) {
+    //  child.dx += dx;
+    //  child.dy += dy;
+    //}
+
+    pushMatrix();
+    translate(width/2 + x - camera.x, height/2 + y - camera.y);
+    circle(width/2, height/2, 10);
+    popMatrix();
   }
 }
 

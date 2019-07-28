@@ -3,7 +3,7 @@ class Explosion extends Entity {
   PImage model;
   float radius;
   float start = millis();
-  float duration = 125;
+  float duration = 30;
   boolean visible = true;
   
   Explosion (float xpos, float ypos) {
