@@ -1,4 +1,4 @@
-class Player extends Entity implements gameOverEvent {
+class Player extends Entity implements gameOverEvent, updateable, renderable {
   PImage model;
   PImage[] runFrames = new PImage[2];
   PImage idle;

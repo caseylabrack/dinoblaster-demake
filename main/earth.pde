@@ -1,6 +1,6 @@
 
 
-class Orbiter extends Entity {
+class Orbiter extends Entity implements updateable {
   float cx, cy, radius, angle, angleStep;
   Orbiter (float _x, float _y, float _cx, float _cy, float _step) {
     x = _x;
@@ -33,7 +33,7 @@ class Orbiter extends Entity {
   }
 }
 
-class Earth extends Entity implements gameOverEvent {
+class Earth extends Entity implements gameOverEvent, updateable, renderable {
   PImage model;
   float radius;
   Earth (float xpos, float ypos) {

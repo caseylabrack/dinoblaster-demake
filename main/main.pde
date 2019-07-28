@@ -6,6 +6,9 @@ EventManager eventManager;
 StarManager starManager;
 Camera camera;
 Orbiter earthOrbit;
+UIStuff ui;
+ArrayList<updateable> updaters = new ArrayList<updateable>();
+ArrayList<renderable> renderers = new ArrayList<renderable>();
 
 void setup () {
   //fullScreen();
@@ -19,8 +22,20 @@ void setup () {
   starManager = new StarManager();
   camera = new Camera();
   earthOrbit = new Orbiter(100, 100, 0, 0, TWO_PI/360);
+  ui = new UIStuff();
+  updaters.add(ui);
+  updaters.add(earth);
+  updaters.add(roids);
+  updaters.add(camera);
+  updaters.add(player);
+  updaters.add(splodesManager);
+  updaters.add(earthOrbit);
+  renderers.add(ui);
+  renderers.add(player);
+  renderers.add(earth);
   //earth.setPosition(earthOrbit.getPosition());
   //earthOrbit.addChild(earth);
+  
 }
 
 void keyPressed() {
@@ -34,14 +49,8 @@ void keyReleased() {
 void draw () {
 
   background(0);
-  earthOrbit.update();
-  camera.update();
-  roids.update();
-  earth.update();
-  earth.render();
-  player.update();
-  player.render();
-  splodesManager.update();
+  for(updateable u : updaters) u.update();
+  for(renderable r : renderers) r.render();
   
   //pushMatrix();
   //translate(width/2 + 0 - camera.x, height/2 + 0 - camera.y);

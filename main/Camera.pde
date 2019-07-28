@@ -1,4 +1,4 @@
-class Camera extends Entity {
+class Camera extends Entity implements updateable {
   Camera () {
 
     setPosition(earth.getPosition());

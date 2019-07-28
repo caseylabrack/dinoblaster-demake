@@ -1,4 +1,4 @@
-class SplosionManager {
+class SplosionManager implements updateable {
   ArrayList<Explosion> splodes = new ArrayList<Explosion>();
   SplosionManager () {
   }

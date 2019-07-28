@@ -1,9 +1,3 @@
-
-interface updateable {
-
-  void update();
-}
-
 class RoidManager implements updateable {
   float wait;
   int min;
