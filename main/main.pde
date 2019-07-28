@@ -7,17 +7,24 @@ StarManager starManager;
 Camera camera;
 Orbiter earthOrbit;
 UIStuff ui;
-ArrayList<updateable> updaters = new ArrayList<updateable>();
-ArrayList<renderable> renderers = new ArrayList<renderable>();
+ArrayList<updateable> updaters;
+ArrayList<renderable> renderers;
 
 void setup () {
-  //fullScreen();
+  //fullScreen(P2D);
   size(640, 480, P2D);
   colorMode(HSB, 360, 100, 100);
+  noCursor();
+  init();
+}
+
+void init () {
+  updaters = new ArrayList<updateable>();
+  renderers = new ArrayList<renderable>();
   eventManager = new EventManager();
   earth = new Earth(width/2, height/2);
   player = new Player();
-  roids = new RoidManager(100, 500, 100);
+  roids = new RoidManager(70, 400, 100);
   splodesManager = new SplosionManager();
   starManager = new StarManager();
   camera = new Camera();
@@ -35,11 +42,14 @@ void setup () {
   renderers.add(earth);
   //earth.setPosition(earthOrbit.getPosition());
   //earthOrbit.addChild(earth);
-  
 }
 
 void keyPressed() {
-  player.setMove(keyCode, true);
+  if (key=='1') {
+    init();
+  } else {
+    player.setMove(keyCode, true);
+  }
 }
 
 void keyReleased() {
@@ -49,15 +59,15 @@ void keyReleased() {
 void draw () {
 
   background(0);
-  for(updateable u : updaters) u.update();
-  for(renderable r : renderers) r.render();
-  
+  for (updateable u : updaters) u.update();
+  for (renderable r : renderers) r.render();
+
   //pushMatrix();
   //translate(width/2 + 0 - camera.x, height/2 + 0 - camera.y);
   //circle(width/2, height/2, 10);
   //popMatrix();
-  
+
   //if(frameCount % 200 == 0) { println(frameRate); }
   //saveFrame("spoofs-and-goofs/frames/dino-####.png");
-  //if(frameCount==200) exit();
+  //if(frameCount==800) exit();
 }

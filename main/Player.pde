@@ -20,6 +20,9 @@ class Player extends Entity implements gameOverEvent, updateable, renderable {
     runFrames[1] = frames[2];
     model = idle;
     eventManager.gameOverSubscribers.add(this);
+    earth.addChild(this);
+    x = earth.x + cos(radians(-90)) * earth.radius;
+    y = earth.y + sin(radians(-90)) * earth.radius;
   }
 
   void gameOverHandle () {
@@ -37,14 +40,8 @@ class Player extends Entity implements gameOverEvent, updateable, renderable {
     }
   } 
 
-  void init () {
-    earth.addChild(this);
-    x = earth.x + cos(radians(0)) * earth.radius;
-    y = earth.y + sin(radians(0)) * earth.radius;
-  }
-
   void update () {
-    if (frameCount==1) init();
+    //if (frameCount==1) init();
 
     if (leftKey != rightKey) { // logical XOR
       model = runFrames[utils.cycleRangeWithDelay(runFrames.length, 4, frameCount)];

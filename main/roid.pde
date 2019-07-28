@@ -2,7 +2,7 @@ class Roid extends Entity {
   PImage sheet;
   PImage[] roids;
   PImage model;
-  float speed = 2;
+  float speed = 2.5;
   boolean enabled = false;
   
   Roid () {
