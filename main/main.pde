@@ -37,9 +37,11 @@ void init () {
   updaters.add(player);
   updaters.add(splodesManager);
   updaters.add(earthOrbit);
+  updaters.add(starManager);
   renderers.add(ui);
   renderers.add(player);
   renderers.add(earth);
+  renderers.add(starManager);
   //earth.setPosition(earthOrbit.getPosition());
   //earthOrbit.addChild(earth);
 }
