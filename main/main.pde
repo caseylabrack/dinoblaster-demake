@@ -25,6 +25,7 @@ void init () {
   earth = new Earth(width/2, height/2);
   player = new Player();
   roids = new RoidManager(70, 400, 100);
+  //roids = new RoidManager(70, 1000000, 100);
   splodesManager = new SplosionManager();
   starManager = new StarManager();
   camera = new Camera();
