@@ -35,8 +35,7 @@ class Roid extends Entity {
       if(dist(x,y,player.x,player.y) < 15) {
         eventManager.dispatchGameOver();
       } 
-      Explosion splode = new Explosion(x, y);
-      earth.addChild(splode);
+      splodesManager.newSplode(x,y);
     }
   }
 

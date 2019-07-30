@@ -1,21 +1,20 @@
 class Explosion extends Entity {
   PImage model;
-  float radius;
-  float start = millis();
+  float start;
   float duration = 300;
-  boolean visible = true;
-  PImage sheet;
+  boolean visible = false;
   PImage[] frames;
 
-  Explosion (float xpos, float ypos) {
+  Explosion (PImage[] _frames) {
+
+    frames = _frames;
+  }
+
+  void fire(float xpos, float ypos) {
+    visible = true;
     x = xpos;
     y = ypos;
-
-    sheet = loadImage("explosion-sheet.png");
-    frames = utils.sheetToSprites(sheet, 3, 1);
-
-    radius = model.width/2;
-    splodesManager.splodes.add(this);
+    start = millis();
     r = degrees(atan2(y - earth.y, x - earth.x)) + 90;
   }
 

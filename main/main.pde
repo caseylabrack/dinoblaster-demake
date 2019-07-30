@@ -25,7 +25,6 @@ void init () {
   earth = new Earth(width/2, height/2);
   player = new Player();
   roids = new RoidManager(70, 400, 100);
-  //roids = new RoidManager(70, 1000000, 100);
   splodesManager = new SplosionManager();
   starManager = new StarManager();
   camera = new Camera();
@@ -43,6 +42,7 @@ void init () {
   renderers.add(player);
   renderers.add(earth);
   renderers.add(starManager);
+  renderers.add(splodesManager);
   //earth.setPosition(earthOrbit.getPosition());
   //earthOrbit.addChild(earth);
 }
