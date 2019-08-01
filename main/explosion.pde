@@ -1,34 +1,42 @@
 class Explosion extends Entity {
-  //PImage[] frames;
   PImage model;
-  float radius;
-  float start = millis();
-  float duration = 30;
-  boolean visible = true;
-  
-  Explosion (float xpos, float ypos) {
+  float start;
+  float duration = 300;
+  boolean visible = false;
+  PImage[] frames;
+
+  Explosion (PImage[] _frames) {
+
+    frames = _frames;
+  }
+
+  void fire(float xpos, float ypos) {
+    visible = true;
     x = xpos;
     y = ypos;
-    
-    model = loadImage("splode.png");
-    radius = model.width/2;
-    splodesManager.splodes.add(this);
+    start = millis();
     r = degrees(atan2(y - earth.y, x - earth.x)) + 90;
   }
-  
+
   void update () {
-    if(millis() - start > duration) {
+
+    if (!visible) return;
+
+    if (millis() - start > duration) {
       visible = false;
     }
+    int frameNum = floor(map((millis() - start) / duration, 0, 1, 0, frames.length)); // animation progress is proportional to duration progress
+    model = frames[frameNum > 2 ? 2 : frameNum]; // mapping above is not clamped to frames.length, can create array out of index error 
+
     x += dx;
     y += dy;
-    
+
     dx = 0;
     dy = 0;
   }
-  
+
   void render () {
-    if(!visible) return;
+    if (!visible) return;
     pushMatrix();
     translate(width/2 + x - camera.x, height/2 + y - camera.y);
     rotate(radians(r));

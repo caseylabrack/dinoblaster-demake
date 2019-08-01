@@ -80,7 +80,7 @@ class StarManager implements updateable, renderable {
         stars[i] = new PVector(random(cx - width/2, cx + width/2), random(cy - height/2, cy + height/2), angle);
         
       }
-      println(stars[i]);
+      //println(stars[i]);
 
       //if (dist(width, height, stars[i].x, stars[i].y) > 1000) {
         //PVector destinationFrame = new PVector(width, height);
