@@ -1,11 +1,10 @@
 Earth earth;
 Player player;
-RoidManager roids;
 SplosionManager splodesManager;
 EventManager eventManager;
-StarManager starManager;
+//StarManager starManager;
 Camera camera;
-Orbiter earthOrbit;
+//Orbiter earthOrbit;
 UIStuff ui;
 ArrayList<updateable> updaters;
 ArrayList<renderable> renderers;
@@ -24,11 +23,11 @@ void init () {
   eventManager = new EventManager();
   earth = new Earth(width/2, height/2);
   player = new Player();
-  roids = new RoidManager(70, 400, 100);
+  RoidManager roids = new RoidManager(70, 400, 100);
   splodesManager = new SplosionManager();
-  starManager = new StarManager();
+  StarManager starManager = new StarManager();
   camera = new Camera();
-  earthOrbit = new Orbiter(100, 100, 0, 0, TWO_PI/360);
+  //earthOrbit = new Orbiter(100, 100, 0, 0, TWO_PI/360);
   ui = new UIStuff();
   updaters.add(ui);
   updaters.add(earth);
@@ -36,7 +35,7 @@ void init () {
   updaters.add(camera);
   updaters.add(player);
   updaters.add(splodesManager);
-  updaters.add(earthOrbit);
+  //updaters.add(earthOrbit);
   updaters.add(starManager);
   renderers.add(ui);
   renderers.add(player);
@@ -64,11 +63,6 @@ void draw () {
   background(0);
   for (updateable u : updaters) u.update();
   for (renderable r : renderers) r.render();
-
-  //pushMatrix();
-  //translate(width/2 + 0 - camera.x, height/2 + 0 - camera.y);
-  //circle(width/2, height/2, 10);
-  //popMatrix();
 
   //if(frameCount % 200 == 0) { println(frameRate); }
   //saveFrame("spoofs-and-goofs/frames/dino-####.png");

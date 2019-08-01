@@ -72,7 +72,7 @@ class StarManager implements updateable, renderable {
     //println(angle - stars[i].z);
 
       if(angle - stars[i].z > 1) {
-        println("respawn");
+        //println("respawn");
         PVector topLeft = getTopLeft(angle);
         //stars[i] = new PVector(random(topLeft.x, topLeft.x + width), random(topLeft.y, topLeft.y + height), angle);
         float cx = sun.x + cos(angle + angleStep * 10) * AU;
@@ -87,7 +87,7 @@ class StarManager implements updateable, renderable {
         //PVector shift = new PVector.mult(direction
         //stars[i] = stars[i].add(PVector.mult(direction, -100));
       //} else {
-        circle(stars[i].x, stars[i].y, 3);
+        //circle(stars[i].x, stars[i].y, 3);
       //}
     }
   }
