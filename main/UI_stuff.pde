@@ -9,8 +9,8 @@ class UIStuff implements gameOverEvent, updateable, renderable {
   String nextStage = "Jurassic";
 
   UIStuff () {
-    EXTINCT = loadFont("ProcessingSansPro-Regular-48.vlw");
-    body = loadFont("ProcessingSansPro-Regular-14.vlw");
+    EXTINCT = loadFont("Hyperspace-Bold-92.vlw");
+    body = loadFont("Hyperspace-Bold-18.vlw");
     textFont(body);
 
     eventManager.gameOverSubscribers.add(this);
@@ -40,12 +40,12 @@ class UIStuff implements gameOverEvent, updateable, renderable {
     pushStyle();
     textFont(body);
     textAlign(LEFT, TOP);
-    text(currentStage, 0, 0);
+    text(currentStage, 5, 5);
     popStyle();
 
     stroke(0, 0, 100);
     strokeWeight(1);
-    line(0, 15, score/100 * stage * width, 15);
+    line(5, 25, score/100 * stage * width, 25);
 
     if (isGameOver) {
       pushStyle();
