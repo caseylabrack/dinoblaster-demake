@@ -8,7 +8,7 @@ class Camera extends Entity implements updateable {
   void update () {
     x += dx;
     y += dy;
-    r += rx;
+    r += dr;
 
     dx = 0;
     dy = 0;

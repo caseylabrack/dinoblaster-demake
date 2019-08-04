@@ -51,7 +51,7 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
     y = ypos;
     dx = 0;
     dy = 0;
-    rx = 2.3;
+    dr = 2.3;
     model = loadImage("earth.png");
     radius = (model.width/2) * .5;
     eventManager.gameOverSubscribers.add(this);
@@ -100,13 +100,8 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
 
     x += dx;
     y += dy;
-    r += rx;
-    for (Entity child : children) {
-      child.dx += dx;
-      child.dy += dy;
-      child.r += rx;
-      child.setPosition(utils.rotateAroundPoint(child.getPosition(), getPosition(), rx));
-    }
+    r += dr;
+    updateChildren();
   }
 
   void render () {

@@ -1,5 +1,5 @@
 class Entity {
-  float x, y, r, dx, dy, rx;
+  float x, y, r, dx, dy, dr;
   Entity parent;
   ArrayList<Entity> children = new ArrayList<Entity>();
 
@@ -22,6 +22,8 @@ class Entity {
     
         c.dx += dx;
         c.dy += dy;
+        c.dr += dr;
+        c.setPosition(utils.rotateAroundPoint(c.getPosition(), getPosition(), dr));
         c.updateChildren();    
     }
   }

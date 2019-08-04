@@ -10,7 +10,7 @@ class Roid extends Entity {
   PVector trailPosition;
 
   Roid () {
-    rx = .1;
+    dr = .1;
     sheet = loadImage("asteroids-ss.png");
     trail = loadImage("roid-trail.png");
     roids = utils.sheetToSprites(sheet, 2, 2);
@@ -33,7 +33,7 @@ class Roid extends Entity {
     if (!enabled) return; 
     x += dx;
     y += dy;
-    r += rx;
+    r += dr;
 
     if (dist(x, y, earth.x, earth.y) < earth.radius) {
       enabled = false;

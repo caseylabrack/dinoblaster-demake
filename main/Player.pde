@@ -13,7 +13,7 @@ class Player extends Entity implements gameOverEvent, updateable, renderable {
   float delay = 100;  
 
   Player (int whichPlayer) {
-    
+
     PImage sheet = whichPlayer==1 ? loadImage("bronto-run.png") : loadImage("oviraptor-frames.png");
     PImage[] frames = whichPlayer==1 ? utils.sheetToSprites(sheet, 3, 1) : utils.sheetToSprites(sheet, 2, 2, 1);
     idle = frames[0];
@@ -48,9 +48,11 @@ class Player extends Entity implements gameOverEvent, updateable, renderable {
       model = runFrames[utils.cycleRangeWithDelay(runFrames.length, 4, frameCount)];
       if (leftKey) {
         setPosition(utils.rotateAroundPoint(getPosition(), earth.getPosition(), runSpeed * -1));
+        dr -= runSpeed;
         direction = -1;
       } else {
         setPosition(utils.rotateAroundPoint(getPosition(), earth.getPosition(), runSpeed * 1));
+        dr += runSpeed;
         direction = 1;
       }
     } else {
@@ -59,15 +61,18 @@ class Player extends Entity implements gameOverEvent, updateable, renderable {
 
     x += dx;
     y += dy;
+    r += dr;
+
 
     dx = 0;
     dy = 0;
+    dr = 0;
   }
 
   void render () {
-    
+
     if (!visible) return;
-    r = degrees(atan2(earth.y - y, earth.x - x)) - 90;
+    //r = degrees(atan2(earth.y - y, earth.x - x)) - 90;
     pushMatrix();
     scale(direction, 1);    
     translate((width/2 + x - camera.x) * direction, height/2 + y - camera.y);

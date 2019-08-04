@@ -30,9 +30,11 @@ class Explosion extends Entity {
 
     x += dx;
     y += dy;
+    r += dr;
 
     dx = 0;
     dy = 0;
+    dr = 0;
   }
 
   void render () {
