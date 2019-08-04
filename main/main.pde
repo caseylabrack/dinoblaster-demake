@@ -68,6 +68,6 @@ void draw () {
   for (renderable r : renderers) r.render();
 
   //if(frameCount % 200 == 0) { println(frameRate); }
-  //saveFrame("spoofs-and-goofs/frames/dino-####.png");
-  //if(frameCount==800) exit();
+  //saveFrame("spoofs-and-goofs/frames2/dino-####.png");
+  //if(frameCount==300) exit();
 }

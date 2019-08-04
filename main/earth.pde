@@ -20,22 +20,32 @@ class Orbiter extends Entity implements updateable {
     x += dx;
     y += dy;
 
-  updateChildren();
+    updateChildren();
     //for (Entity child : children) {
     //  child.dx += dx;
     //  child.dy += dy;
     //}
 
-    pushMatrix();
-    translate(width/2 + x - camera.x, height/2 + y - camera.y);
-    circle(width/2, height/2, 10);
-    popMatrix();
+    //pushMatrix();
+    //translate(width/2 + x - camera.x, height/2 + y - camera.y);
+    //circle(width/2, height/2, 10);
+    //popMatrix();
   }
 }
 
 class Earth extends Entity implements gameOverEvent, updateable, renderable {
   PImage model;
   float radius;
+
+  float shakeAngle;
+  boolean shake = false;
+  float shakeMag;
+
+  boolean shaking = false;
+  float shakingDur;
+  float shakingMag;
+  float shakingStart;
+
   Earth (float xpos, float ypos) {
     x = xpos;
     y = ypos;
@@ -51,7 +61,43 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
     //rx = 0;
   }
 
+  void shake (float _mag) {
+    shakeMag += _mag;
+    shake = true;
+  }
+
+  void shakeContinous (float _dur, float _mag) {
+    shakingDur += _dur;
+    shakingMag = _mag;
+    shakingStart = millis();
+    shaking = true;
+  }
+
   void update() {
+
+    dx = width/2 - x;
+    dy = height/2 - y;
+
+    if (shake) {
+      shakeAngle = random(0, TWO_PI);
+      dx += cos(shakeAngle) * shakeMag;
+      dy += sin(shakeAngle) * shakeMag;
+      shakeMag *= .9;
+      if (shakeMag < .01) {
+        shakeMag =0;
+        shake = false;
+      }
+    } 
+
+    if (shaking) {
+      shakeAngle = random(0, TWO_PI);
+      dx += cos(shakeAngle) * shakingMag;
+      dy += sin(shakeAngle) * shakingMag;
+      if (millis() - shakingStart > shakingDur) {
+        shaking = false;
+      }
+    }
+
     x += dx;
     y += dy;
     r += rx;
