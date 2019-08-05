@@ -17,14 +17,15 @@ class Camera extends Entity implements updateable {
 
 class ColorDecider implements updateable {
   int currentHue = 0;
+  String hues2 = new String[]{"#ff3800","#ffff00","#00ff00","#00ffff","#ff57ff"}
   int[] hues = new int[]{0,60,120,180,240,300};
   ColorDecider () {
   }
-  
+
   void update () {
     currentHue = hues[utils.cycleRangeWithDelay(hues.length, 10, frameCount)];
   }
-  
+
   color getColor () {
     return color(currentHue, 100, 100);
   }
