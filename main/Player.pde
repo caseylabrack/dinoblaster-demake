@@ -72,7 +72,6 @@ class Player extends Entity implements gameOverEvent, updateable, renderable {
   void render () {
 
     if (!visible) return;
-    //r = degrees(atan2(earth.y - y, earth.x - x)) - 90;
     pushMatrix();
     scale(direction, 1);    
     translate((width/2 + x - camera.x) * direction, height/2 + y - camera.y);

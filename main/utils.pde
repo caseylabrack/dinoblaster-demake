@@ -20,18 +20,24 @@ static class utils {
   }
 
   static PImage[] sheetToSprites (PImage sheet, int rows, int cols) {
-    PImage[] sprites = new PImage[rows*cols];
-    int cellX = sheet.width / rows;
-    int cellY = sheet.height / cols;
-    for (int r = 0; r < rows; r++) {
-      for (int c = 0; c < cols; c++) {
-        sprites[r * cols + c] = sheet.get(r * cellX, c * cellY, cellX, cellY);
-      }
-    }
-    return sprites;
+    return sheetToSprites(sheet, rows, cols, 0);
+    //PImage[] sprites = new PImage[rows*cols];
+    //int cellX = sheet.width / rows;
+    //int cellY = sheet.height / cols;
+    //for (int r = 0; r < rows; r++) {
+    //  for (int c = 0; c < cols; c++) {
+    //    sprites[r * cols + c] = sheet.get(r * cellX, c * cellY, cellX, cellY);
+    //  }
+    //}
+    //return sprites;
   }
 
   static int cycleRangeWithDelay (int framesTotal, int delay, int seed) {
     return floor((seed % floor(framesTotal * delay))/delay);
+  }
+  
+  static float signedAngleDiff (float r1, float r2) {
+     float diff = (r2 - r1 + 180) % 360 - 180;
+     return diff < -180 ? diff + 360: diff;
   }
 } 

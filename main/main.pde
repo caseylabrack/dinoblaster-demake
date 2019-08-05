@@ -4,9 +4,9 @@ SplosionManager splodesManager;
 EventManager eventManager;
 //StarManager starManager;
 Camera camera;
-//Orbiter earthOrbit;
 UIStuff ui;
 ColorDecider currentColor;
+Trex trex;
 ArrayList<updateable> updaters;
 ArrayList<renderable> renderers;
 
@@ -31,22 +31,23 @@ void init () {
   //earthOrbit = new Orbiter(100, 100, 0, 0, TWO_PI/360);
   ui = new UIStuff();
   currentColor = new ColorDecider();
+  trex = new Trex();
+  earth.addChild(trex);
   updaters.add(ui);
   updaters.add(earth);
-  updaters.add(roids);
+  //updaters.add(roids);
   updaters.add(camera);
   updaters.add(player);
   updaters.add(splodesManager);
   updaters.add(currentColor);
-  //updaters.add(earthOrbit);
+  updaters.add(trex);
   updaters.add(starManager);
   renderers.add(ui);
   renderers.add(player);
   renderers.add(earth);
   renderers.add(starManager);
   renderers.add(splodesManager);
-  //earth.setPosition(earthOrbit.getPosition());
-  //earthOrbit.addChild(earth);
+  renderers.add(trex);  
 }
 
 void keyPressed() {
