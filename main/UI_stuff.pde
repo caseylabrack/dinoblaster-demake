@@ -45,7 +45,7 @@ class UIStuff implements gameOverEvent, updateable, renderable {
 
     stroke(0, 0, 100);
     strokeWeight(1);
-    line(5, 25, score/100 * stage * width, 25);
+    line(5, 25, score/100 * stage * width-5, 25);
 
     if (isGameOver) {
       pushStyle();

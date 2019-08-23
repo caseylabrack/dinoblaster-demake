@@ -1,6 +1,7 @@
 class Entity {
   float x, y, r, dx, dy, dr;
   Entity parent;
+  boolean delete = false;
   ArrayList<Entity> children = new ArrayList<Entity>();
 
   void setParent (Entity p) {

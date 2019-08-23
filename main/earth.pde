@@ -51,7 +51,7 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
     y = ypos;
     dx = 0;
     dy = 0;
-    //dr = 2.3;
+    dr = 2.3;
     model = loadImage("earth.png");
     radius = (model.width/2) * .5;
     eventManager.gameOverSubscribers.add(this);
@@ -83,7 +83,7 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
       dx += cos(shakeAngle) * shakeMag;
       dy += sin(shakeAngle) * shakeMag;
       shakeMag *= .9;
-      if (shakeMag < .01) {
+      if (shakeMag < .1) {
         shakeMag =0;
         shake = false;
       }

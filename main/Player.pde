@@ -1,3 +1,18 @@
+class PlayerIntro extends Entity {
+  PImage model;
+  PlayerIntro (int whichPlayer) {
+    PImage sheet = whichPlayer==1 ? loadImage("bronto-run.png") : loadImage("oviraptor-frames.png");
+    PImage[] frames = whichPlayer==1 ? utils.sheetToSprites(sheet, 3, 1) : utils.sheetToSprites(sheet, 2, 2, 1);
+    model = frames[0];
+  }
+
+  void update () {
+  }
+
+  void render () {
+  }
+}
+
 class Player extends Entity implements gameOverEvent, updateable, renderable {
   PImage model;
   PImage[] runFrames = new PImage[2];
@@ -13,7 +28,6 @@ class Player extends Entity implements gameOverEvent, updateable, renderable {
   float delay = 100;  
 
   Player (int whichPlayer) {
-
     PImage sheet = whichPlayer==1 ? loadImage("bronto-run.png") : loadImage("oviraptor-frames.png");
     PImage[] frames = whichPlayer==1 ? utils.sheetToSprites(sheet, 3, 1) : utils.sheetToSprites(sheet, 2, 2, 1);
     idle = frames[0];
@@ -24,6 +38,10 @@ class Player extends Entity implements gameOverEvent, updateable, renderable {
     earth.addChild(this);
     x = earth.x + cos(radians(-90)) * earth.radius;
     y = earth.y + sin(radians(-90)) * earth.radius;
+  }
+
+  void die () {
+    eventManager.dispatchGameOver();
   }
 
   void gameOverHandle () {

@@ -22,6 +22,7 @@ class Trex extends Entity implements gameOverEvent, updateable, renderable {
   }
 
   void gameOverHandle () {
+    chasing = false;
   }
 
   void update () {
@@ -43,6 +44,8 @@ class Trex extends Entity implements gameOverEvent, updateable, renderable {
     } else {
       model = idle;
     }
+
+    //if(
 
     x += dx;
     y += dy;

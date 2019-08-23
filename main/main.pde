@@ -2,7 +2,7 @@ Earth earth;
 Player player;
 SplosionManager splodesManager;
 EventManager eventManager;
-//StarManager starManager;
+StarManager starManager;
 Camera camera;
 UIStuff ui;
 ColorDecider currentColor;
@@ -35,7 +35,7 @@ void init () {
   earth.addChild(trex);
   updaters.add(ui);
   updaters.add(earth);
-  //updaters.add(roids);
+  updaters.add(roids);
   updaters.add(camera);
   updaters.add(player);
   updaters.add(splodesManager);

@@ -38,7 +38,7 @@ class Roid extends Entity {
     if (dist(x, y, earth.x, earth.y) < earth.radius) {
       enabled = false;
       if (dist(x, y, player.x, player.y) < 26) {
-        eventManager.dispatchGameOver();
+        player.die();
       } 
       splodesManager.newSplode(x, y);
     }
