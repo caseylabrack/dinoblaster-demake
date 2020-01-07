@@ -41,6 +41,7 @@ class Roid extends Entity {
         player.die();
       } 
       splodesManager.newSplode(x, y);
+      eventManager.dispatchRoidImpact(new PVector(x,y));
     }
   }
 

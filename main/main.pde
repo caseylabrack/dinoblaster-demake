@@ -1,8 +1,11 @@
+import processing.sound.*;
+
 Earth earth;
 Player player;
 SplosionManager splodesManager;
 EventManager eventManager;
 StarManager starManager;
+SoundManager soundManager;
 Camera camera;
 UIStuff ui;
 ColorDecider currentColor;
@@ -22,6 +25,7 @@ void init () {
   updaters = new ArrayList<updateable>();
   renderers = new ArrayList<renderable>();
   eventManager = new EventManager();
+  soundManager = new SoundManager(this);
   earth = new Earth(width/2, height/2);
   player = new Player(2);
   RoidManager roids = new RoidManager(70, 400, 100);

@@ -9,7 +9,7 @@ class UIStuff implements gameOverEvent, updateable, renderable {
   String nextStage = "Jurassic";
 
   UIStuff () {
-    EXTINCT = loadFont("Hyperspace-Bold-92.vlw");
+    EXTINCT = loadFont("Hyperspace-92.vlw");
     body = loadFont("Hyperspace-Bold-18.vlw");
     textFont(body);
 
@@ -51,7 +51,7 @@ class UIStuff implements gameOverEvent, updateable, renderable {
       pushStyle();
       textFont(EXTINCT);
       textAlign(CENTER, CENTER);
-      fill(0, 50, 50); 
+      fill(currentColor.getColor()); 
       text("EXTINCT", width/2, height/2);
       popStyle();
     }

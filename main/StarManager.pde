@@ -5,6 +5,13 @@ class StarManager implements updateable, renderable {
   float a = 0;
   float x, y;
 
+  PImage[] nebulaFrames;
+  PImage nebulaModel;
+  PVector nebulaVec;
+  boolean nebulaActive = false;
+  float nebulaLead = 15;
+  float nebulaOffset = 0;
+
   StarManager () {
 
     int k = 0;
@@ -14,10 +21,22 @@ class StarManager implements updateable, renderable {
         k++;
       }
     }
+
+    PImage sheet = loadImage("nebula.png");
+    nebulaFrames = utils.sheetToSprites(sheet, 7, 5);
+    spawnNeb();
+  }
+
+  void spawnNeb () {
+    nebulaActive = true;
+    nebulaOffset = random(1)<.5 ? 200 : -200; 
+    nebulaVec = new PVector(cos(a + radians(nebulaLead)) * (r + nebulaOffset), sin(a + radians(nebulaLead)) * (r + nebulaOffset));
   }
 
   void update () {
     a += TWO_PI / (360 * 40);
+
+    nebulaModel = nebulaFrames[utils.cycleRangeWithDelay(nebulaFrames.length, 8, frameCount)];
   }
 
   void render () {
@@ -30,6 +49,21 @@ class StarManager implements updateable, renderable {
         rotate(TWO_PI/8);
         square(0, 0, 2);
         popMatrix();
+      }
+    }
+
+    if (nebulaActive) {
+      x = nebulaVec.x - (cos(a) * r - width / 2);
+      y = nebulaVec.y - (sin(a) * r - height / 2);
+
+      if (x>-640 && x < width + 640 && y > -640 && y < height + 640) {
+        pushStyle();
+        pushMatrix();
+        translate(x, y);
+        tint(currentColor.getColor());
+        image(nebulaModel, 0, 0);
+        popMatrix();
+        popStyle();
       }
     }
   }
