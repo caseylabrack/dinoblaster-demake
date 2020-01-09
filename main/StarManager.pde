@@ -22,8 +22,8 @@ class StarManager implements updateable, renderable {
       }
     }
 
-    PImage sheet = loadImage("nebula.png");
-    nebulaFrames = utils.sheetToSprites(sheet, 7, 5);
+    PImage sheet = loadImage("oviraptor-frames.png"); // loadImage("nebula.png");
+    nebulaFrames = utils.sheetToSprites(sheet, 2, 2, 1); // utils.sheetToSprites(sheet, 7, 5);
     spawnNeb();
   }
 

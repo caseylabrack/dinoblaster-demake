@@ -9,8 +9,11 @@ class UIStuff implements gameOverEvent, updateable, renderable {
   String nextStage = "Jurassic";
 
   UIStuff () {
-    EXTINCT = loadFont("Hyperspace-92.vlw");
-    body = loadFont("Hyperspace-Bold-18.vlw");
+    printArray(PFont.list());
+    EXTINCT = createFont("Hyperspace", 92);
+    //body = loadFont("Hyperspace-Bold-18.vlw");
+    body = createFont("Hyperspace Bold", 24);
+    textFont(EXTINCT);
     textFont(body);
 
     eventManager.gameOverSubscribers.add(this);
