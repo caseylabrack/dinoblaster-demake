@@ -1,7 +1,7 @@
 class Camera extends Entity implements updateable {
   Camera () {
 
-    setPosition(earth.getPosition());
+    //setPosition(earth.getPosition());
     //earth.addChild(this);
   }
 

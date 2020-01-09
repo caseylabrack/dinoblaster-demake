@@ -1,9 +1,12 @@
 class PlayerIntro extends Entity {
   PImage model;
-  PlayerIntro (int whichPlayer) {
+  GameMode mode;
+  
+  PlayerIntro (GameMode _mode, int whichPlayer) {
     PImage sheet = whichPlayer==1 ? loadImage("bronto-run.png") : loadImage("oviraptor-frames.png");
     PImage[] frames = whichPlayer==1 ? utils.sheetToSprites(sheet, 3, 1) : utils.sheetToSprites(sheet, 2, 2, 1);
     model = frames[0];
+    mode = _mode;
   }
 
   void update () {
@@ -25,19 +28,21 @@ class Player extends Entity implements gameOverEvent, updateable, renderable {
   Boolean visible = true;
   int playerNum = 1;
   int framesTotal = 8;
-  float delay = 100;  
+  float delay = 100;
+  GameMode mode;
 
-  Player (int whichPlayer) {
+  Player (GameMode _mode, int whichPlayer) {
     PImage sheet = whichPlayer==1 ? loadImage("bronto-run.png") : loadImage("oviraptor-frames.png");
     PImage[] frames = whichPlayer==1 ? utils.sheetToSprites(sheet, 3, 1) : utils.sheetToSprites(sheet, 2, 2, 1);
     idle = frames[0];
     runFrames[0] = frames[1];
     runFrames[1] = frames[2];
     model = idle;
-    eventManager.gameOverSubscribers.add(this);
-    earth.addChild(this);
-    x = earth.x + cos(radians(-90)) * earth.radius;
-    y = earth.y + sin(radians(-90)) * earth.radius;
+    mode = _mode;
+    mode.eventManager.gameOverSubscribers.add(this);
+    mode.earth.addChild(this);
+    x = mode.earth.x + cos(radians(-90)) * mode.earth.radius;
+    y = mode.earth.y + sin(radians(-90)) * mode.earth.radius;
   }
 
   void die () {

@@ -22,3 +22,8 @@ interface gameOverEvent {
 interface roidImpactEvent {
   void roidImpactHandle(PVector p);
 }
+
+//interface GameMode {
+//  void init(PApplet _main);
+//  void update();
+//}
