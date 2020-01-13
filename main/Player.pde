@@ -16,7 +16,7 @@ class PlayerIntro extends Entity {
   }
 }
 
-class Player extends Entity implements gameOverEvent, updateable, renderable {
+class Player extends Entity implements gameOverEvent, updateable, renderable, roidImpactEvent {
   PImage model;
   PImage[] runFrames = new PImage[2];
   PImage idle;
@@ -40,6 +40,7 @@ class Player extends Entity implements gameOverEvent, updateable, renderable {
     model = idle;
     mode = _mode;
     mode.eventManager.gameOverSubscribers.add(this);
+    mode.eventManager.roidImpactSubscribers.add(this);
     mode.earth.addChild(this);
     x = mode.earth.x + cos(radians(-90)) * mode.earth.radius;
     y = mode.earth.y + sin(radians(-90)) * mode.earth.radius;
@@ -90,6 +91,13 @@ class Player extends Entity implements gameOverEvent, updateable, renderable {
     dx = 0;
     dy = 0;
     dr = 0;
+  }
+  
+  void roidImpactHandle(PVector impact) {
+    
+    if (dist(x, y, impact.x, impact.y) < 26) {
+        die();
+    } 
   }
 
   void render () {

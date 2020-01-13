@@ -85,11 +85,11 @@ class StoryMode extends GameMode {
     //soundManager = new SoundManager(_main);
     earth = new Earth(this, width/2, height/2);
     player = new Player(this, 1);
-    //RoidManager roids = new RoidManager(70, 400, 100);
-    //splodesManager = new SplosionManager();
-    //StarManager starManager = new StarManager();
     camera = new Camera();
     camera.setPosition(earth.getPosition());
+    RoidManager roids = new RoidManager(70, 400, 100, earth, eventManager, camera);
+    //splodesManager = new SplosionManager();
+    //StarManager starManager = new StarManager();
     earth.addChild(camera);
     //earthOrbit = new Orbiter(100, 100, 0, 0, TWO_PI/360);
     //ui = new UIStuff();
@@ -98,7 +98,7 @@ class StoryMode extends GameMode {
     //earth.addChild(trex);
     //updaters.add(ui);
     updaters.add(earth);
-    //updaters.add(roids);
+    updaters.add(roids);
     updaters.add(camera);
     updaters.add(player);
     //updaters.add(splodesManager);

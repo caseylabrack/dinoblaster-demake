@@ -17,7 +17,8 @@ GameMode game;
 
 void setup () {
   //fullScreen(P2D);
-  size(640, 480, P2D);
+  //size(640, 480, P2D);
+  size(1024, 768, P2D);
   colorMode(HSB, 360, 100, 100);
   noCursor();
   //init();
