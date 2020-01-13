@@ -1,5 +1,3 @@
-
-
 class Orbiter extends Entity implements updateable {
   float cx, cy, radius, angle, angleStep;
   Orbiter (float _x, float _y, float _cx, float _cy, float _step) {
@@ -45,8 +43,10 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
   float shakingDur;
   float shakingMag;
   float shakingStart;
+  
+  GameMode mode;
 
-  Earth (float xpos, float ypos) {
+  Earth (GameMode _mode, float xpos, float ypos) {
     x = xpos;
     y = ypos;
     dx = 0;
@@ -54,7 +54,8 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
     dr = 2.3;
     model = loadImage("earth.png");
     radius = (model.width/2) * .5 - 5;
-    eventManager.gameOverSubscribers.add(this);
+    mode = _mode;
+    mode.eventManager.gameOverSubscribers.add(this);
   }
 
   void gameOverHandle () {
@@ -106,7 +107,7 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
 
   void render () {
     pushMatrix();
-    translate(width/2 + x - camera.x, height/2 + y - camera.y);
+    translate(width/2 + x - mode.camera.x, height/2 + y - mode.camera.y);
     rotate(radians(r));
     imageMode(CENTER);
     image(model, 0, 0, model.width*.5, model.height*.5);

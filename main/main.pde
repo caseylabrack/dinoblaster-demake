@@ -12,7 +12,7 @@ import processing.sound.*;
 //Trex trex;
 //ArrayList<updateable> updaters;
 //ArrayList<renderable> renderers;
-boolean testactive = false;
+boolean testactive = true;
 GameMode game;
 
 void setup () {
@@ -21,8 +21,9 @@ void setup () {
   colorMode(HSB, 360, 100, 100);
   noCursor();
   //init();
-  game = new OviraptorMode();
-  game.init(this);
+  //game = new OviraptorMode();
+  game = new StoryMode(this);
+  //game.init(this);
 }
 
 //void init () {
@@ -60,26 +61,36 @@ void setup () {
 //}
 
 void keyPressed() {
-  //if (key=='1') {
-  //  init();
-  //} else {
-  //  player.setMove(keyCode, true);
-  //}
+  
+  switch (key) {   
+    case '1':
+     game = new StoryMode(this);
+    break;
+    
+    case '2':
+    game = new OviraptorMode(this);
+    break;
+    
+    case ' ':
+    testactive = !testactive;
+    break;
+    
+    default:
+      game.input(keyCode, true);
+    break;
+  }
 }
 
 void keyReleased() {
-  //player.setMove(keyCode, false);
+  game.input(keyCode, false);
 }
 
 void draw () {
 
-  background(0);
-  game.update();
-  //if(testactive) {
-  //for (updateable u : updaters) u.update();
-  //for (renderable r : renderers) r.render();
-  
-  //}
+  if(testactive) {
+    background(0);
+    game.update();
+  }
 
   //if(frameCount % 200 == 0) { println(frameRate); }
   //saveFrame("spoofs-and-goofs/frames2/dino-####.png");

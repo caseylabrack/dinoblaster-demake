@@ -46,7 +46,7 @@ class Player extends Entity implements gameOverEvent, updateable, renderable {
   }
 
   void die () {
-    eventManager.dispatchGameOver();
+    mode.eventManager.dispatchGameOver();
   }
 
   void gameOverHandle () {
@@ -70,11 +70,11 @@ class Player extends Entity implements gameOverEvent, updateable, renderable {
     if (leftKey != rightKey) { // logical XOR
       model = runFrames[utils.cycleRangeWithDelay(runFrames.length, 4, frameCount)];
       if (leftKey) {
-        setPosition(utils.rotateAroundPoint(getPosition(), earth.getPosition(), runSpeed * -1));
+        setPosition(utils.rotateAroundPoint(getPosition(), mode.earth.getPosition(), runSpeed * -1));
         dr -= runSpeed;
         direction = -1;
       } else {
-        setPosition(utils.rotateAroundPoint(getPosition(), earth.getPosition(), runSpeed * 1));
+        setPosition(utils.rotateAroundPoint(getPosition(), mode.earth.getPosition(), runSpeed * 1));
         dr += runSpeed;
         direction = 1;
       }
@@ -97,11 +97,11 @@ class Player extends Entity implements gameOverEvent, updateable, renderable {
     if (!visible) return;
     pushMatrix();
     scale(direction, 1);    
-    translate((width/2 + x - camera.x) * direction, height/2 + y - camera.y);
+    translate((width/2 + x - mode.camera.x) * direction, height/2 + y - mode.camera.y);
     rotate(radians(r  * direction));
     imageMode(CENTER);
     pushStyle();
-    tint(currentColor.getColor());
+    //tint(currentColor.getColor());
     image(model, 0, 0, model.width * .5, model.height * .5);
     popStyle();
     popMatrix();

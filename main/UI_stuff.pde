@@ -8,15 +8,15 @@ class UIStuff implements gameOverEvent, updateable, renderable {
   String currentStage = "Triassic";
   String nextStage = "Jurassic";
 
-  UIStuff () {
-    printArray(PFont.list());
+  UIStuff (OviraptorMode mode) {
+    //printArray(PFont.list());
     EXTINCT = createFont("Hyperspace", 92);
     //body = loadFont("Hyperspace-Bold-18.vlw");
     body = createFont("Hyperspace Bold", 24);
     textFont(EXTINCT);
     textFont(body);
 
-    eventManager.gameOverSubscribers.add(this);
+    mode.eventManager.gameOverSubscribers.add(this);
   }
 
   void gameOverHandle() {
@@ -54,7 +54,7 @@ class UIStuff implements gameOverEvent, updateable, renderable {
       pushStyle();
       textFont(EXTINCT);
       textAlign(CENTER, CENTER);
-      fill(currentColor.getColor()); 
+      //fill(currentColor.getColor()); 
       text("EXTINCT", width/2, height/2);
       popStyle();
     }

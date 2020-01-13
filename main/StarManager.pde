@@ -60,7 +60,7 @@ class StarManager implements updateable, renderable {
         pushStyle();
         pushMatrix();
         translate(x, y);
-        tint(currentColor.getColor());
+        //tint(currentColor.getColor());
         image(nebulaModel, 0, 0);
         popMatrix();
         popStyle();

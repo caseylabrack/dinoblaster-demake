@@ -4,8 +4,9 @@ class Explosion extends Entity {
   float duration = 300;
   boolean visible = false;
   PImage[] frames;
+  GameMode mode;
 
-  Explosion (PImage[] _frames) {
+  Explosion (GameMode _mode, PImage[] _frames) {
 
     frames = _frames;
   }
@@ -15,7 +16,7 @@ class Explosion extends Entity {
     x = xpos;
     y = ypos;
     start = millis();
-    r = degrees(atan2(y - earth.y, x - earth.x)) + 90;
+    r = degrees(atan2(y - mode.earth.y, x - mode.earth.x)) + 90;
   }
 
   void update () {
@@ -40,7 +41,7 @@ class Explosion extends Entity {
   void render () {
     if (!visible) return;
     pushMatrix();
-    translate(width/2 + x - camera.x, height/2 + y - camera.y);
+    translate(width/2 + x - mode.camera.x, height/2 + y - mode.camera.y);
     rotate(radians(r));
     imageMode(CENTER);
     image(model, 0, 0, model.width*.5, model.height*.5);

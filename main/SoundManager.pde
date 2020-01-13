@@ -3,10 +3,9 @@ class SoundManager implements roidImpactEvent {
   SoundFile[] roid_impacts = new SoundFile[5];
   PApplet main;
   
-  SoundManager (PApplet _p) {
+  SoundManager (GameMode _mode, PApplet _p) {
     main = _p;
-    
-    eventManager.roidImpactSubscribers.add(this);
+    _mode.eventManager.roidImpactSubscribers.add(this);
     
     for(int i = 1; i <= 5; i++) {
       roid_impacts[i-1] = new SoundFile(main, "impact"+i+".wav");
