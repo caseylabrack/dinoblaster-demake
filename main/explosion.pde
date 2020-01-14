@@ -5,11 +5,13 @@
 //  boolean visible = false;
 //  PImage[] frames;
 //  Camera camera;
+//  Earth earth;
 
-//  Explosion (Camera _cam, PImage[] _frames) {
+//  Explosion (Camera _cam, PImage[] _frames, Earth _earth) {
 
 //    frames = _frames;
 //    camera = _cam;
+//    earth = _earth;
 //  }
 
 //  void fire(float xpos, float ypos) {

@@ -82,6 +82,8 @@ class Player extends Entity implements gameOverEvent, updateable, renderable, ro
     } else {
       model = idle;
     }
+    
+    //println(r);
 
     x += dx;
     y += dy;

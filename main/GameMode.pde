@@ -11,7 +11,6 @@ abstract class GameMode {
   ArrayList<updateable> updaters = new ArrayList<updateable>();
   ArrayList<renderable> renderers = new ArrayList<renderable>();
 
-  //abstract void init(PApplet _main);
   void input(int _key, boolean pressed) {
     player.setMove(_key, pressed);
   }
@@ -64,7 +63,7 @@ class OviraptorMode extends GameMode {
   //}
   
   void update () {
-    print("oviraptor tick");
+    //print("oviraptor tick");
     for (updateable u : updaters) u.update();
     for (renderable r : renderers) r.render();
   }
@@ -105,9 +104,10 @@ class StoryMode extends GameMode {
     //updaters.add(currentColor);
     //updaters.add(trex);
     //updaters.add(starManager);
+    
     //renderers.add(ui);
-    renderers.add(player);
     renderers.add(earth);
+    renderers.add(player);
     //renderers.add(starManager);
     //renderers.add(splodesManager);
     //renderers.add(trex); 
@@ -130,6 +130,12 @@ class StoryMode extends GameMode {
   
   void update () {
     //print("story tick");
+    //if(frameCount % 90==0) {
+    //  player = new Player(this, 1);
+    //  updaters.add(player);
+    //  renderers.add(player);
+    //}
+    
     for (updateable u : updaters) u.update();
     for (renderable r : renderers) r.render();
   }

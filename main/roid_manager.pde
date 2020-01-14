@@ -8,7 +8,7 @@ class RoidManager implements updateable {
   Earth earth;
   EventManager events;
   Camera cam;
-  
+
   Explosion[] splodes = new Explosion[25];
   PImage sheet;
   PImage[] frames;
@@ -18,51 +18,73 @@ class RoidManager implements updateable {
     min = _min;
     max = _max;
     roids = new Roid[poolsize];
-    
+
     earth = earf;
     events = _events;
     cam = _cam;
-    
+
     for (int i = 0; i < poolsize; i++) {
       roids[i] = new Roid(earth, events, cam);
     }
-    
+
     sheet = loadImage("explosion-sheet.png");
     frames = utils.sheetToSprites(sheet, 3, 1);
 
-    for (int i = 0; i < splodes.length; i++) {
-      splodes[i] = new Explosion(cam, frames);
-      earth.addChild(splodes[i]);
+    for (int j = 0; j < splodes.length; j++) {
+      splodes[j] = new Explosion(cam, frames, earth);
+      //earth.addChild(splodes[j]);
     }
-  }
-  
-  void newSplode (float x, float y) {
-    splodes[splodeindex % splodes.length].fire(x, y);
-    //splodes[splodeindex % splodes.length].r = degrees(atan2(y - earth.y, x - earth.x)) + 90;
-    //splodeindex++;
+    
+    //frameRate(1);
+    //splodes[splodeindex % splodes.length].fire(earth.x , earth.y -100);
+    //splodes[1].fire(earth.x + 200, earth.y + 200);
   }
 
   void update () {
-    if (millis() - lastFire > wait) {
-      lastFire = millis();
-      wait = random(min, max);
-      roids[roidindex % roids.length].fire();
-      roidindex++;
-    };
-
-    for (Roid r : roids) {
-      r.update();
-      if(dist(r.x, r.y, earth.x, earth.y) < earth.radius ) {
-        r.enabled = false;
-        newSplode(r.x,r.y);
-        events.dispatchRoidImpact(new PVector(r.x,r.y));
-      }
-      r.render();
-    }
+    //if (millis() - lastFire > wait) {
+    //  lastFire = millis();
+    //  wait = random(min, max);
+    //  roids[roidindex % roids.length].fire();
+    //  roidindex++;
+    //};
     
-    for (Explosion s : splodes) s.update();
-    for (Explosion s : splodes) s.render();
+   if(frameCount % 30 == 0) {
+   roids[roidindex % roids.length].fire(); 
+   roidindex++;
+   }
+    
+   //  if(frameCount==400){
+   //    frameRate(5);
+   //  //  splodes[splodeindex % splodes.length].fire(earth.x , earth.y -100);
+   //  //  circle(earth.x, earth.y -100, 25);
+   //  //  circle(earth.x, earth.y, 40);
+   //  }   
+    
+    for (Roid r : roids) {
+      if (r.enabled) {
+        r.update();
+        if (dist(r.x, r.y, earth.x, earth.y) < earth.radius ) {
+          //circle(r.x,r.y,20);
+          r.enabled = false;
+          splodes[splodeindex % splodes.length].fire(r.x, r.y);
+          earth.addChild(splodes[splodeindex % splodes.length]);
+          //println(splodeindex % splodes.length);
+          //splodes[splodeindex % splodes.length].r = degrees(atan2(r.y - earth.y, r.x - earth.x)) + 90;
+          //splodes[splodeindex % splodes.length].r = degrees(atan2(r.y - earth.y, r.x - earth.x)) + 90;
+          //println(splodes[splodeindex % splodes.length].r);
+          //splodes[splodeindex % splodes.length].r = degrees(atan2(r.y - earth.y, r.x - earth.x)) + 90;
+          splodeindex++;
+          //newSplode(r.x, r.y);
+          events.dispatchRoidImpact(new PVector(r.x, r.y));
+        }
+        r.render();
+      }
+    }
 
+    for (Explosion s : splodes) {
+      s.update();
+      s.render();
+    }
   }
 }
 
@@ -105,7 +127,7 @@ class Roid extends Entity {
   }
 
   void update () {
- 
+
     if (!enabled) return; 
     x += dx;
     y += dy;
@@ -115,14 +137,14 @@ class Roid extends Entity {
   void render() {
     if (!enabled) return;
     pushMatrix();
-      imageMode(CENTER);
-      translate(width/2 + x - camera.x, height/2 + y - camera.y);
-      pushMatrix();
-        rotate(radians(angle+90));
-        image(trail, 0, -25, trail.width/2, trail.height/2);
-      popMatrix();
-      rotate(r);
-      image(model, 0, 0, model.width/2, model.height/2);
+    imageMode(CENTER);
+    translate(width/2 + x - camera.x, height/2 + y - camera.y);
+    pushMatrix();
+    rotate(radians(angle+90));
+    image(trail, 0, -25, trail.width/2, trail.height/2);
+    popMatrix();
+    rotate(r);
+    image(model, 0, 0, model.width/2, model.height/2);
     popMatrix();
   }
 }
@@ -134,11 +156,13 @@ class Explosion extends Entity {
   boolean visible = false;
   PImage[] frames;
   Camera camera;
+  Earth earth;
 
-  Explosion (Camera _cam, PImage[] _frames) {
+  Explosion (Camera _cam, PImage[] _frames, Earth _earth) {
 
     frames = _frames;
     camera = _cam;
+    earth = _earth;
   }
 
   void fire(float xpos, float ypos) {
@@ -146,15 +170,18 @@ class Explosion extends Entity {
     x = xpos;
     y = ypos;
     start = millis();
-    //r = degrees(atan2(y - mode.earth.y, x - mode.earth.x)) + 90;
+    r = degrees(atan2(y - earth.y, x - earth.x)) + 90;
+    //print("fire method");
+    //println(r);
   }
 
   void update () {
-
+    
     if (!visible) return;
 
     if (millis() - start > duration) {
       visible = false;
+      earth.removeChild(this);
     }
     int frameNum = floor(map((millis() - start) / duration, 0, 1, 0, frames.length)); // animation progress is proportional to duration progress
     model = frames[frameNum > 2 ? 2 : frameNum]; // mapping above is not clamped to frames.length, can create array out of index error 

@@ -11,6 +11,10 @@ class Entity {
   void addChild (Entity obj) {
     children.add(obj);
   } 
+  
+  void removeChild (Entity obj) {
+    children.remove(obj);
+  }
 
   void setPosition (PVector pos) {
     x = pos.x;
