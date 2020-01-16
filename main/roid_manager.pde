@@ -32,49 +32,25 @@ class RoidManager implements updateable {
 
     for (int j = 0; j < splodes.length; j++) {
       splodes[j] = new Explosion(cam, frames, earth);
-      //earth.addChild(splodes[j]);
-    }
-    
-    //frameRate(1);
-    //splodes[splodeindex % splodes.length].fire(earth.x , earth.y -100);
-    //splodes[1].fire(earth.x + 200, earth.y + 200);
+    }    
   }
 
   void update () {
-    //if (millis() - lastFire > wait) {
-    //  lastFire = millis();
-    //  wait = random(min, max);
-    //  roids[roidindex % roids.length].fire();
-    //  roidindex++;
-    //};
-    
-   if(frameCount % 30 == 0) {
-   roids[roidindex % roids.length].fire(); 
-   roidindex++;
-   }
-    
-   //  if(frameCount==400){
-   //    frameRate(5);
-   //  //  splodes[splodeindex % splodes.length].fire(earth.x , earth.y -100);
-   //  //  circle(earth.x, earth.y -100, 25);
-   //  //  circle(earth.x, earth.y, 40);
-   //  }   
-    
+    if (millis() - lastFire > wait) {
+      lastFire = millis();
+      wait = random(min, max);
+      roids[roidindex % roids.length].fire();
+      roidindex++;
+    };
+     
     for (Roid r : roids) {
       if (r.enabled) {
         r.update();
         if (dist(r.x, r.y, earth.x, earth.y) < earth.radius ) {
-          //circle(r.x,r.y,20);
           r.enabled = false;
           splodes[splodeindex % splodes.length].fire(r.x, r.y);
           earth.addChild(splodes[splodeindex % splodes.length]);
-          //println(splodeindex % splodes.length);
-          //splodes[splodeindex % splodes.length].r = degrees(atan2(r.y - earth.y, r.x - earth.x)) + 90;
-          //splodes[splodeindex % splodes.length].r = degrees(atan2(r.y - earth.y, r.x - earth.x)) + 90;
-          //println(splodes[splodeindex % splodes.length].r);
-          //splodes[splodeindex % splodes.length].r = degrees(atan2(r.y - earth.y, r.x - earth.x)) + 90;
           splodeindex++;
-          //newSplode(r.x, r.y);
           events.dispatchRoidImpact(new PVector(r.x, r.y));
         }
         r.render();
@@ -100,7 +76,6 @@ class Roid extends Entity {
   PVector trailPosition;
   Earth earth;
   Player player;
-  //SplosionManager splodesManager;
   EventManager eventManager;
   Camera camera;
 
@@ -171,8 +146,6 @@ class Explosion extends Entity {
     y = ypos;
     start = millis();
     r = degrees(atan2(y - earth.y, x - earth.x)) + 90;
-    //print("fire method");
-    //println(r);
   }
 
   void update () {

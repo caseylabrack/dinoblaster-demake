@@ -24,8 +24,8 @@ void setup () {
   colorMode(HSB, 360, 100, 100);
   noCursor();
   //init();
-  //game = new OviraptorMode();
-  game = new StoryMode(this);
+  game = new OviraptorMode(this);
+  //game = new StoryMode(this);
   //frameRate(10);
   //game.init(this);
   prev = frameRateLastNanos;

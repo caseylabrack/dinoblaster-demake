@@ -47,7 +47,7 @@ class StarManager implements updateable, renderable {
         pushMatrix();
         translate(x, y);
         rotate(TWO_PI/8);
-        square(0, 0, 2);
+        square(0, 0, 4);
         popMatrix();
       }
     }
