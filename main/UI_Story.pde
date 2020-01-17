@@ -1,4 +1,4 @@
-class UIStuff implements gameOverEvent, updateable, renderable {
+class UIStory implements gameOverEvent, updateable, renderable {
   PFont EXTINCT;
   PFont body;
   boolean isGameOver = false;
@@ -7,16 +7,18 @@ class UIStuff implements gameOverEvent, updateable, renderable {
   int lastScoreTick = 0;
   String currentStage = "Triassic";
   String nextStage = "Jurassic";
+  EventManager eventManager;
+  ColorDecider currentColor;
 
-  UIStuff (OviraptorMode mode) {
-    //printArray(PFont.list());
+  UIStory (EventManager _eventManager, ColorDecider _currentColor) {
+    eventManager = _eventManager;
+    currentColor = _currentColor;
     EXTINCT = createFont("Hyperspace", 92);
-    //body = loadFont("Hyperspace-Bold-18.vlw");
     body = createFont("Hyperspace Bold", 24);
     textFont(EXTINCT);
     textFont(body);
 
-    mode.eventManager.gameOverSubscribers.add(this);
+    eventManager.gameOverSubscribers.add(this);
   }
 
   void gameOverHandle() {
@@ -54,7 +56,7 @@ class UIStuff implements gameOverEvent, updateable, renderable {
       pushStyle();
       textFont(EXTINCT);
       textAlign(CENTER, CENTER);
-      //fill(currentColor.getColor()); 
+      fill(currentColor.getColor()); 
       text("EXTINCT", width/2, height/2);
       popStyle();
     }
