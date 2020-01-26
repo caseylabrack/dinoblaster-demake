@@ -10,8 +10,8 @@ abstract class GameMode {
 
   Camera camera;
   int score = 0;
-  ArrayList<updateable> updaters = new ArrayList<updateable>();
-  ArrayList<renderable> renderers = new ArrayList<renderable>();
+  ArrayList<updateable> updaters;
+  ArrayList<renderable> renderers;
 
   GameMode (PApplet main) {
     updaters = new ArrayList<updateable>();
@@ -21,8 +21,9 @@ abstract class GameMode {
     camera = new Camera();
     camera.setPosition(earth.getPosition());
     roids = new RoidManager(70, 400, 100, earth, eventManager, camera);
-    starManager = new StarManager();
     currentColor = new ColorDecider();
+    starManager = new StarManager(currentColor);
+
 
     soundManager = new SoundManager(main, eventManager);
 
@@ -50,6 +51,7 @@ class OviraptorMode extends GameMode {
     updaters.add(currentColor);
     updaters.add(trex);
     updaters.add(starManager);
+    
     renderers.add(player);
     renderers.add(earth);
     renderers.add(starManager);
@@ -65,11 +67,13 @@ class OviraptorMode extends GameMode {
 class StoryMode extends GameMode {
 
   UIStory ui;
+  UFOManager ufoManager;
   
   StoryMode (PApplet _main) {
     super(_main);
     player = new Player(this, 1);
     ui = new UIStory(eventManager, currentColor);
+    ufoManager = new UFOManager (currentColor, earth);
     updaters.add(ui);
     updaters.add(earth);
     updaters.add(roids);
@@ -77,14 +81,28 @@ class StoryMode extends GameMode {
     updaters.add(player);
     updaters.add(currentColor);
     updaters.add(starManager);
+    updaters.add(ufoManager);
     
     renderers.add(ui);
     renderers.add(earth);
     renderers.add(player);
     renderers.add(starManager);
+    renderers.add(ufoManager);
   }
     
   void update () {
+    
+    //if(frameCount % 200 == 0)
+    //{
+    //  println("new ufo");
+    //  ufo = new UFO(currentColor);
+    //  updaters.add(ufo);
+    //  renderers.add(ufo);
+    //}
+    
+    if(frameCount==30) {
+      ufoManager.spawnUFOAbducting();
+    }
     
     for (updateable u : updaters) u.update();
     for (renderable r : renderers) r.render();

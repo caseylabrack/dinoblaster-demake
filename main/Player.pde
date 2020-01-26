@@ -51,7 +51,7 @@ class Player extends Entity implements gameOverEvent, updateable, renderable, ro
   }
 
   void gameOverHandle () {
-    visible = false;
+    //visible = false;
   }
 
   void setMove (int keyevent, boolean set) {

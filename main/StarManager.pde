@@ -11,9 +11,13 @@ class StarManager implements updateable, renderable {
   boolean nebulaActive = false;
   float nebulaLead = 15;
   float nebulaOffset = 0;
+  
+  ColorDecider currentColor;
 
-  StarManager () {
+  StarManager (ColorDecider _color) {
 
+    currentColor = _color;
+    
     int k = 0;
     for (int j = 0; j < 360; j+= 9) {
       for (int i = 0; i < 20; i++) {
@@ -60,7 +64,7 @@ class StarManager implements updateable, renderable {
         pushStyle();
         pushMatrix();
         translate(x, y);
-        //tint(currentColor.getColor());
+        tint(currentColor.getColor());
         image(nebulaModel, 0, 0);
         popMatrix();
         popStyle();
