@@ -11,13 +11,13 @@ class StarManager implements updateable, renderable {
   boolean nebulaActive = false;
   float nebulaLead = 15;
   float nebulaOffset = 0;
-  
+
   ColorDecider currentColor;
 
   StarManager (ColorDecider _color) {
 
     currentColor = _color;
-    
+
     int k = 0;
     for (int j = 0; j < 360; j+= 9) {
       for (int i = 0; i < 20; i++) {
@@ -44,31 +44,35 @@ class StarManager implements updateable, renderable {
   }
 
   void render () {
-    for (PVector s : stars) {
-      x = s.x - (cos(a) * r - width / 2);
-      y = s.y - (sin(a) * r - height / 2);
-      if (x>0 && x < width && y > 0 && y < height) {
-        pushMatrix();
-        translate(x, y);
-        rotate(TWO_PI/8);
-        square(0, 0, 4);
-        popMatrix();
+
+    if (frameCount % 3 == 0) {
+      for (PVector s : stars) {
+        x = s.x - (cos(a) * r - width / 2);
+        y = s.y - (sin(a) * r - height / 2);
+        if (x>0 && x < width && y > 0 && y < height) {
+          pushMatrix();
+          translate(x, y);
+          rotate(TWO_PI/8);
+          square(0, 0, 2);
+          popMatrix();
+        }
       }
     }
 
-    if (nebulaActive) {
-      x = nebulaVec.x - (cos(a) * r - width / 2);
-      y = nebulaVec.y - (sin(a) * r - height / 2);
 
-      if (x>-640 && x < width + 640 && y > -640 && y < height + 640) {
-        pushStyle();
-        pushMatrix();
-        translate(x, y);
-        tint(currentColor.getColor());
-        image(nebulaModel, 0, 0);
-        popMatrix();
-        popStyle();
-      }
-    }
+    //if (nebulaActive) {
+    //  x = nebulaVec.x - (cos(a) * r - width / 2);
+    //  y = nebulaVec.y - (sin(a) * r - height / 2);
+
+    //  if (x>-640 && x < width + 640 && y > -640 && y < height + 640) {
+    //    pushStyle();
+    //    pushMatrix();
+    //    translate(x, y);
+    //    tint(currentColor.getColor());
+    //    image(nebulaModel, 0, 0);
+    //    popMatrix();
+    //    popStyle();
+    //  }
+    //}
   }
 }

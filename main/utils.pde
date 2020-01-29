@@ -36,13 +36,15 @@ static class utils {
     return floor((seed % floor(framesTotal * delay))/delay);
   }
 
+  public static float unsignedAngleDiff(float alpha, float beta) {
+    float phi = Math.abs(beta - alpha) % 360;       
+    float distance = phi > 180 ? 360 - phi : phi;
+    return distance;
+  }
+
   static float signedAngleDiff (float r1, float r2) {
     float diff = (r2 - r1 + 180) % 360 - 180;
     return diff < -180 ? diff + 360: diff;
-  }
-
-  static float linear (float t, float start, float change, float duration) {
-    return start + change * (t/duration);
   }
 
   static float easeInOutQuad (float t, float b, float c, float d) {
@@ -61,8 +63,16 @@ static class utils {
     if ((t/=d/2) < 1) return (float)(c/2 * Math.pow(2, 10 * (t - 1)) + b);
     return (float)(c/2 * (-Math.pow(2, -10 * --t) + 2) + b);
   }
-  
+
   static float easeInExpo (float t, float b, float c, float d) {
     return (float)((t==0) ? b : c * Math.pow(2, 10 * (t/d - 1)) + b);
+  }
+  
+  static float easeOutExpo (float t, float b, float c, float d) {
+    return (t==d) ? b+c : (float)(c * (-Math.pow(2, -10 * t/d) + 1) + b);
+  }
+  
+  static float easeOutQuad (float t, float b, float c, float d) {
+    return -c *(t/=d)*(t-2) + b;
   }
 } 

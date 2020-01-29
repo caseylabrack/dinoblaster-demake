@@ -51,7 +51,7 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
     y = ypos;
     dx = 0;
     dy = 0;
-    dr = 2.3;
+    dr = .2;//2.3;
     //r = 90;
     model = loadImage("earth.png");
     radius = (model.width/2) * .5 - 5;

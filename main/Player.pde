@@ -29,29 +29,42 @@ class Player extends Entity implements gameOverEvent, updateable, renderable, ro
   int playerNum = 1;
   int framesTotal = 8;
   float delay = 100;
-  GameMode mode;
+  //GameMode mode;
+  
+  EventManager eventManager;
+  Earth earth;
+  Camera camera;
 
-  Player (GameMode _mode, int whichPlayer) {
+  Player (EventManager _eventManager, Earth _earth, Camera _camera, int whichPlayer) {
+    
+    eventManager = _eventManager;
+    earth = _earth;
+    camera = _camera;
+    
     PImage sheet = whichPlayer==1 ? loadImage("bronto-run.png") : loadImage("oviraptor-frames.png");
     PImage[] frames = whichPlayer==1 ? utils.sheetToSprites(sheet, 3, 1) : utils.sheetToSprites(sheet, 2, 2, 1);
     idle = frames[0];
     runFrames[0] = frames[1];
     runFrames[1] = frames[2];
     model = idle;
-    mode = _mode;
-    mode.eventManager.gameOverSubscribers.add(this);
-    mode.eventManager.roidImpactSubscribers.add(this);
-    mode.earth.addChild(this);
-    x = mode.earth.x + cos(radians(-90)) * mode.earth.radius;
-    y = mode.earth.y + sin(radians(-90)) * mode.earth.radius;
+    eventManager.gameOverSubscribers.add(this);
+    eventManager.roidImpactSubscribers.add(this);
+    earth.addChild(this);
+    x = earth.x + cos(radians(-90)) * earth.radius;
+    y = earth.y + sin(radians(-90)) * earth.radius;
   }
 
   void die () {
-    mode.eventManager.dispatchGameOver();
+    eventManager.dispatchGameOver();
   }
 
   void gameOverHandle () {
     //visible = false;
+  }
+
+  float getAngleFromEarth () {
+    
+    return degrees((float)Math.atan2(earth.y - y, earth.x - x));
   }
 
   void setMove (int keyevent, boolean set) {
@@ -71,11 +84,11 @@ class Player extends Entity implements gameOverEvent, updateable, renderable, ro
     if (leftKey != rightKey) { // logical XOR
       model = runFrames[utils.cycleRangeWithDelay(runFrames.length, 4, frameCount)];
       if (leftKey) {
-        setPosition(utils.rotateAroundPoint(getPosition(), mode.earth.getPosition(), runSpeed * -1));
+        setPosition(utils.rotateAroundPoint(getPosition(), earth.getPosition(), runSpeed * -1));
         dr -= runSpeed;
         direction = -1;
       } else {
-        setPosition(utils.rotateAroundPoint(getPosition(), mode.earth.getPosition(), runSpeed * 1));
+        setPosition(utils.rotateAroundPoint(getPosition(), earth.getPosition(), runSpeed * 1));
         dr += runSpeed;
         direction = 1;
       }
@@ -107,7 +120,7 @@ class Player extends Entity implements gameOverEvent, updateable, renderable, ro
     if (!visible) return;
     pushMatrix();
     scale(direction, 1);    
-    translate((width/2 + x - mode.camera.x) * direction, height/2 + y - mode.camera.y);
+    translate((width/2 + x - camera.x) * direction, height/2 + y - camera.y);
     rotate(radians(r  * direction));
     imageMode(CENTER);
     pushStyle();

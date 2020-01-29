@@ -26,7 +26,6 @@ abstract class GameMode {
 
 
     soundManager = new SoundManager(main, eventManager);
-
   }
 
   void input(int _key, boolean pressed) {
@@ -38,10 +37,10 @@ abstract class GameMode {
 class OviraptorMode extends GameMode {
 
   Trex trex;
-  
+
   OviraptorMode (PApplet _main) {
     super(_main);
-    player = new Player(this, 2);
+    player = new Player(eventManager, earth, camera, 2);
     trex = new Trex(earth, player, camera);
     earth.addChild(trex);
     updaters.add(earth);
@@ -51,13 +50,13 @@ class OviraptorMode extends GameMode {
     updaters.add(currentColor);
     updaters.add(trex);
     updaters.add(starManager);
-    
+
     renderers.add(player);
     renderers.add(earth);
     renderers.add(starManager);
-    renderers.add(trex); 
+    renderers.add(trex);
   }
-    
+
   void update () {
     for (updateable u : updaters) u.update();
     for (renderable r : renderers) r.render();
@@ -68,12 +67,12 @@ class StoryMode extends GameMode {
 
   UIStory ui;
   UFOManager ufoManager;
-  
+
   StoryMode (PApplet _main) {
     super(_main);
-    player = new Player(this, 1);
+    player = new Player(eventManager, earth, camera, 1);
     ui = new UIStory(eventManager, currentColor);
-    ufoManager = new UFOManager (currentColor, earth);
+    ufoManager = new UFOManager (currentColor, earth, player);
     updaters.add(ui);
     updaters.add(earth);
     updaters.add(roids);
@@ -82,16 +81,17 @@ class StoryMode extends GameMode {
     updaters.add(currentColor);
     updaters.add(starManager);
     updaters.add(ufoManager);
-    
+
+
     renderers.add(ui);
-    renderers.add(earth);
     renderers.add(player);
-    renderers.add(starManager);
     renderers.add(ufoManager);
+    renderers.add(earth);
+    renderers.add(starManager);
   }
-    
+
   void update () {
-    
+
     //if(frameCount % 200 == 0)
     //{
     //  println("new ufo");
@@ -99,11 +99,11 @@ class StoryMode extends GameMode {
     //  updaters.add(ufo);
     //  renderers.add(ufo);
     //}
-    
-    if(frameCount==30) {
+
+    if (frameCount==30) {
       ufoManager.spawnUFOAbducting();
     }
-    
+
     for (updateable u : updaters) u.update();
     for (renderable r : renderers) r.render();
   }
