@@ -8,3 +8,7 @@ interface updateable {
 interface renderable {
   void render();
 } 
+
+interface renderableScreen {
+  void render();
+}

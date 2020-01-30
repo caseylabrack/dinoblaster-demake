@@ -29,17 +29,14 @@ class Player extends Entity implements gameOverEvent, updateable, renderable, ro
   int playerNum = 1;
   int framesTotal = 8;
   float delay = 100;
-  //GameMode mode;
   
   EventManager eventManager;
   Earth earth;
-  Camera camera;
 
-  Player (EventManager _eventManager, Earth _earth, Camera _camera, int whichPlayer) {
+  Player (EventManager _eventManager, Earth _earth, int whichPlayer) {
     
     eventManager = _eventManager;
     earth = _earth;
-    camera = _camera;
     
     PImage sheet = whichPlayer==1 ? loadImage("bronto-run.png") : loadImage("oviraptor-frames.png");
     PImage[] frames = whichPlayer==1 ? utils.sheetToSprites(sheet, 3, 1) : utils.sheetToSprites(sheet, 2, 2, 1);
@@ -96,8 +93,6 @@ class Player extends Entity implements gameOverEvent, updateable, renderable, ro
       model = idle;
     }
     
-    //println(r);
-
     x += dx;
     y += dy;
     r += dr;
@@ -119,8 +114,8 @@ class Player extends Entity implements gameOverEvent, updateable, renderable, ro
 
     if (!visible) return;
     pushMatrix();
-    scale(direction, 1);    
-    translate((width/2 + x - camera.x) * direction, height/2 + y - camera.y);
+    scale(direction, 1);
+    translate(x * direction, y);
     rotate(radians(r  * direction));
     imageMode(CENTER);
     pushStyle();

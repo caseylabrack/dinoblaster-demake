@@ -1,4 +1,4 @@
-class UIStory implements gameOverEvent, updateable, renderable {
+class UIStory implements gameOverEvent, updateable, renderableScreen {
   PFont EXTINCT;
   PFont body;
   boolean isGameOver = false;

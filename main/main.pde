@@ -13,25 +13,26 @@ void setup () {
   //game = new OviraptorMode(this);
   game = new StoryMode(this);
   prev = frameRateLastNanos;
+  //game.update();
 }
 
 void keyPressed() {
-  
+
   switch (key) {   
-    case '1':
-     game = new StoryMode(this);
+  case '1':
+    game = new StoryMode(this);
     break;
-    
-    case '2':
+
+  case '2':
     game = new OviraptorMode(this);
     break;
-    
-    case ' ':
+
+  case ' ':
     testactive = !testactive;
     break;
-    
-    default:
-      game.input(keyCode, true);
+
+  default:
+    game.input(keyCode, true);
     break;
   }
 }
@@ -46,11 +47,11 @@ void draw () {
     background(0);
     game.update();
   }
-  
+
   //if(frameCount % 60==0) println((frameRateLastNanos - prev)/1e6/16.666);
   prev = frameRateLastNanos;
 
   //if(frameCount % 200 == 0) { println(frameRate); }
-  //saveFrame("spoofs-and-goofs/frames2/dino-####.png");
-  //if(frameCount==300) exit();
+  //saveFrame("spoofs-and-goofs/frames/dino-####.png");
+  //if(frameCount==120) exit();
 }

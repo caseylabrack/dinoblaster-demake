@@ -21,7 +21,6 @@ class UFOManager implements updateable, renderable {
     lilBronto = loadShape("bronto.svg");
     lilBronto.disableStyle();
 
-
     //spawnUFOAbducting();
   }
 
@@ -34,8 +33,7 @@ class UFOManager implements updateable, renderable {
   }
 
   void update () {
-    for (UFO u : ufos) u.update();    
-    //println();
+    for (UFO u : ufos) u.update();
   }
 
   void render () {
@@ -94,7 +92,6 @@ class UFO extends Entity implements updateable, renderable {
 
 
   UFO (ColorDecider _color, PShape _model, PShape _bronto, Earth _earth, Player _player) {
-    //UFO (ColorDecider _color, PImage _model) {
 
     currentColor = _color;
     model = _model;
@@ -215,8 +212,7 @@ class UFO extends Entity implements updateable, renderable {
     stroke(currentColor.getColor());
     //tint(currentColor.getColor());
     pushMatrix();
-    fill(0,0,0);
-    //translate(width/2,height/2);
+    fill(0, 0, 0);
     shapeMode(CENTER);
     //image(model, x, y, currentSize, currentSize);
     shape(model, x, y, currentSize, currentSize);

@@ -1,36 +1,3 @@
-class Orbiter extends Entity implements updateable {
-  float cx, cy, radius, angle, angleStep;
-  Orbiter (float _x, float _y, float _cx, float _cy, float _step) {
-    x = _x;
-    y = _y;
-    cx = _cx;
-    cy = _cy;
-    angleStep = _step;
-    angle = atan2(y - cy, x - cx);
-    radius = dist(x, y, cx, cy);
-  }
-
-  void update () {
-    dx = cos(angle) * radius - x;
-    dy = sin(angle) * radius - y;
-    angle += angleStep;
-
-    x += dx;
-    y += dy;
-
-    updateChildren();
-    //for (Entity child : children) {
-    //  child.dx += dx;
-    //  child.dy += dy;
-    //}
-
-    //pushMatrix();
-    //translate(width/2 + x - camera.x, height/2 + y - camera.y);
-    //circle(width/2, height/2, 10);
-    //popMatrix();
-  }
-}
-
 class Earth extends Entity implements gameOverEvent, updateable, renderable {
   PImage model;
   float radius;
@@ -51,8 +18,7 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
     y = ypos;
     dx = 0;
     dy = 0;
-    dr = .2;//2.3;
-    //r = 90;
+    dr = 3;//2.3;
     model = loadImage("earth.png");
     radius = (model.width/2) * .5 - 5;
     mode = _mode;
@@ -77,8 +43,8 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
 
   void update() {
 
-    dx = width/2 - x;
-    dy = height/2 - y;
+    dx = 0 - x;
+    dy = 0 - y;
 
     if (shake) {
       shakeAngle = random(0, TWO_PI);
@@ -108,7 +74,6 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
 
   void render () {
     pushMatrix();
-    translate(width/2 + x - mode.camera.x, height/2 + y - mode.camera.y);
     rotate(radians(r));
     imageMode(CENTER);
     image(model, 0, 0, model.width*.5, model.height*.5);

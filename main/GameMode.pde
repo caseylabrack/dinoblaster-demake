@@ -11,16 +11,17 @@ abstract class GameMode {
   Camera camera;
   int score = 0;
   ArrayList<updateable> updaters;
+  ArrayList<renderableScreen> screeenRenderers;
   ArrayList<renderable> renderers;
 
   GameMode (PApplet main) {
     updaters = new ArrayList<updateable>();
     renderers = new ArrayList<renderable>();
+    screeenRenderers = new ArrayList<renderableScreen>();
     eventManager = new EventManager();
-    earth = new Earth(this, width/2, height/2);
-    camera = new Camera();
-    camera.setPosition(earth.getPosition());
-    roids = new RoidManager(70, 400, 100, earth, eventManager, camera);
+    earth = new Earth(this, 0, 0);
+    camera = new Camera(0, 0);
+    roids = new RoidManager(70, 400, 100, earth, eventManager);
     currentColor = new ColorDecider();
     starManager = new StarManager(currentColor);
 
@@ -40,7 +41,7 @@ class OviraptorMode extends GameMode {
 
   OviraptorMode (PApplet _main) {
     super(_main);
-    player = new Player(eventManager, earth, camera, 2);
+    player = new Player(eventManager, earth, 2);
     trex = new Trex(earth, player, camera);
     earth.addChild(trex);
     updaters.add(earth);
@@ -70,7 +71,7 @@ class StoryMode extends GameMode {
 
   StoryMode (PApplet _main) {
     super(_main);
-    player = new Player(eventManager, earth, camera, 1);
+    player = new Player(eventManager, earth, 1);
     ui = new UIStory(eventManager, currentColor);
     ufoManager = new UFOManager (currentColor, earth, player);
     updaters.add(ui);
@@ -82,29 +83,26 @@ class StoryMode extends GameMode {
     updaters.add(starManager);
     updaters.add(ufoManager);
 
-
-    renderers.add(ui);
     renderers.add(player);
     renderers.add(ufoManager);
     renderers.add(earth);
+    renderers.add(roids);
     renderers.add(starManager);
+
+    screeenRenderers.add(ui);
   }
 
   void update () {
-
-    //if(frameCount % 200 == 0)
-    //{
-    //  println("new ufo");
-    //  ufo = new UFO(currentColor);
-    //  updaters.add(ufo);
-    //  renderers.add(ufo);
-    //}
 
     if (frameCount==30) {
       ufoManager.spawnUFOAbducting();
     }
 
+    pushMatrix(); // world-space
+    translate(camera.x, camera.y);
     for (updateable u : updaters) u.update();
     for (renderable r : renderers) r.render();
+    popMatrix(); // screen-space
+    for (renderableScreen rs : screeenRenderers) rs.render();
   }
 }

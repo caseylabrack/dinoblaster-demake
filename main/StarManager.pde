@@ -1,4 +1,4 @@
-class StarManager implements updateable, renderable {
+class StarManager implements updateable, renderable, renderableScreen {
 
   PVector[] stars = new PVector[800];
   float r = 2000;
@@ -28,7 +28,7 @@ class StarManager implements updateable, renderable {
 
     PImage sheet = loadImage("oviraptor-frames.png"); // loadImage("nebula.png");
     nebulaFrames = utils.sheetToSprites(sheet, 2, 2, 1); // utils.sheetToSprites(sheet, 7, 5);
-    spawnNeb();
+    //spawnNeb();
   }
 
   void spawnNeb () {
@@ -45,34 +45,33 @@ class StarManager implements updateable, renderable {
 
   void render () {
 
-    if (frameCount % 3 == 0) {
-      for (PVector s : stars) {
-        x = s.x - (cos(a) * r - width / 2);
-        y = s.y - (sin(a) * r - height / 2);
-        if (x>0 && x < width && y > 0 && y < height) {
-          pushMatrix();
-          translate(x, y);
-          rotate(TWO_PI/8);
-          square(0, 0, 2);
-          popMatrix();
-        }
+    x = (cos(a) * r) ;
+    y = (sin(a) * r) ;
+    pushMatrix();
+    for (PVector s : stars) {
+      if (abs(s.x - x) < width && abs(s.y - y) < height) {
+        pushMatrix();
+        rotate(TWO_PI/8);
+        square(s.x - x, s.y - y, 2);
+        popMatrix();
       }
     }
+    popMatrix();
 
 
-    //if (nebulaActive) {
-    //  x = nebulaVec.x - (cos(a) * r - width / 2);
-    //  y = nebulaVec.y - (sin(a) * r - height / 2);
+    if (nebulaActive) {
+      x = nebulaVec.x - (cos(a) * r - width / 2);
+      y = nebulaVec.y - (sin(a) * r - height / 2);
 
-    //  if (x>-640 && x < width + 640 && y > -640 && y < height + 640) {
-    //    pushStyle();
-    //    pushMatrix();
-    //    translate(x, y);
-    //    tint(currentColor.getColor());
-    //    image(nebulaModel, 0, 0);
-    //    popMatrix();
-    //    popStyle();
-    //  }
-    //}
+      if (x>-640 && x < width + 640 && y > -640 && y < height + 640) {
+        pushStyle();
+        pushMatrix();
+        translate(x, y);
+        tint(currentColor.getColor());
+        image(nebulaModel, 0, 0);
+        popMatrix();
+        popStyle();
+      }
+    }
   }
 }

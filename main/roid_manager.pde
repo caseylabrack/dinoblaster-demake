@@ -1,4 +1,4 @@
-class RoidManager implements updateable {
+class RoidManager implements updateable, renderable {
   float wait;
   int min;
   int max;
@@ -7,32 +7,30 @@ class RoidManager implements updateable {
   int roidindex = 0;
   Earth earth;
   EventManager events;
-  Camera cam;
 
   Explosion[] splodes = new Explosion[25];
   PImage sheet;
   PImage[] frames;
   int splodeindex = 0;
 
-  RoidManager (int _min, int _max, int poolsize, Earth earf, EventManager _events, Camera _cam) {
+  RoidManager (int _min, int _max, int poolsize, Earth earf, EventManager _events) {
     min = _min;
     max = _max;
     roids = new Roid[poolsize];
 
     earth = earf;
     events = _events;
-    cam = _cam;
 
     for (int i = 0; i < poolsize; i++) {
-      roids[i] = new Roid(earth, events, cam);
+      roids[i] = new Roid(earth, events);
     }
 
     sheet = loadImage("explosion-sheet.png");
     frames = utils.sheetToSprites(sheet, 3, 1);
 
     for (int j = 0; j < splodes.length; j++) {
-      splodes[j] = new Explosion(cam, frames, earth);
-    }    
+      splodes[j] = new Explosion(frames, earth);
+    }
   }
 
   void update () {
@@ -42,7 +40,7 @@ class RoidManager implements updateable {
       roids[roidindex % roids.length].fire();
       roidindex++;
     };
-     
+
     for (Roid r : roids) {
       if (r.enabled) {
         r.update();
@@ -53,14 +51,15 @@ class RoidManager implements updateable {
           splodeindex++;
           events.dispatchRoidImpact(new PVector(r.x, r.y));
         }
-        r.render();
       }
     }
 
-    for (Explosion s : splodes) {
-      s.update();
-      s.render();
-    }
+    for (Explosion s : splodes) s.update();
+  }
+
+  void render () {
+    for (Roid r : roids) r.render();
+    for (Explosion s : splodes) s.render();
   }
 }
 
@@ -77,9 +76,8 @@ class Roid extends Entity {
   Earth earth;
   Player player;
   EventManager eventManager;
-  Camera camera;
 
-  Roid (Earth earf, EventManager _eventmanager, Camera _camera) {
+  Roid (Earth earf, EventManager _eventmanager) {
     dr = .1;
     sheet = loadImage("asteroids-ss.png");
     trail = loadImage("roid-trail.png");
@@ -88,7 +86,6 @@ class Roid extends Entity {
     radius = sqrt(sq(width/2) + sq(height/2)) + model.width;
     earth = earf;
     eventManager = _eventmanager;
-    camera = _camera;
   }
 
   void fire () {
@@ -113,7 +110,7 @@ class Roid extends Entity {
     if (!enabled) return;
     pushMatrix();
     imageMode(CENTER);
-    translate(width/2 + x - camera.x, height/2 + y - camera.y);
+    translate(x, y);
     pushMatrix();
     rotate(radians(angle+90));
     image(trail, 0, -25, trail.width/2, trail.height/2);
@@ -130,13 +127,11 @@ class Explosion extends Entity {
   float duration = 300;
   boolean visible = false;
   PImage[] frames;
-  Camera camera;
   Earth earth;
 
-  Explosion (Camera _cam, PImage[] _frames, Earth _earth) {
+  Explosion (PImage[] _frames, Earth _earth) {
 
     frames = _frames;
-    camera = _cam;
     earth = _earth;
   }
 
@@ -149,7 +144,7 @@ class Explosion extends Entity {
   }
 
   void update () {
-    
+
     if (!visible) return;
 
     if (millis() - start > duration) {
@@ -171,7 +166,7 @@ class Explosion extends Entity {
   void render () {
     if (!visible) return;
     pushMatrix();
-    translate(width/2 + x - camera.x, height/2 + y - camera.y);
+    translate(x, y);
     rotate(radians(r));
     imageMode(CENTER);
     image(model, 0, 0, model.width*.5, model.height*.5);
