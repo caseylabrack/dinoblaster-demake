@@ -38,7 +38,9 @@ class Player extends Entity implements gameOverEvent, updateable, renderable, ro
     eventManager = _eventManager;
     earth = _earth;
     
-    PImage sheet = whichPlayer==1 ? loadImage("bronto-run.png") : loadImage("oviraptor-frames.png");
+    //PImage sheet = whichPlayer==1 ? loadImage("bronto-run.png") : loadImage("oviraptor-frames.png");
+    //PImage[] frames = whichPlayer==1 ? utils.sheetToSprites(sheet, 3, 1) : utils.sheetToSprites(sheet, 2, 2, 1);
+    PImage sheet = whichPlayer==1 ? loadImage("bronto-run2.png") : loadImage("oviraptor-frames.png");
     PImage[] frames = whichPlayer==1 ? utils.sheetToSprites(sheet, 3, 1) : utils.sheetToSprites(sheet, 2, 2, 1);
     idle = frames[0];
     runFrames[0] = frames[1];
@@ -47,8 +49,10 @@ class Player extends Entity implements gameOverEvent, updateable, renderable, ro
     eventManager.gameOverSubscribers.add(this);
     eventManager.roidImpactSubscribers.add(this);
     earth.addChild(this);
-    x = earth.x + cos(radians(-90)) * earth.radius;
-    y = earth.y + sin(radians(-90)) * earth.radius;
+    x = earth.x + cos(radians(-90)) * (earth.radius + 35);
+    y = earth.y + sin(radians(-90)) * (earth.radius + 35);
+    println(earth.radius);
+
   }
 
   void die () {
@@ -120,7 +124,7 @@ class Player extends Entity implements gameOverEvent, updateable, renderable, ro
     imageMode(CENTER);
     pushStyle();
     //tint(currentColor.getColor());
-    image(model, 0, 0, model.width * .5, model.height * .5);
+    image(model, 0, 0, model.width, model.height);
     popStyle();
     popMatrix();
   }

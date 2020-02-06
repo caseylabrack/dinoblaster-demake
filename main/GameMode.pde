@@ -104,5 +104,11 @@ class StoryMode extends GameMode {
     for (renderable r : renderers) r.render();
     popMatrix(); // screen-space
     for (renderableScreen rs : screeenRenderers) rs.render();
+    pushStyle();
+    noStroke();
+    fill(0, 0, 0);
+    rect(0, 0, 128, height);
+    rect(1024 - 128, 0, 128, height);
+    popStyle();
   }
 }

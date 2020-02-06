@@ -128,6 +128,7 @@ class Explosion extends Entity {
   boolean visible = false;
   PImage[] frames;
   Earth earth;
+  float angle = 0;
 
   Explosion (PImage[] _frames, Earth _earth) {
 
@@ -137,10 +138,11 @@ class Explosion extends Entity {
 
   void fire(float xpos, float ypos) {
     visible = true;
-    x = xpos;
-    y = ypos;
+    angle = atan2(ypos - earth.y, xpos - earth.x);
     start = millis();
-    r = degrees(atan2(y - earth.y, x - earth.x)) + 90;
+    r = degrees(angle) + 90;
+    x = earth.x + cos(angle) * (earth.radius + 40);
+    y = earth.y + sin(angle) * (earth.radius + 40);
   }
 
   void update () {
@@ -169,7 +171,7 @@ class Explosion extends Entity {
     translate(x, y);
     rotate(radians(r));
     imageMode(CENTER);
-    image(model, 0, 0, model.width*.5, model.height*.5);
+    image(model, 0, 0, model.width, model.height);
     popMatrix();
   }
 }

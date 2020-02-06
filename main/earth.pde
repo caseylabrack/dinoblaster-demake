@@ -1,5 +1,7 @@
 class Earth extends Entity implements gameOverEvent, updateable, renderable {
   PImage model;
+  //PGraphics model;
+  PShape modelV;
   float radius;
 
   float shakeAngle;
@@ -19,8 +21,11 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
     dx = 0;
     dy = 0;
     dr = 3;//2.3;
-    model = loadImage("earth.png");
-    radius = (model.width/2) * .5 - 5;
+    //modelV = loadShape("earth.svg");
+    //model = createGraphics(50,50);
+    //model.beginDraw();
+    model = loadImage("earth4.png");
+    radius = model.width/2;
     mode = _mode;
     mode.eventManager.gameOverSubscribers.add(this);
   }
@@ -76,7 +81,12 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
     pushMatrix();
     rotate(radians(r));
     imageMode(CENTER);
-    image(model, 0, 0, model.width*.5, model.height*.5);
+    image(model, 0, 0, model.width, model.height);
+    //pushStyle();
+    //stroke(30,60,60);
+    //noFill();
+    //line(0, 0, 0, radius);
+    //popStyle();
     popMatrix();
   }
 }

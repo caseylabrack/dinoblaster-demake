@@ -5,7 +5,7 @@ GameMode game;
 long prev;
 
 void setup () {
-  size(640, 480, P2D);
+  size(1024, 768, P2D);
   //fullScreen(P2D);
 
   colorMode(HSB, 360, 100, 100);
@@ -13,7 +13,7 @@ void setup () {
   //game = new OviraptorMode(this);
   game = new StoryMode(this);
   prev = frameRateLastNanos;
-  //game.update();
+  game.update();
 }
 
 void keyPressed() {

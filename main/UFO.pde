@@ -208,7 +208,7 @@ class UFO extends Entity implements updateable, renderable {
 
     pushStyle();
     noFill();
-    strokeWeight(1 * 128/currentSize);
+    strokeWeight(2 * 128/currentSize);
     stroke(currentColor.getColor());
     //tint(currentColor.getColor());
     pushMatrix();

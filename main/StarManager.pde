@@ -28,7 +28,7 @@ class StarManager implements updateable, renderable, renderableScreen {
 
     PImage sheet = loadImage("oviraptor-frames.png"); // loadImage("nebula.png");
     nebulaFrames = utils.sheetToSprites(sheet, 2, 2, 1); // utils.sheetToSprites(sheet, 7, 5);
-    //spawnNeb();
+    spawnNeb();
   }
 
   void spawnNeb () {
@@ -47,16 +47,20 @@ class StarManager implements updateable, renderable, renderableScreen {
 
     x = (cos(a) * r) ;
     y = (sin(a) * r) ;
+    pushStyle();
     pushMatrix();
+    noStroke();
+    fill(0,0,100);
     for (PVector s : stars) {
       if (abs(s.x - x) < width && abs(s.y - y) < height) {
         pushMatrix();
         rotate(TWO_PI/8);
-        square(s.x - x, s.y - y, 2);
+        square(s.x - x, s.y - y, 4);
         popMatrix();
       }
     }
     popMatrix();
+    popStyle();
 
 
     if (nebulaActive) {
