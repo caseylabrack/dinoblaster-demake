@@ -14,7 +14,6 @@ class UFOManager implements updateable, renderable {
     earth = _earth;
     player = _player;
 
-    //model = loadImage("ufo.png");
     model = loadShape("UFO.svg");
     model.disableStyle();
 
@@ -67,7 +66,7 @@ class UFO extends Entity implements updateable, renderable {
   final float normalSize = 64;
   final float startSize = 500;
   final float startDist = height/2 + startSize/2 - 50;
-  final float finalDist = 200;
+  final float finalDist = 300;
   float currentSize = startSize;
   final float approachTime = 4 * 1e3;
   float startApproach;
@@ -98,6 +97,8 @@ class UFO extends Entity implements updateable, renderable {
     earth = _earth;
     lilBronto = _bronto;
     player = _player;
+
+    println(model.width, model.height, model.width/model.height);
 
     float angle = random(0, 360);
     x = earth.x + cos(angle) * initialDist;
@@ -208,14 +209,14 @@ class UFO extends Entity implements updateable, renderable {
 
     pushStyle();
     noFill();
-    strokeWeight(2 * 128/currentSize);
+    strokeWeight(1 * model.width/currentSize);
     stroke(currentColor.getColor());
     //tint(currentColor.getColor());
     pushMatrix();
     fill(0, 0, 0);
     shapeMode(CENTER);
     //image(model, x, y, currentSize, currentSize);
-    shape(model, x, y, currentSize, currentSize);
+    shape(model, x, y, currentSize, currentSize * (model.height/model.width));
     popMatrix();
     popStyle();
   }

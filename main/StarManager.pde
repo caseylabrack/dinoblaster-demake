@@ -55,7 +55,7 @@ class StarManager implements updateable, renderable, renderableScreen {
       if (abs(s.x - x) < width && abs(s.y - y) < height) {
         pushMatrix();
         rotate(TWO_PI/8);
-        square(s.x - x, s.y - y, 4);
+        square(s.x - x, s.y - y, 1);
         popMatrix();
       }
     }

@@ -7,8 +7,13 @@ class RoidManager implements updateable, renderable {
   int roidindex = 0;
   Earth earth;
   EventManager events;
+  
+  PShape roidsheetV;
+  PGraphics roidsheet;
+  float roidSize = 400;
 
   Explosion[] splodes = new Explosion[25];
+  //PShape sheet;
   PImage sheet;
   PImage[] frames;
   int splodeindex = 0;
@@ -20,12 +25,26 @@ class RoidManager implements updateable, renderable {
 
     earth = earf;
     events = _events;
+    
+    //roidsheetV = loadShape("roids.svg");
+    //roidsheetV.disableStyle();
+    //roidsheet = createGraphics((int)roidSize, (int)roidSize);
+    //roidsheet.beginDraw();
+    //roidsheet.colorMode(HSB, 360, 100, 100);
+    //roidsheet.stroke(0,0,100);
+    //roidsheet.strokeWeight(2 * 100 / roidSize);
+    //roidsheet.noFill();
+    ////roidsheet.shapeMode(CENTER);
+    //roidsheet.shape(roidsheetV, 0, 0, roidSize, roidSize);
+    //roidsheet.endDraw();
+    sheet = loadImage("roids.png");
 
     for (int i = 0; i < poolsize; i++) {
-      roids[i] = new Roid(earth, events);
+      roids[i] = new Roid(earth, events, sheet);
     }
 
-    sheet = loadImage("explosion-sheet.png");
+    //sheet = loadImage("explosion-sheet.png");
+    sheet = loadImage("explosion.png");
     frames = utils.sheetToSprites(sheet, 3, 1);
 
     for (int j = 0; j < splodes.length; j++) {
@@ -58,6 +77,9 @@ class RoidManager implements updateable, renderable {
   }
 
   void render () {
+    //image(roidsheet, 0, 0, roidsheet.width, roidsheet.height);
+    //shapeMode(CENTER);
+    //shape(roidsheetV, 0, 0, roidSize, roidSize);
     for (Roid r : roids) r.render();
     for (Explosion s : splodes) s.render();
   }
@@ -77,9 +99,11 @@ class Roid extends Entity {
   Player player;
   EventManager eventManager;
 
-  Roid (Earth earf, EventManager _eventmanager) {
+  Roid (Earth earf, EventManager _eventmanager, PImage _sheet) {
     dr = .1;
-    sheet = loadImage("asteroids-ss.png");
+    sheet = _sheet;
+    //sheet = loadImage("roids.png");
+    //sheet = loadImage("asteroids-ss.png");
     trail = loadImage("roid-trail.png");
     roids = utils.sheetToSprites(sheet, 2, 2);
     model = roids[floor(random(0, 4))];
@@ -116,7 +140,8 @@ class Roid extends Entity {
     image(trail, 0, -25, trail.width/2, trail.height/2);
     popMatrix();
     rotate(r);
-    image(model, 0, 0, model.width/2, model.height/2);
+    image(model, 0, 0, model.width, model.height);
+    //image(model, 0, 0, model.width/2, model.height/2);
     popMatrix();
   }
 }
@@ -141,8 +166,8 @@ class Explosion extends Entity {
     angle = atan2(ypos - earth.y, xpos - earth.x);
     start = millis();
     r = degrees(angle) + 90;
-    x = earth.x + cos(angle) * (earth.radius + 40);
-    y = earth.y + sin(angle) * (earth.radius + 40);
+    x = earth.x + cos(angle) * (earth.radius + 20);
+    y = earth.y + sin(angle) * (earth.radius + 20);
   }
 
   void update () {
