@@ -20,7 +20,7 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
     y = ypos;
     dx = 0;
     dy = 0;
-    dr = 3;//2.3;
+    dr = 0;//2.3;
     //radius = 160;
     //modelV = loadShape("earth.svg");
     //modelV.disableStyle();
@@ -33,7 +33,7 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
     //model.shapeMode(CENTER);
     //model.shape(modelV, radius, radius, model.width-3 * ((radius * 2) / 291), model.height-3 * ((radius * 2) / 291));
     //model.endDraw();
-    model = loadImage("earth.png");
+    model = loadImage("earth-fill.png");
     radius = model.width/2;
     mode = _mode;
     mode.eventManager.gameOverSubscribers.add(this);

@@ -52,6 +52,8 @@ class UIStory implements gameOverEvent, updateable, renderableScreen {
     strokeWeight(1);
     line(5, 25, score/100 * stage * width-5, 25);
 
+    //println(isGameOver);
+
     if (isGameOver) {
       pushStyle();
       textFont(EXTINCT);

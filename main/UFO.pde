@@ -68,18 +68,27 @@ class UFO extends Entity implements updateable, renderable {
   final float startDist = height/2 + startSize/2 - 50;
   final float finalDist = 300;
   float currentSize = startSize;
-  final float approachTime = 4 * 1e3;
+  final float approachTime = 1e3;//4 * 1e3;
   float startApproach;
 
   final float circlingMaxSpeed = 3;
   float speed = circlingMaxSpeed;
-  final float circlingTime = 2 * 1e3;
+  final float circlingTime = 2e3;//2 * 1e3;
   float startCircling;
 
-  final static float scanDuration = 2 * 1e3;
+  //float scanningStart = 0;
+  final float scanningStartDelay = 1e3;
+  final float scanningTransitioning = 2e3;
+  final float scanningPause = 1e3;
+  final float maxBeamWidth = 15;
+  float beamWidth = 0;
+
+  final float scanDuration = scanningStartDelay + scanningTransitioning + scanningPause + scanningTransitioning + 2e3;
   float scanstart = 0;
 
-  final static float snatchDuration = 5 * 1e3;
+  final float snatchMargin = 1;
+
+  final float snatchDuration = 5e3;
   float snatchStart = 0;
   PVector snatchStartPos = new PVector();
   PVector lilBrontoPos = new PVector();
@@ -97,8 +106,6 @@ class UFO extends Entity implements updateable, renderable {
     earth = _earth;
     lilBronto = _bronto;
     player = _player;
-
-    println(model.width, model.height, model.width/model.height);
 
     float angle = random(0, 360);
     x = earth.x + cos(angle) * initialDist;
@@ -152,7 +159,7 @@ class UFO extends Entity implements updateable, renderable {
 
     case SCANNING:
       if (millis() - scanstart < scanDuration) {
-        if (utils.unsignedAngleDiff(player.getAngleFromEarth(), degrees((float)Math.atan2(earth.y - y, earth.x - x))) < 3) {
+        if (utils.unsignedAngleDiff(player.getAngleFromEarth(), degrees((float)Math.atan2(earth.y - y, earth.x - x))) < snatchMargin) {
           snatchStart = millis();
           snatchStartPos = player.getPosition();
           lilBrontoFacingDirection = player.direction;
@@ -194,15 +201,42 @@ class UFO extends Entity implements updateable, renderable {
 
   void render () {
 
+    if (state==SCANNING) {
+      float angle = degrees(atan2(earth.y - y, earth.x - x));
+      float scantime = millis() - scanstart;
+      if (scantime < scanningStartDelay) {
+        line(x, y, x + cos(radians(angle)) * 250, y + sin(radians(angle)) * 250);
+      }
+      if (scantime > scanningStartDelay && scantime < scanningStartDelay + scanningTransitioning) {
+        beamWidth = utils.easeOutExpo((scantime - scanningStartDelay)/scanningTransitioning, 0, maxBeamWidth, 1);
+        line(x, y, x + cos(radians(angle + beamWidth)) * 250, y + sin(radians(angle + beamWidth)) * 250);
+        line(x, y, x + cos(radians(angle - beamWidth)) * 250, y + sin(radians(angle - beamWidth)) * 250);
+      }
+      if (scantime > scanningStartDelay + scanningTransitioning && scantime < scanningStartDelay + scanningTransitioning + scanningPause) {
+        line(x, y, x + cos(radians(angle + beamWidth)) * 250, y + sin(radians(angle + beamWidth)) * 250);
+        line(x, y, x + cos(radians(angle - beamWidth)) * 250, y + sin(radians(angle - beamWidth)) * 250);
+      }
+      if (scantime > scanningStartDelay + scanningTransitioning + scanningPause && scantime < scanningStartDelay + scanningTransitioning + scanningPause + scanningTransitioning) {
+        beamWidth = utils.easeInExpo(((scantime - scanningStartDelay - scanningTransitioning - scanningPause)/scanningTransitioning), maxBeamWidth, -maxBeamWidth, 1);
+        line(x, y, x + cos(radians(angle + beamWidth)) * 250, y + sin(radians(angle + beamWidth)) * 250);
+        line(x, y, x + cos(radians(angle - beamWidth)) * 250, y + sin(radians(angle - beamWidth)) * 250);
+      }
+    }
+
     if (state==SNATCHING) {
       pushStyle();
       noFill();
-      strokeWeight(1 * lilBrontoNativeSize/max(.05, lilBrontoSize));
+      float angle = degrees(atan2(earth.y - y, earth.x - x));
+      line(x, y, x + cos(radians(angle + maxBeamWidth)) * 250, y + sin(radians(angle + maxBeamWidth)) * 250);
+      line(x, y, x + cos(radians(angle - maxBeamWidth)) * 250, y + sin(radians(angle - maxBeamWidth)) * 250);
+
+      strokeWeight(1 * lilBronto.width/max(.05, lilBrontoSize));
+      //strokeWeight(1 * lilBrontoNativeSize/max(.05, lilBrontoSize));
       pushMatrix();
       //scale(direction, 1);
       //rotate(radians(0  * lilBrontoFacingDirection));
       shapeMode(CENTER);
-      shape(lilBronto, lilBrontoPos.x, lilBrontoPos.y, lilBrontoSize, lilBrontoSize);
+      shape(lilBronto, lilBrontoPos.x, lilBrontoPos.y, lilBrontoSize, lilBrontoSize * (lilBronto.height / lilBronto.width));
       popMatrix();
       popStyle();
     }

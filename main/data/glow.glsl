@@ -12,8 +12,9 @@ varying vec4 vertTexCoord;
 void main(void) {
   int i = 0;
   int j= 0;
-  int range = 3;
-  float intensity = .07;
+  int range = 8;
+  float intensity = .02;
+  float dist = 6;
   vec4 sum = vec4(0.0);
 
   for( i=-range;i<range;i++) {

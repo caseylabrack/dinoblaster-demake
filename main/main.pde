@@ -5,6 +5,10 @@ GameMode game;
 long prev;
 PShader glow;
 
+// recording
+int fcount = 0;
+boolean rec = false;
+
 void setup () {
   size(1024, 768, P2D);
     //size(400, 400, P2D);
@@ -13,7 +17,7 @@ void setup () {
   colorMode(HSB, 360, 100, 100);
   noCursor();
   
-  glow = loadShader("glow.glsl");
+  glow = loadShader("glow2.glsl");
   //game = new OviraptorMode(this);
   game = new StoryMode(this);
   prev = frameRateLastNanos;
@@ -45,8 +49,22 @@ void keyReleased() {
   game.input(keyCode, false);
 }
 
+void mousePressed () {
+  frameRate(5);
+}
+
+void mouseReleased () {
+  frameRate(60);
+  rec = true;
+}
+
 void draw () {
 
+  
+  //frameRate(mousePressed ? 2 : 60);
+    
+  
+  //tint(0,0,50);
   if(testactive) {
     background(0);
     game.update();
@@ -54,9 +72,18 @@ void draw () {
 
   //if(frameCount % 60==0) println((frameRateLastNanos - prev)/1e6/16.666);
   prev = frameRateLastNanos;
-  filter(glow);
+  //if(mousePressed) 
+  //filter(glow);
+  
+  if(rec) {
+    if(frameCount % 4 == 0) {
+      saveFrame("spoofs-and-goofs/frames/dino-" + nf(fcount,4) + ".png");
+      fcount++;
+    }
+    if(fcount==360) exit();
+  }
 
   //if(frameCount % 200 == 0) { println(frameRate); }
   //if(frameCount % 4 == 0) saveFrame("spoofs-and-goofs/frames/dino-####.png");
-  //if(frameCount==240) exit();
+  //if(frameCount==360) exit();
 }
