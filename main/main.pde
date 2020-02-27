@@ -11,12 +11,12 @@ boolean rec = false;
 
 void setup () {
   size(1024, 768, P2D);
-    //size(400, 400, P2D);
+  //size(400, 400, P2D);
   //fullScreen(P2D);
 
   colorMode(HSB, 360, 100, 100);
   noCursor();
-  
+
   glow = loadShader("glow2.glsl");
   //game = new OviraptorMode(this);
   game = new StoryMode(this);
@@ -37,6 +37,15 @@ void keyPressed() {
 
   case ' ':
     testactive = !testactive;
+    break;
+
+  case '3':
+    if(frameRate < 30) {
+    frameRate(60);
+    } else {
+    frameRate(10);
+    }
+    
     break;
 
   default:
@@ -60,12 +69,12 @@ void mouseReleased () {
 
 void draw () {
 
-  
+
   //frameRate(mousePressed ? 2 : 60);
-    
-  
+
+
   //tint(0,0,50);
-  if(testactive) {
+  if (testactive) {
     background(0);
     game.update();
   }
@@ -74,13 +83,13 @@ void draw () {
   prev = frameRateLastNanos;
   //if(mousePressed) 
   //filter(glow);
-  
-  if(rec) {
-    if(frameCount % 4 == 0) {
-      saveFrame("spoofs-and-goofs/frames/dino-" + nf(fcount,4) + ".png");
+
+  if (rec) {
+    if (frameCount % 4 == 0) {
+      saveFrame("spoofs-and-goofs/frames/dino-" + nf(fcount, 4) + ".png");
       fcount++;
     }
-    if(fcount==360) exit();
+    if (fcount==360) exit();
   }
 
   //if(frameCount % 200 == 0) { println(frameRate); }

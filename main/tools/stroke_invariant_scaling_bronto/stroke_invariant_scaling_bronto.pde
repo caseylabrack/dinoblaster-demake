@@ -39,9 +39,8 @@ void draw () {
 
       progress = frame/(totalFrames-1);
       currentSize = startSize - ((startSize - endSize) * progress);
-      println(frame, totalFrames, progress);
 
-      canvas.strokeWeight(2 * svg.width/currentSize);
+      canvas.strokeWeight(1 * svg.width/currentSize/1.422);
       //canvas.strokeWeight(2);
       //canvas.strokeWeight(5 * (svg.width/(canvas.width/cellX * (1 - frame/totalFrames))));
       //if(frame<6) {
@@ -54,7 +53,7 @@ void draw () {
       //}
     }
   } 
-  canvas.save("export/shrinking-bronto.png");
+  canvas.save("export/bronto-abduction-sheet.png");
   canvas.endDraw();
 
   exit();

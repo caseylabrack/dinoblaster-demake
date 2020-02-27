@@ -1,8 +1,13 @@
 class UFOManager implements updateable, renderable {
 
-  PShape model;
+  //PShape model;
   PShape lilBronto;
-  //PImage model;
+  PImage brontoAbductionSheet;
+  PImage[] brontoAbductionFrames = new PImage[9];
+  PImage model;
+  PImage modelBig;
+  PImage ufoSheet;
+  PImage[] ufoFrames = new PImage[9];
   ColorDecider currentColor;
   ArrayList<UFO> ufos = new ArrayList<UFO>();
   Earth earth;
@@ -14,18 +19,26 @@ class UFOManager implements updateable, renderable {
     earth = _earth;
     player = _player;
 
-    model = loadShape("UFO.svg");
-    model.disableStyle();
+    //model = loadShape("UFO.svg");
+    //model.disableStyle();
+    model = loadImage("UFO.png");
+    modelBig = loadImage("UFO-big.png");
+
+    ufoSheet = loadImage("ufo-resizing-sheet.png");
+    ufoFrames = utils.sheetToSprites(ufoSheet, 3, 3);
 
     lilBronto = loadShape("bronto.svg");
     lilBronto.disableStyle();
+
+    brontoAbductionSheet = loadImage("bronto-abduction-sheet.png");
+    brontoAbductionFrames = utils.sheetToSprites(brontoAbductionSheet, 3, 3);
 
     //spawnUFOAbducting();
   }
 
   void spawnUFOAbducting () {
 
-    ufos.add(new UFO(currentColor, model, lilBronto, earth, player));
+    ufos.add(new UFO(currentColor, model, brontoAbductionFrames, earth, player, ufoFrames));
   }
 
   void spawnUFOReturning () {
@@ -36,6 +49,7 @@ class UFOManager implements updateable, renderable {
   }
 
   void render () {
+    //image(brontoAbductionFrames[0], 0, -200);
     for (UFO u : ufos) u.render();
   }
 }
@@ -44,9 +58,12 @@ class UFOManager implements updateable, renderable {
 
 class UFO extends Entity implements updateable, renderable {
 
-  PShape model;
+  //PShape model;
   PShape lilBronto;
-  //PImage model;
+  PImage[] brontoAbductionFrames;
+  PImage[] ufoFrames;
+  PImage model;
+  PImage modelBig;
   ColorDecider currentColor;
   Earth earth;
   Player player;
@@ -68,7 +85,7 @@ class UFO extends Entity implements updateable, renderable {
   final float startDist = height/2 + startSize/2 - 50;
   final float finalDist = 300;
   float currentSize = startSize;
-  final float approachTime = 1e3;//4 * 1e3;
+  final float approachTime = 4e3;
   float startApproach;
 
   final float circlingMaxSpeed = 3;
@@ -86,7 +103,7 @@ class UFO extends Entity implements updateable, renderable {
   final float scanDuration = scanningStartDelay + scanningTransitioning + scanningPause + scanningTransitioning + 2e3;
   float scanstart = 0;
 
-  final float snatchMargin = 1;
+  final float snatchMargin = 3;
 
   final float snatchDuration = 5e3;
   float snatchStart = 0;
@@ -99,13 +116,16 @@ class UFO extends Entity implements updateable, renderable {
   float progress, dist, angle;
 
 
-  UFO (ColorDecider _color, PShape _model, PShape _bronto, Earth _earth, Player _player) {
+  UFO (ColorDecider _color, PImage _model, PImage[] _brontoAbductionFrames, Earth _earth, Player _player, PImage[] _ufoFrames) {
 
     currentColor = _color;
     model = _model;
+    //modelBig = _modelBig;
     earth = _earth;
-    lilBronto = _bronto;
+    //lilBronto = _bronto;
+    ufoFrames = _ufoFrames;
     player = _player;
+    brontoAbductionFrames = _brontoAbductionFrames;
 
     float angle = random(0, 360);
     x = earth.x + cos(angle) * initialDist;
@@ -135,6 +155,7 @@ class UFO extends Entity implements updateable, renderable {
       progress = (millis() - startApproach)  / approachTime;
       dist = dist(x, y, earth.x, earth.y);
       if (progress < 1) {
+        model = ufoFrames[ceil(progress * 8)];
         currentSize = utils.easeInOutExpo(progress * 100, startSize, normalSize - startSize, 100);
         setPosition(utils.rotateAroundPoint(getPosition(), earth.getPosition(), (progress * circlingMaxSpeed + initialRotate) * -1));
         angle = (float)Math.atan2(y - earth.y, x - earth.x);
@@ -230,27 +251,39 @@ class UFO extends Entity implements updateable, renderable {
       line(x, y, x + cos(radians(angle + maxBeamWidth)) * 250, y + sin(radians(angle + maxBeamWidth)) * 250);
       line(x, y, x + cos(radians(angle - maxBeamWidth)) * 250, y + sin(radians(angle - maxBeamWidth)) * 250);
 
-      strokeWeight(1 * lilBronto.width/max(.05, lilBrontoSize));
+      //strokeWeight(1 * lilBronto.width/max(.05, lilBrontoSize));
       //strokeWeight(1 * lilBrontoNativeSize/max(.05, lilBrontoSize));
       pushMatrix();
+      imageMode(CENTER);
+      progress = (millis() - snatchStart)  / snatchDuration;
+      image(brontoAbductionFrames[ceil(progress * 8)], lilBrontoPos.x, lilBrontoPos.y);
       //scale(direction, 1);
       //rotate(radians(0  * lilBrontoFacingDirection));
-      shapeMode(CENTER);
-      shape(lilBronto, lilBrontoPos.x, lilBrontoPos.y, lilBrontoSize, lilBrontoSize * (lilBronto.height / lilBronto.width));
+      //shapeMode(CENTER);
+      //shape(lilBronto, lilBrontoPos.x, lilBrontoPos.y, lilBrontoSize, lilBrontoSize * (lilBronto.height / lilBronto.width));
       popMatrix();
       popStyle();
     }
 
     pushStyle();
     noFill();
-    strokeWeight(1 * model.width/currentSize);
-    stroke(currentColor.getColor());
-    //tint(currentColor.getColor());
+    //strokeWeight(1);
+    //strokeWeight(1 * model.width/currentSize);
+    //stroke(currentColor.getColor());
+    tint(currentColor.getColor());
     pushMatrix();
     fill(0, 0, 0);
-    shapeMode(CENTER);
-    //image(model, x, y, currentSize, currentSize);
-    shape(model, x, y, currentSize, currentSize * (model.height/model.width));
+    imageMode(CENTER);
+    //shapeMode(CENTER);
+    image(model, x, y);
+    //if (state <= APPROACHING) {
+    //  image(model, x, y, currentSize, currentSize * (float)model.height/(float)model.width);
+    //} else {
+    //  image(model, x, y);
+    //}
+
+    //shape(model, x, y);
+    //shape(model, x, y, currentSize, currentSize * (model.height/model.width));
     popMatrix();
     popStyle();
   }
