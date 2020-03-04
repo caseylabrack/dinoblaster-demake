@@ -1,7 +1,24 @@
+class PlayerManager implements abductionEvent {
+
+  EventManager eventManager;
+  int extralives = 0;
+
+  PlayerManager (EventManager _ev) {
+    eventManager = _ev;
+    eventManager.abductionSubscribers.add(this);
+  }
+
+  void abductionHandle(PVector p) {
+    println("extra life"); 
+    extralives++;
+  }
+}
+
+
 class PlayerIntro extends Entity {
   PImage model;
   GameMode mode;
-  
+
   PlayerIntro (GameMode _mode, int whichPlayer) {
     PImage sheet = whichPlayer==1 ? loadImage("bronto-run.png") : loadImage("oviraptor-frames.png");
     PImage[] frames = whichPlayer==1 ? utils.sheetToSprites(sheet, 3, 1) : utils.sheetToSprites(sheet, 2, 2, 1);
@@ -16,7 +33,7 @@ class PlayerIntro extends Entity {
   }
 }
 
-class Player extends Entity implements gameOverEvent, updateable, renderable, roidImpactEvent {
+class Player extends Entity implements gameOverEvent, updateable, renderable, roidImpactEvent, abductionEvent {
   PImage model;
   PImage[] runFrames = new PImage[2];
   PImage idle;
@@ -29,15 +46,15 @@ class Player extends Entity implements gameOverEvent, updateable, renderable, ro
   int playerNum = 1;
   int framesTotal = 8;
   float delay = 100;
-  
+
   EventManager eventManager;
   Earth earth;
 
   Player (EventManager _eventManager, Earth _earth, int whichPlayer) {
-    
+
     eventManager = _eventManager;
     earth = _earth;
-    
+
     //PImage sheet = whichPlayer==1 ? loadImage("bronto-run.png") : loadImage("oviraptor-frames.png");
     //PImage[] frames = whichPlayer==1 ? utils.sheetToSprites(sheet, 3, 1) : utils.sheetToSprites(sheet, 2, 2, 1);
     PImage sheet = whichPlayer==1 ? loadImage("bronto-frames.png") : loadImage("oviraptor-frames.png");
@@ -52,7 +69,6 @@ class Player extends Entity implements gameOverEvent, updateable, renderable, ro
     x = earth.x + cos(radians(-90)) * (earth.radius + 30);
     y = earth.y + sin(radians(-90)) * (earth.radius + 30);
     //println(earth.radius);
-
   }
 
   void die () {
@@ -63,8 +79,12 @@ class Player extends Entity implements gameOverEvent, updateable, renderable, ro
     //visible = false;
   }
 
+  void abductionHandle(PVector p) {
+    println("time to disappear or something");
+  }
+
   float getAngleFromEarth () {
-    
+
     return degrees((float)Math.atan2(earth.y - y, earth.x - x));
   }
 
@@ -96,7 +116,7 @@ class Player extends Entity implements gameOverEvent, updateable, renderable, ro
     } else {
       model = idle;
     }
-    
+
     x += dx;
     y += dy;
     r += dr;
@@ -106,12 +126,12 @@ class Player extends Entity implements gameOverEvent, updateable, renderable, ro
     dy = 0;
     dr = 0;
   }
-  
+
   void roidImpactHandle(PVector impact) {
-    
+
     if (dist(x, y, impact.x, impact.y) < 26) {
-        die();
-    } 
+      die();
+    }
   }
 
   void render () {

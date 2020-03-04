@@ -11,11 +11,10 @@ boolean rec = false;
 
 void setup () {
   size(1024, 768, P2D);
-  //size(400, 400, P2D);
   //fullScreen(P2D);
 
   colorMode(HSB, 360, 100, 100);
-  noCursor();
+  //noCursor();
 
   glow = loadShader("glow2.glsl");
   //game = new OviraptorMode(this);
@@ -40,12 +39,12 @@ void keyPressed() {
     break;
 
   case '3':
-    if(frameRate < 30) {
-    frameRate(60);
+    if (frameRate < 30) {
+      frameRate(60);
     } else {
-    frameRate(10);
+      frameRate(10);
     }
-    
+
     break;
 
   default:

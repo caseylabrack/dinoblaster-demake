@@ -21,15 +21,6 @@ static class utils {
 
   static PImage[] sheetToSprites (PImage sheet, int rows, int cols) {
     return sheetToSprites(sheet, rows, cols, 0);
-    //PImage[] sprites = new PImage[rows*cols];
-    //int cellX = sheet.width / rows;
-    //int cellY = sheet.height / cols;
-    //for (int r = 0; r < rows; r++) {
-    //  for (int c = 0; c < cols; c++) {
-    //    sprites[r * cols + c] = sheet.get(r * cellX, c * cellY, cellX, cellY);
-    //  }
-    //}
-    //return sprites;
   }
 
   static int cycleRangeWithDelay (int framesTotal, int delay, int seed) {
@@ -45,6 +36,22 @@ static class utils {
   static float signedAngleDiff (float r1, float r2) {
     float diff = (r2 - r1 + 180) % 360 - 180;
     return diff < -180 ? diff + 360: diff;
+  }
+
+  static boolean rectOverlap (PVector l1, PVector r1, PVector l2, PVector r2) {
+    if(r1.x < l2.x || r2.x < l1.x) {
+      return false;
+    }
+    
+    if(r2.y < l1.y || r1.y < l2.y) {
+      return false;
+    }
+    
+    return true;
+  }
+
+  static float easeLinear (float t, float b, float c, float d) { 
+    return b + c * (t/d);
   }
 
   static float easeInOutQuad (float t, float b, float c, float d) {
@@ -74,5 +81,9 @@ static class utils {
   
   static float easeOutQuad (float t, float b, float c, float d) {
     return -c *(t/=d)*(t-2) + b;
+  }
+  
+  static float easeInQuad (float t, float b, float c, float d) {
+    return c*(t/=d)*t + b;
   }
 } 

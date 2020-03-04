@@ -7,6 +7,7 @@ abstract class GameMode {
   RoidManager roids;
   SoundManager soundManager;
   ColorDecider currentColor;
+  int tick = 0;
 
   Camera camera;
   int score = 0;
@@ -68,12 +69,14 @@ class StoryMode extends GameMode {
 
   UIStory ui;
   UFOManager ufoManager;
+  PlayerManager playerManager;
 
   StoryMode (PApplet _main) {
     super(_main);
+    playerManager = new PlayerManager(eventManager);
     player = new Player(eventManager, earth, 1);
     ui = new UIStory(eventManager, currentColor);
-    ufoManager = new UFOManager (currentColor, earth, player);
+    ufoManager = new UFOManager (currentColor, earth, player, eventManager);
     updaters.add(ui);
     updaters.add(earth);
     updaters.add(roids);
@@ -94,7 +97,9 @@ class StoryMode extends GameMode {
 
   void update () {
 
-    if (frameCount==30) {
+    tick++;
+
+    if (tick==30) {
       ufoManager.spawnUFOAbducting();
     }
 
@@ -103,12 +108,14 @@ class StoryMode extends GameMode {
     for (updateable u : updaters) u.update();
     for (renderable r : renderers) r.render();
     popMatrix(); // screen-space
-    for (renderableScreen rs : screeenRenderers) rs.render();
-    pushStyle();
-    noStroke();
-    fill(0, 0, 0);
-    rect(0, 0, 128, height);
-    rect(1024 - 128, 0, 128, height);
-    popStyle();
+    
+    //pushStyle(); // letterboxes
+    //noStroke();
+    //fill(0, 50, 30);
+    //rect(0, 0, 128, height);
+    //rect(1024 - 128, 0, 128, height);
+    //popStyle();
+
+    for (renderableScreen rs : screeenRenderers) rs.render(); // UI
   }
 }
