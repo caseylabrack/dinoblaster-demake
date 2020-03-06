@@ -1,6 +1,6 @@
 import processing.sound.*;
 
-boolean testactive = true;
+boolean paused = false;
 GameMode game;
 long prev;
 PShader glow;
@@ -8,6 +8,8 @@ PShader glow;
 // recording
 int fcount = 0;
 boolean rec = false;
+
+Keys keys = new Keys();
 
 void setup () {
   size(1024, 768, P2D);
@@ -18,43 +20,65 @@ void setup () {
 
   glow = loadShader("glow2.glsl");
   //game = new OviraptorMode(this);
-  game = new StoryMode(this);
+  game = new StoryMode(this, keys);
   prev = frameRateLastNanos;
-  game.update();
 }
 
 void keyPressed() {
 
-  switch (key) {   
-  case '1':
-    game = new StoryMode(this);
+  switch (keyCode) {   
+    case 49:
+      game = new StoryMode(this, keys);
+      break;
+
+    //case '2':
+    //  game = new OviraptorMode(this);
+    //  break;
+
+    case 32:
+      paused = !paused;
+      break;
+
+    //case '3':
+    //  if (frameRate < 30) {
+    //    frameRate(60);
+    //  } else {
+    //    frameRate(10);
+    //  }
+    //  break;
+
+  case 37:
+    //keys.left = true;
+    keys.setKey(Keys.LEFT, true);
     break;
 
-  case '2':
-    game = new OviraptorMode(this);
-    break;
-
-  case ' ':
-    testactive = !testactive;
-    break;
-
-  case '3':
-    if (frameRate < 30) {
-      frameRate(60);
-    } else {
-      frameRate(10);
-    }
-
+  case 39:
+  keys.setKey(Keys.RIGHT, true);
+    //keys.right = true;
     break;
 
   default:
-    game.input(keyCode, true);
     break;
   }
 }
 
 void keyReleased() {
-  game.input(keyCode, false);
+  
+  switch (keyCode) {   
+
+  case 37:
+    //keys.left = false;
+    keys.setKey(Keys.LEFT, false);
+    break;
+
+  case 39:
+    //keys.right = false;
+    keys.setKey(Keys.RIGHT, false);
+    break;
+
+  default:
+    break;
+  }
 }
 
 void mousePressed () {
@@ -68,12 +92,8 @@ void mouseReleased () {
 
 void draw () {
 
-
-  //frameRate(mousePressed ? 2 : 60);
-
-
   //tint(0,0,50);
-  if (testactive) {
+  if (!paused) {
     background(0);
     game.update();
   }
@@ -94,4 +114,36 @@ void draw () {
   //if(frameCount % 200 == 0) { println(frameRate); }
   //if(frameCount % 4 == 0) saveFrame("spoofs-and-goofs/frames/dino-####.png");
   //if(frameCount==360) exit();
+}
+
+class Keys {
+
+  static final int LEFT = 0;
+  static final int RIGHT = 1;
+  boolean left = false;
+  boolean right = false;
+  boolean anykey = false;
+
+  Keys () {
+  }
+  
+  void setKey(int _key, boolean _value) {
+    
+    switch(_key) {
+    
+      case LEFT:
+      left = _value;
+      break;
+      
+      case RIGHT:
+      right = _value;
+      break;
+      
+      default:
+      println("unknown key press/release");
+      break;
+    }
+    
+    anykey = left || right;
+  }
 }

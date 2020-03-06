@@ -8,6 +8,7 @@ abstract class GameMode {
   SoundManager soundManager;
   ColorDecider currentColor;
   int tick = 0;
+  Keys keys;
 
   Camera camera;
   int score = 0;
@@ -15,7 +16,7 @@ abstract class GameMode {
   ArrayList<renderableScreen> screeenRenderers;
   ArrayList<renderable> renderers;
 
-  GameMode (PApplet main) {
+  GameMode (PApplet main, Keys _keys) {
     updaters = new ArrayList<updateable>();
     renderers = new ArrayList<renderable>();
     screeenRenderers = new ArrayList<renderableScreen>();
@@ -25,14 +26,11 @@ abstract class GameMode {
     roids = new RoidManager(70, 400, 100, earth, eventManager);
     currentColor = new ColorDecider();
     starManager = new StarManager(currentColor);
-
+    keys = _keys;
 
     soundManager = new SoundManager(main, eventManager);
   }
 
-  void input(int _key, boolean pressed) {
-    player.setMove(_key, pressed);
-  }
   abstract void update();
 }
 
@@ -40,9 +38,9 @@ class OviraptorMode extends GameMode {
 
   Trex trex;
 
-  OviraptorMode (PApplet _main) {
-    super(_main);
-    player = new Player(eventManager, earth, 2);
+  OviraptorMode (PApplet _main, Keys _keys) {
+    super(_main, _keys);
+    player = new Player(eventManager, keys, earth, 2);
     trex = new Trex(earth, player, camera);
     earth.addChild(trex);
     updaters.add(earth);
@@ -71,12 +69,16 @@ class StoryMode extends GameMode {
   UFOManager ufoManager;
   PlayerManager playerManager;
 
-  StoryMode (PApplet _main) {
-    super(_main);
-    playerManager = new PlayerManager(eventManager);
-    player = new Player(eventManager, earth, 1);
+  StoryMode (PApplet _main, Keys _keys) {
+    super(_main, _keys);
+    playerManager = new PlayerManager(eventManager, keys);
+    player = new Player(eventManager, keys, earth, 1);
     ui = new UIStory(eventManager, currentColor);
     ufoManager = new UFOManager (currentColor, earth, player, eventManager);
+
+    //inputables.add(player);
+    //inputables.add(playerManager);
+
     updaters.add(ui);
     updaters.add(earth);
     updaters.add(roids);
@@ -85,9 +87,11 @@ class StoryMode extends GameMode {
     updaters.add(currentColor);
     updaters.add(starManager);
     updaters.add(ufoManager);
+    updaters.add(playerManager);
 
     renderers.add(player);
     renderers.add(ufoManager);
+    renderers.add(playerManager);
     renderers.add(earth);
     renderers.add(roids);
     renderers.add(starManager);
@@ -108,13 +112,6 @@ class StoryMode extends GameMode {
     for (updateable u : updaters) u.update();
     for (renderable r : renderers) r.render();
     popMatrix(); // screen-space
-    
-    //pushStyle(); // letterboxes
-    //noStroke();
-    //fill(0, 50, 30);
-    //rect(0, 0, 128, height);
-    //rect(1024 - 128, 0, 128, height);
-    //popStyle();
 
     for (renderableScreen rs : screeenRenderers) rs.render(); // UI
   }

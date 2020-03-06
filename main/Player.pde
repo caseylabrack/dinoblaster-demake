@@ -1,16 +1,94 @@
-class PlayerManager implements abductionEvent {
+class PlayerManager implements updateable, renderable, abductionEvent {
 
   EventManager eventManager;
-  int extralives = 0;
+  Keys keys;
 
-  PlayerManager (EventManager _ev) {
+  PImage model;
+  int extralives = 0;
+  int flicker = 60;
+  boolean display = true;
+  float flickerStart = 0;
+  float flickerDuration = 6e3;
+  boolean respawning = false;
+  float flickerInitialRate = 250;
+  float flickerRate = 250;
+  float respawningY = -100;
+  float respawningYTarget = -197;
+  float respawningDuration = 3e3;
+  float respawningStart = 0;
+  float progress = 0;
+
+  boolean spawning = true;
+  float spawningStart = 0;
+  float spawningDuration = 4e3;
+  float spawningRate = 125;
+  float spawningFlickerStart;
+
+  PlayerManager (EventManager _ev, Keys _keys) {
+    keys = _keys;
     eventManager = _ev;
     eventManager.abductionSubscribers.add(this);
+
+    model = utils.sheetToSprites(loadImage("bronto-frames.png"), 3, 1)[0];
+
+    spawningStart = millis();
+    progress = 0;
+    spawningFlickerStart = millis();
   }
 
   void abductionHandle(PVector p) {
     println("extra life"); 
     extralives++;
+    respawning = true;
+    flickerStart = millis();
+    flickerRate = flickerInitialRate;
+    respawningStart = millis();
+    display = true;
+    progress = 0;
+  }
+
+  void update() {
+  }
+
+  void render() {
+
+    if (spawning) {
+      progress = (millis() - spawningStart) / spawningDuration;
+      if (progress < 1) {
+        if (millis() - spawningFlickerStart > spawningRate) {
+          display = !display;
+          spawningFlickerStart = millis();
+        }
+      } else {
+        spawning = false;
+        println("spawn!");
+      }
+      if (display) {
+        image(model, 0, respawningYTarget);
+      }
+    }
+
+
+    if (respawning) {
+      progress = (millis() - respawningStart) / respawningDuration;
+      if (millis() - flickerStart > flickerRate) {
+        display = !display;
+        flickerStart = millis();
+      }
+      if (progress < 1) {
+        respawningY = utils.easeOutQuad(progress, -100, respawningYTarget - (-100), 1);    
+        flickerRate = utils.easeOutExpo(progress, 250, 50 - 250, 1);
+      } else {
+        // allow respawning
+        if (keys.anykey) {
+          println("respawned!");
+          respawning = false;
+        }
+      }
+      if (display) {
+        image(model, 0, respawningY);
+      }
+    }
   }
 }
 
@@ -33,7 +111,7 @@ class PlayerIntro extends Entity {
   }
 }
 
-class Player extends Entity implements gameOverEvent, updateable, renderable, roidImpactEvent, abductionEvent {
+class Player extends Entity implements updateable, renderable, roidImpactEvent, abductionEvent, gameOverEvent {
   PImage model;
   PImage[] runFrames = new PImage[2];
   PImage idle;
@@ -47,13 +125,16 @@ class Player extends Entity implements gameOverEvent, updateable, renderable, ro
   int framesTotal = 8;
   float delay = 100;
 
+  Keys keys;
+
   EventManager eventManager;
   Earth earth;
 
-  Player (EventManager _eventManager, Earth _earth, int whichPlayer) {
+  Player (EventManager _eventManager, Keys _keys, Earth _earth, int whichPlayer) {
 
     eventManager = _eventManager;
     earth = _earth;
+    keys = _keys;
 
     //PImage sheet = whichPlayer==1 ? loadImage("bronto-run.png") : loadImage("oviraptor-frames.png");
     //PImage[] frames = whichPlayer==1 ? utils.sheetToSprites(sheet, 3, 1) : utils.sheetToSprites(sheet, 2, 2, 1);
@@ -63,13 +144,17 @@ class Player extends Entity implements gameOverEvent, updateable, renderable, ro
     runFrames[0] = frames[1];
     runFrames[1] = frames[2];
     model = idle;
+    eventManager.abductionSubscribers.add(this);
     eventManager.gameOverSubscribers.add(this);
     eventManager.roidImpactSubscribers.add(this);
     earth.addChild(this);
     x = earth.x + cos(radians(-90)) * (earth.radius + 30);
     y = earth.y + sin(radians(-90)) * (earth.radius + 30);
-    //println(earth.radius);
   }
+
+  //void input(Keys _keys) {
+  //  keys = _keys;
+  //}
 
   void die () {
     eventManager.dispatchGameOver();
@@ -88,23 +173,22 @@ class Player extends Entity implements gameOverEvent, updateable, renderable, ro
     return degrees((float)Math.atan2(earth.y - y, earth.x - x));
   }
 
-  void setMove (int keyevent, boolean set) {
-    switch(keyevent) {
-    case LEFT: 
-      leftKey = set;
-      break;
-    case RIGHT:
-      rightKey = set;
-      break;
-    }
-  } 
+  //void setMove (int keyevent, boolean set) {
+  //  switch(keyevent) {
+  //  case LEFT: 
+  //    leftKey = set;
+  //    break;
+  //  case RIGHT:
+  //    rightKey = set;
+  //    break;
+  //  }
+  //} 
 
   void update () {
-    //if (frameCount==1) init();
 
-    if (leftKey != rightKey) { // logical XOR
+    if (keys.left != keys.right) { // xor
       model = runFrames[utils.cycleRangeWithDelay(runFrames.length, 4, frameCount)];
-      if (leftKey) {
+      if (keys.left) {
         setPosition(utils.rotateAroundPoint(getPosition(), earth.getPosition(), runSpeed * -1));
         dr -= runSpeed;
         direction = -1;
