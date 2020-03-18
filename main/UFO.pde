@@ -1,10 +1,10 @@
 class UFOManager implements updateable, renderable {
 
-  PImage brontoAbductionSheet;
-  PImage[] brontoAbductionFrames = new PImage[9];
+  //PImage brontoAbductionSheet;
+  //PImage[] brontoAbductionFrames = new PImage[9];
   PImage model;
-  PImage ufoSheet;
-  PImage[] ufoFrames = new PImage[9];
+  //PImage ufoSheet;
+  //PImage[] ufoFrames = new PImage[9];
   ColorDecider currentColor;
   UFO ufo = null;
   Earth earth;
@@ -17,19 +17,23 @@ class UFOManager implements updateable, renderable {
     earth = _earth;
     player = _player;
     eventManager = _ev;
+    //assets = _assets;
 
-    model = loadImage("UFO.png");
+    //model = loadImage("UFO.png");
 
-    ufoSheet = loadImage("ufo-resizing-sheet.png");
-    ufoFrames = utils.sheetToSprites(ufoSheet, 3, 3);
+    //ufoSheet = loadImage("ufo-resizing-sheet.png");
+    //ufoFrames = utils.sheetToSprites(ufoSheet, 3, 3);
 
-    brontoAbductionSheet = loadImage("bronto-abduction-sheet.png");
-    brontoAbductionFrames = utils.sheetToSprites(brontoAbductionSheet, 3, 3);
+    //ufoFrames = assets.ufostuff.ufoFrames;
+    //brontoAbductionFrames = assets.ufostuff.brontoAbductionFrames;
+
+    //brontoAbductionSheet = loadImage("bronto-abduction-sheet.png");
+    //brontoAbductionFrames = utils.sheetToSprites(brontoAbductionSheet, 3, 3);
   }
 
   void spawnUFOAbducting () {
 
-    ufo = new UFO(currentColor, brontoAbductionFrames, earth, player, ufoFrames, eventManager);
+    ufo = new UFO(currentColor, earth, player, eventManager);
   }
 
   void spawnUFOReturning () {
@@ -54,11 +58,11 @@ class UFOManager implements updateable, renderable {
 class UFO extends Entity implements updateable, renderable {
 
   //PShape model;
-  PShape lilBronto;
+  //PShape lilBronto;
   PImage[] brontoAbductionFrames;
   PImage[] ufoFrames;
   PImage model;
-  PImage modelBig;
+  //PImage modelBig;
   ColorDecider currentColor;
   Earth earth;
   Player player;
@@ -112,13 +116,15 @@ class UFO extends Entity implements updateable, renderable {
 
   EventManager eventManager;
 
-  UFO (ColorDecider _color, PImage[] _brontoAbductionFrames, Earth _earth, Player _player, PImage[] _ufoFrames, EventManager _ev) {
+  //UFO (ColorDecider _color, PImage[] _brontoAbductionFrames, Earth _earth, Player _player, PImage[] _ufoFrames, EventManager _ev) {
+  UFO (ColorDecider _color, Earth _earth, Player _player, EventManager _ev) {
 
     currentColor = _color;
     earth = _earth;
-    ufoFrames = _ufoFrames;
+    ufoFrames = assets.ufostuff.ufoFrames;
     player = _player;
-    brontoAbductionFrames = _brontoAbductionFrames;
+    //brontoAbductionFrames = _brontoAbductionFrames;
+    brontoAbductionFrames = assets.ufostuff.brontoAbductionFrames;
     eventManager = _ev;
 
     model = ufoFrames[0];

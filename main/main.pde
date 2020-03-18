@@ -10,6 +10,7 @@ int fcount = 0;
 boolean rec = false;
 
 Keys keys = new Keys();
+AssetManager assets = new AssetManager();
 
 void setup () {
   size(1024, 768, P2D);
@@ -18,9 +19,13 @@ void setup () {
   colorMode(HSB, 360, 100, 100);
   //noCursor();
 
+  assets.load();
+
+  //println(assets.ufostuff.brontoAbductionFrames);
+
   glow = loadShader("glow2.glsl");
   //game = new OviraptorMode(this);
-  game = new StoryMode(this, keys);
+  game = new StoryMode(this);
   prev = frameRateLastNanos;
 }
 
@@ -28,7 +33,7 @@ void keyPressed() {
 
   switch (keyCode) {   
     case 49:
-      game = new StoryMode(this, keys);
+      game = new StoryMode(this);
       break;
 
     //case '2':
@@ -124,9 +129,6 @@ class Keys {
   boolean right = false;
   boolean anykey = false;
 
-  Keys () {
-  }
-  
   void setKey(int _key, boolean _value) {
     
     switch(_key) {

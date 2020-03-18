@@ -8,7 +8,7 @@ abstract class GameMode {
   SoundManager soundManager;
   ColorDecider currentColor;
   int tick = 0;
-  Keys keys;
+  //Keys keys;
 
   Camera camera;
   int score = 0;
@@ -16,7 +16,7 @@ abstract class GameMode {
   ArrayList<renderableScreen> screeenRenderers;
   ArrayList<renderable> renderers;
 
-  GameMode (PApplet main, Keys _keys) {
+  GameMode (PApplet main) {
     updaters = new ArrayList<updateable>();
     renderers = new ArrayList<renderable>();
     screeenRenderers = new ArrayList<renderableScreen>();
@@ -26,7 +26,7 @@ abstract class GameMode {
     roids = new RoidManager(70, 400, 100, earth, eventManager);
     currentColor = new ColorDecider();
     starManager = new StarManager(currentColor);
-    keys = _keys;
+    //keys = _keys;
 
     soundManager = new SoundManager(main, eventManager);
   }
@@ -38,9 +38,9 @@ class OviraptorMode extends GameMode {
 
   Trex trex;
 
-  OviraptorMode (PApplet _main, Keys _keys) {
-    super(_main, _keys);
-    player = new Player(eventManager, keys, earth, 2);
+  OviraptorMode (PApplet _main) {
+    super(_main);
+    player = new Player(eventManager, earth, 2);
     trex = new Trex(earth, player, camera);
     earth.addChild(trex);
     updaters.add(earth);
@@ -69,10 +69,10 @@ class StoryMode extends GameMode {
   UFOManager ufoManager;
   PlayerManager playerManager;
 
-  StoryMode (PApplet _main, Keys _keys) {
-    super(_main, _keys);
-    playerManager = new PlayerManager(eventManager, keys);
-    player = new Player(eventManager, keys, earth, 1);
+  StoryMode (PApplet _main) {
+    super(_main);
+    playerManager = new PlayerManager(eventManager);
+    player = new Player(eventManager, earth, 1);
     ui = new UIStory(eventManager, currentColor);
     ufoManager = new UFOManager (currentColor, earth, player, eventManager);
 

@@ -1,8 +1,7 @@
 class PlayerManager implements updateable, renderable, abductionEvent {
 
   EventManager eventManager;
-  Keys keys;
-
+  
   PImage model;
   int extralives = 0;
   int flicker = 60;
@@ -24,8 +23,7 @@ class PlayerManager implements updateable, renderable, abductionEvent {
   float spawningRate = 125;
   float spawningFlickerStart;
 
-  PlayerManager (EventManager _ev, Keys _keys) {
-    keys = _keys;
+  PlayerManager (EventManager _ev) {
     eventManager = _ev;
     eventManager.abductionSubscribers.add(this);
 
@@ -125,16 +123,14 @@ class Player extends Entity implements updateable, renderable, roidImpactEvent, 
   int framesTotal = 8;
   float delay = 100;
 
-  Keys keys;
-
   EventManager eventManager;
   Earth earth;
 
-  Player (EventManager _eventManager, Keys _keys, Earth _earth, int whichPlayer) {
+  Player (EventManager _eventManager, Earth _earth, int whichPlayer) {
 
     eventManager = _eventManager;
     earth = _earth;
-    keys = _keys;
+    //keys = _keys;
 
     //PImage sheet = whichPlayer==1 ? loadImage("bronto-run.png") : loadImage("oviraptor-frames.png");
     //PImage[] frames = whichPlayer==1 ? utils.sheetToSprites(sheet, 3, 1) : utils.sheetToSprites(sheet, 2, 2, 1);
