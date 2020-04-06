@@ -17,8 +17,7 @@ class UIStory implements gameOverEvent, abductionEvent, updateable, renderableSc
   boolean extralifeAnimating = false;
   float extralifeAnimationDuration = 5e3;
 
-  PImage letterboxLeft;
-  PImage letterboxRight;
+  PImage letterbox;
 
   UIStory (EventManager _eventManager, ColorDecider _currentColor) {
     eventManager = _eventManager;
@@ -34,8 +33,7 @@ class UIStory implements gameOverEvent, abductionEvent, updateable, renderableSc
     extralifeSheet = loadImage("bronto-abduction-sheet.png");
     extralifeIcons = utils.sheetToSprites(extralifeSheet, 3, 3);
 
-    letterboxLeft = loadImage("letterboxes-left.png");
-    letterboxRight = loadImage("letterboxes-right.png");
+    letterbox = loadImage("letterboxes.png");
   }
 
   void gameOverHandle() {
@@ -65,6 +63,7 @@ class UIStory implements gameOverEvent, abductionEvent, updateable, renderableSc
 
   void render () {
 
+
     // letterbox bg
     pushStyle();
     fill(0, 0, 0);
@@ -79,15 +78,21 @@ class UIStory implements gameOverEvent, abductionEvent, updateable, renderableSc
     strokeWeight(1);
     line(64, 40, 64, 40 + score/100 * stage * (height - 40));
     popStyle();
-
-    // letterboxes
+    
+    // letterbox
     pushStyle();
     imageMode(CORNER);
-    fill(0, 0, 0);
-    noStroke();
-    image(letterboxLeft, 0, 0);
-    image(letterboxRight, 1024 - 128, 0);
+    image(letterbox, 0, 0);
     popStyle();
+    
+    // letterboxes
+    //pushStyle();
+    //imageMode(CORNER);
+    //fill(0, 0, 0);
+    //noStroke();
+    //image(letterboxLeft, 0, 0);
+    //image(letterboxRight, 1024 - 128, 0);
+    //popStyle();
 
     if (extralives > 0) {
       int i = 0;
