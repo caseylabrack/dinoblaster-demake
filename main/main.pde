@@ -21,8 +21,6 @@ void setup () {
 
   assets.load();
 
-  //println(assets.ufostuff.brontoAbductionFrames);
-
   glow = loadShader("glow2.glsl");
   //game = new OviraptorMode(this);
   game = new StoryMode(this);
@@ -86,14 +84,14 @@ void keyReleased() {
   }
 }
 
-void mousePressed () {
-  frameRate(5);
-}
+//void mousePressed () {
+//  frameRate(5);
+//}
 
-void mouseReleased () {
-  frameRate(60);
-  rec = true;
-}
+//void mouseReleased () {
+//  frameRate(60);
+//  //rec = true;
+//}
 
 void draw () {
 

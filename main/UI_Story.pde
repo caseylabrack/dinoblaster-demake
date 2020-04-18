@@ -1,6 +1,7 @@
 class UIStory implements gameOverEvent, abductionEvent, updateable, renderableScreen {
   PFont EXTINCT;
   PFont body;
+  //PImage extinc
   boolean isGameOver = false;
   float score = 0;
   int stage = 1;
@@ -22,10 +23,10 @@ class UIStory implements gameOverEvent, abductionEvent, updateable, renderableSc
   UIStory (EventManager _eventManager, ColorDecider _currentColor) {
     eventManager = _eventManager;
     currentColor = _currentColor;
-    EXTINCT = createFont("Hyperspace", 92);
-    body = createFont("Hyperspace Bold", 24);
-    textFont(EXTINCT);
-    textFont(body);
+    //EXTINCT = createFont("Hyperspace", 92);
+    //body = createFont("Hyperspace Bold", 24);
+    //textFont(EXTINCT);
+    //textFont(body);
 
     eventManager.gameOverSubscribers.add(this);
     eventManager.abductionSubscribers.add(this);
@@ -78,13 +79,13 @@ class UIStory implements gameOverEvent, abductionEvent, updateable, renderableSc
     strokeWeight(1);
     line(64, 40, 64, 40 + score/100 * stage * (height - 40));
     popStyle();
-    
+
     // letterbox
     pushStyle();
     imageMode(CORNER);
     image(letterbox, 0, 0);
     popStyle();
-    
+
     // letterboxes
     //pushStyle();
     //imageMode(CORNER);
@@ -113,10 +114,15 @@ class UIStory implements gameOverEvent, abductionEvent, updateable, renderableSc
 
     if (isGameOver) {
       pushStyle();
-      textFont(EXTINCT);
-      textAlign(CENTER, CENTER);
-      fill(currentColor.getColor()); 
-      text("EXTINCT", width/2, height/2);
+      //textFont(EXTINCT);
+      //textAlign(CENTER, CENTER);
+
+      //text("EXTINCT", width/2, height/2);
+      pushMatrix();
+      imageMode(CORNER);
+      tint(currentColor.getColor()); 
+      image(assets.uiStuff.extinctSign, 0, 0);
+      popMatrix();
       popStyle();
     }
   }

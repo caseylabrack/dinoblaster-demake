@@ -1,7 +1,10 @@
-class PlayerManager implements updateable, renderable, abductionEvent {
+class PlayerManager implements updateable, renderable, abductionEvent, playerDiedEvent {
 
   EventManager eventManager;
-  
+  Earth earth;
+
+  Player player = null;
+
   PImage model;
   int extralives = 0;
   int flicker = 60;
@@ -23,8 +26,9 @@ class PlayerManager implements updateable, renderable, abductionEvent {
   float spawningRate = 125;
   float spawningFlickerStart;
 
-  PlayerManager (EventManager _ev) {
+  PlayerManager (EventManager _ev, Earth _earth) {
     eventManager = _ev;
+    earth = _earth;
     eventManager.abductionSubscribers.add(this);
 
     model = utils.sheetToSprites(loadImage("bronto-frames.png"), 3, 1)[0];
@@ -32,10 +36,12 @@ class PlayerManager implements updateable, renderable, abductionEvent {
     spawningStart = millis();
     progress = 0;
     spawningFlickerStart = millis();
+    
+    eventManager.playerDiedSubscribers.add(this);
   }
 
   void abductionHandle(PVector p) {
-    println("extra life"); 
+    player = null;
     extralives++;
     respawning = true;
     flickerStart = millis();
@@ -45,7 +51,26 @@ class PlayerManager implements updateable, renderable, abductionEvent {
     progress = 0;
   }
 
+  void playerDiedHandle (Player p) {
+    println("player died");
+    player = null;
+    extralives--;
+    if (extralives<0) {
+      eventManager.dispatchGameOver();
+      //player = null;
+    } 
+    else {
+      respawning = true;
+      flickerStart = millis();
+      flickerRate = flickerInitialRate;
+      respawningStart = millis();
+      display = true;
+      progress = 0;
+    }
+  }
+
   void update() {
+    if (player!=null) player.update();
   }
 
   void render() {
@@ -59,12 +84,14 @@ class PlayerManager implements updateable, renderable, abductionEvent {
         }
       } else {
         spawning = false;
-        println("spawn!");
+        player = new Player(eventManager, earth, 1);
       }
       if (display) {
         image(model, 0, respawningYTarget);
       }
     }
+
+    if (player!=null) player.render();
 
 
     if (respawning) {
@@ -79,33 +106,14 @@ class PlayerManager implements updateable, renderable, abductionEvent {
       } else {
         // allow respawning
         if (keys.anykey) {
-          println("respawned!");
           respawning = false;
+          player = new Player(eventManager, earth, 1);
         }
       }
       if (display) {
         image(model, 0, respawningY);
       }
     }
-  }
-}
-
-
-class PlayerIntro extends Entity {
-  PImage model;
-  GameMode mode;
-
-  PlayerIntro (GameMode _mode, int whichPlayer) {
-    PImage sheet = whichPlayer==1 ? loadImage("bronto-run.png") : loadImage("oviraptor-frames.png");
-    PImage[] frames = whichPlayer==1 ? utils.sheetToSprites(sheet, 3, 1) : utils.sheetToSprites(sheet, 2, 2, 1);
-    model = frames[0];
-    mode = _mode;
-  }
-
-  void update () {
-  }
-
-  void render () {
   }
 }
 
@@ -153,7 +161,15 @@ class Player extends Entity implements updateable, renderable, roidImpactEvent, 
   //}
 
   void die () {
-    eventManager.dispatchGameOver();
+    eventManager.abductionSubscribers.remove(this);
+    eventManager.gameOverSubscribers.remove(this);
+    eventManager.roidImpactSubscribers.remove(this);
+    earth.removeChild(this);
+    eventManager.dispatchPlayerDied(this);
+  }
+  
+  void destory() {
+  
   }
 
   void gameOverHandle () {
@@ -201,7 +217,6 @@ class Player extends Entity implements updateable, renderable, roidImpactEvent, 
     y += dy;
     r += dr;
 
-
     dx = 0;
     dy = 0;
     dr = 0;
@@ -209,7 +224,9 @@ class Player extends Entity implements updateable, renderable, roidImpactEvent, 
 
   void roidImpactHandle(PVector impact) {
 
-    if (dist(x, y, impact.x, impact.y) < 26) {
+    //println(dist(x, y, impact.x, impact.y));
+
+    if (dist(x, y, impact.x, impact.y) < 50) {
       die();
     }
   }

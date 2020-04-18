@@ -8,32 +8,20 @@ class UFOManager implements updateable, renderable {
   ColorDecider currentColor;
   UFO ufo = null;
   Earth earth;
-  Player player;
+  PlayerManager playerManager;
   EventManager eventManager;
 
-  UFOManager (ColorDecider _color, Earth _earth, Player _player, EventManager _ev) {
+  UFOManager (ColorDecider _color, Earth _earth, PlayerManager _pm, EventManager _ev) {
 
     currentColor = _color;
     earth = _earth;
-    player = _player;
+    playerManager = _pm;
     eventManager = _ev;
-    //assets = _assets;
-
-    //model = loadImage("UFO.png");
-
-    //ufoSheet = loadImage("ufo-resizing-sheet.png");
-    //ufoFrames = utils.sheetToSprites(ufoSheet, 3, 3);
-
-    //ufoFrames = assets.ufostuff.ufoFrames;
-    //brontoAbductionFrames = assets.ufostuff.brontoAbductionFrames;
-
-    //brontoAbductionSheet = loadImage("bronto-abduction-sheet.png");
-    //brontoAbductionFrames = utils.sheetToSprites(brontoAbductionSheet, 3, 3);
   }
 
   void spawnUFOAbducting () {
 
-    ufo = new UFO(currentColor, earth, player, eventManager);
+    ufo = new UFO(currentColor, earth, playerManager, eventManager);
   }
 
   void spawnUFOReturning () {
@@ -65,7 +53,7 @@ class UFO extends Entity implements updateable, renderable {
   //PImage modelBig;
   ColorDecider currentColor;
   Earth earth;
-  Player player;
+  PlayerManager playerManager;
 
   final static int INTO_VIEW = 0;
   final static int APPROACHING = 1;
@@ -117,12 +105,12 @@ class UFO extends Entity implements updateable, renderable {
   EventManager eventManager;
 
   //UFO (ColorDecider _color, PImage[] _brontoAbductionFrames, Earth _earth, Player _player, PImage[] _ufoFrames, EventManager _ev) {
-  UFO (ColorDecider _color, Earth _earth, Player _player, EventManager _ev) {
+  UFO (ColorDecider _color, Earth _earth, PlayerManager _pm, EventManager _ev) {
 
     currentColor = _color;
     earth = _earth;
     ufoFrames = assets.ufostuff.ufoFrames;
-    player = _player;
+    playerManager = _pm;
     //brontoAbductionFrames = _brontoAbductionFrames;
     brontoAbductionFrames = assets.ufostuff.brontoAbductionFrames;
     eventManager = _ev;
@@ -188,14 +176,15 @@ class UFO extends Entity implements updateable, renderable {
     case SCANNING:
       if (millis() - scanstart < scanDuration) {
         if (millis() - scanstart > scanningStartDelay + scanningTransitioning && millis() - scanstart < scanningStartDelay + scanningTransitioning + scanningPause) {
-          //println("scanning");
-          if (utils.unsignedAngleDiff(player.getAngleFromEarth(), degrees((float)Math.atan2(earth.y - y, earth.x - x))) < snatchMargin) {
-            snatchStart = millis();
-            snatchStartPos = player.getPosition();
-            lilBrontoFacingDirection = player.direction;
-            state = SNATCHING;
-            lilBrontoAngle = player.r;
-            eventManager.dispatchAbduction(player.getPosition());
+          if (playerManager.player!=null) {
+            if (utils.unsignedAngleDiff(playerManager.player.getAngleFromEarth(), degrees((float)Math.atan2(earth.y - y, earth.x - x))) < snatchMargin) {
+              snatchStart = millis();
+              snatchStartPos = playerManager.player.getPosition();
+              lilBrontoFacingDirection = playerManager.player.direction;
+              state = SNATCHING;
+              lilBrontoAngle = playerManager.player.r;
+              eventManager.dispatchAbduction(playerManager.player.getPosition());
+            }
           }
         }
       } else {

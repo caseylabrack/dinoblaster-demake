@@ -2,6 +2,8 @@ class EventManager {
   ArrayList<gameOverEvent> gameOverSubscribers = new ArrayList<gameOverEvent>();
   ArrayList<roidImpactEvent> roidImpactSubscribers = new ArrayList<roidImpactEvent>();
   ArrayList<abductionEvent> abductionSubscribers = new ArrayList<abductionEvent>();
+  ArrayList<playerSpawnedEvent> playerSpawnedSubscribers = new ArrayList<playerSpawnedEvent>();
+  ArrayList<playerDiedEvent> playerDiedSubscribers = new ArrayList<playerDiedEvent>();
   
   EventManager () {
   
@@ -18,6 +20,14 @@ class EventManager {
   void dispatchAbduction(PVector p) {
     for(abductionEvent a : abductionSubscribers) a.abductionHandle(p);
   }
+  
+  void playerSpawned(Player p) {
+    for(playerSpawnedEvent s : playerSpawnedSubscribers) s.playerSpawnedHandle(p);
+  }
+  
+  void dispatchPlayerDied(Player p) {
+    for(playerDiedEvent s: playerDiedSubscribers) s.playerDiedHandle(p);
+  }
 } 
 
 interface gameOverEvent {
@@ -30,4 +40,12 @@ interface roidImpactEvent {
 
 interface abductionEvent {
   void abductionHandle(PVector p);
+}
+
+interface playerSpawnedEvent {
+  void playerSpawnedHandle(Player p);
+}
+
+interface playerDiedEvent {
+  void playerDiedHandle(Player p);
 }

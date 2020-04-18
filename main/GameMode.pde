@@ -1,7 +1,7 @@
 abstract class GameMode {
 
   Earth earth;
-  Player player;
+  //Player player;
   EventManager eventManager;
   StarManager starManager;
   RoidManager roids;
@@ -40,18 +40,18 @@ class OviraptorMode extends GameMode {
 
   OviraptorMode (PApplet _main) {
     super(_main);
-    player = new Player(eventManager, earth, 2);
-    trex = new Trex(earth, player, camera);
+    //player = new Player(eventManager, earth, 2);
+    //trex = new Trex(earth, player, camera);
     earth.addChild(trex);
     updaters.add(earth);
     updaters.add(roids);
     updaters.add(camera);
-    updaters.add(player);
+    //updaters.add(player);
     updaters.add(currentColor);
     updaters.add(trex);
     updaters.add(starManager);
 
-    renderers.add(player);
+    //renderers.add(player);
     renderers.add(earth);
     renderers.add(starManager);
     renderers.add(trex);
@@ -71,10 +71,10 @@ class StoryMode extends GameMode {
 
   StoryMode (PApplet _main) {
     super(_main);
-    playerManager = new PlayerManager(eventManager);
-    player = new Player(eventManager, earth, 1);
+    playerManager = new PlayerManager(eventManager, earth);
+    //player = new Player(eventManager, earth, 1);
     ui = new UIStory(eventManager, currentColor);
-    ufoManager = new UFOManager (currentColor, earth, player, eventManager);
+    ufoManager = new UFOManager (currentColor, earth, playerManager, eventManager);
 
     //inputables.add(player);
     //inputables.add(playerManager);
@@ -83,13 +83,13 @@ class StoryMode extends GameMode {
     updaters.add(earth);
     updaters.add(roids);
     updaters.add(camera);
-    updaters.add(player);
+    //updaters.add(player);
     updaters.add(currentColor);
     updaters.add(starManager);
     updaters.add(ufoManager);
     updaters.add(playerManager);
 
-    renderers.add(player);
+    //renderers.add(player);
     renderers.add(ufoManager);
     renderers.add(playerManager);
     renderers.add(earth);
@@ -106,7 +106,7 @@ class StoryMode extends GameMode {
     if (tick==30) {
       ufoManager.spawnUFOAbducting();
     }
-
+    
     pushMatrix(); // world-space
     translate(camera.x, camera.y);
     for (updateable u : updaters) u.update();
