@@ -1,7 +1,6 @@
-class UIStory implements gameOverEvent, abductionEvent, updateable, renderableScreen {
+class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, updateable, renderableScreen {
   PFont EXTINCT;
   PFont body;
-  //PImage extinc
   boolean isGameOver = false;
   float score = 0;
   int stage = 1;
@@ -23,13 +22,10 @@ class UIStory implements gameOverEvent, abductionEvent, updateable, renderableSc
   UIStory (EventManager _eventManager, ColorDecider _currentColor) {
     eventManager = _eventManager;
     currentColor = _currentColor;
-    //EXTINCT = createFont("Hyperspace", 92);
-    //body = createFont("Hyperspace Bold", 24);
-    //textFont(EXTINCT);
-    //textFont(body);
 
     eventManager.gameOverSubscribers.add(this);
     eventManager.abductionSubscribers.add(this);
+    eventManager.playerDiedSubscribers.add(this);
 
     extralifeSheet = loadImage("bronto-abduction-sheet.png");
     extralifeIcons = utils.sheetToSprites(extralifeSheet, 3, 3);
@@ -39,6 +35,10 @@ class UIStory implements gameOverEvent, abductionEvent, updateable, renderableSc
 
   void gameOverHandle() {
     isGameOver = true;
+  }
+  
+  void playerDiedHandle(PVector position) {
+    extralives--;
   }
 
   void abductionHandle(PVector p) {
@@ -63,7 +63,6 @@ class UIStory implements gameOverEvent, abductionEvent, updateable, renderableSc
   }
 
   void render () {
-
 
     // letterbox bg
     pushStyle();

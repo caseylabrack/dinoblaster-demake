@@ -1,4 +1,4 @@
-class PlayerManager implements updateable, renderable, abductionEvent, playerDiedEvent {
+class PlayerManager implements updateable, renderable, abductionEvent, roidImpactEvent {
 
   EventManager eventManager;
   Earth earth;
@@ -22,7 +22,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, playerDie
 
   boolean spawning = true;
   float spawningStart = 0;
-  float spawningDuration = 4e3;
+  float spawningDuration = 2e3;
   float spawningRate = 125;
   float spawningFlickerStart;
 
@@ -36,8 +36,30 @@ class PlayerManager implements updateable, renderable, abductionEvent, playerDie
     spawningStart = millis();
     progress = 0;
     spawningFlickerStart = millis();
-    
-    eventManager.playerDiedSubscribers.add(this);
+
+    eventManager.roidImpactSubscribers.add(this);
+  }
+
+  void roidImpactHandle(PVector impact) {
+
+    if (player!=null) {
+      if (dist(player.x, player.y, impact.x, impact.y) < 50) {
+        eventManager.dispatchPlayerDied(player.getPosition());
+        player.cleanup();
+        player = null;
+        extralives--;
+        if (extralives<0) {
+          eventManager.dispatchGameOver();
+        } else {
+          respawning = true;
+          flickerStart = millis();
+          flickerRate = flickerInitialRate;
+          respawningStart = millis();
+          display = true;
+          progress = 0;
+        }
+      }
+    }
   }
 
   void abductionHandle(PVector p) {
@@ -58,8 +80,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, playerDie
     if (extralives<0) {
       eventManager.dispatchGameOver();
       //player = null;
-    } 
-    else {
+    } else {
       respawning = true;
       flickerStart = millis();
       flickerRate = flickerInitialRate;
@@ -117,7 +138,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, playerDie
   }
 }
 
-class Player extends Entity implements updateable, renderable, roidImpactEvent, abductionEvent, gameOverEvent {
+class Player extends Entity implements updateable, renderable, abductionEvent, gameOverEvent {
   PImage model;
   PImage[] runFrames = new PImage[2];
   PImage idle;
@@ -148,9 +169,6 @@ class Player extends Entity implements updateable, renderable, roidImpactEvent, 
     runFrames[0] = frames[1];
     runFrames[1] = frames[2];
     model = idle;
-    eventManager.abductionSubscribers.add(this);
-    eventManager.gameOverSubscribers.add(this);
-    eventManager.roidImpactSubscribers.add(this);
     earth.addChild(this);
     x = earth.x + cos(radians(-90)) * (earth.radius + 30);
     y = earth.y + sin(radians(-90)) * (earth.radius + 30);
@@ -160,16 +178,15 @@ class Player extends Entity implements updateable, renderable, roidImpactEvent, 
   //  keys = _keys;
   //}
 
-  void die () {
-    eventManager.abductionSubscribers.remove(this);
-    eventManager.gameOverSubscribers.remove(this);
-    eventManager.roidImpactSubscribers.remove(this);
-    earth.removeChild(this);
-    eventManager.dispatchPlayerDied(this);
-  }
-  
+  //void die () {
+  //  eventManager.abductionSubscribers.remove(this);
+  //  eventManager.gameOverSubscribers.remove(this);
+  //  eventManager.roidImpactSubscribers.remove(this);
+  //  earth.removeChild(this);
+  //  eventManager.dispatchPlayerDied(this);
+  //}
+
   void destory() {
-  
   }
 
   void gameOverHandle () {
@@ -222,15 +239,6 @@ class Player extends Entity implements updateable, renderable, roidImpactEvent, 
     dr = 0;
   }
 
-  void roidImpactHandle(PVector impact) {
-
-    //println(dist(x, y, impact.x, impact.y));
-
-    if (dist(x, y, impact.x, impact.y) < 50) {
-      die();
-    }
-  }
-
   void render () {
 
     if (!visible) return;
@@ -244,5 +252,9 @@ class Player extends Entity implements updateable, renderable, roidImpactEvent, 
     image(model, 0, 0, model.width, model.height);
     popStyle();
     popMatrix();
+  }
+
+  void cleanup () {
+    earth.removeChild(this);
   }
 }

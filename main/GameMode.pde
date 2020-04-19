@@ -15,6 +15,7 @@ abstract class GameMode {
   ArrayList<updateable> updaters;
   ArrayList<renderableScreen> screeenRenderers;
   ArrayList<renderable> renderers;
+  ArrayList<deletable> deletables;
 
   GameMode (PApplet main) {
     updaters = new ArrayList<updateable>();

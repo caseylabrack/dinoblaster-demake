@@ -25,8 +25,8 @@ class EventManager {
     for(playerSpawnedEvent s : playerSpawnedSubscribers) s.playerSpawnedHandle(p);
   }
   
-  void dispatchPlayerDied(Player p) {
-    for(playerDiedEvent s: playerDiedSubscribers) s.playerDiedHandle(p);
+  void dispatchPlayerDied(PVector position) {
+    for(playerDiedEvent s: playerDiedSubscribers) s.playerDiedHandle(position);
   }
 } 
 
@@ -47,5 +47,5 @@ interface playerSpawnedEvent {
 }
 
 interface playerDiedEvent {
-  void playerDiedHandle(Player p);
+  void playerDiedHandle(PVector position);
 }
