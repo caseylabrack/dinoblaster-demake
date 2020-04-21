@@ -1,4 +1,4 @@
-class PlayerManager implements updateable, renderable, abductionEvent, roidImpactEvent {
+class PlayerManager implements updateable, renderable, abductionEvent, roidImpactEvent, playerRespawnedEvent {
 
   EventManager eventManager;
   Earth earth;
@@ -29,15 +29,17 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
   PlayerManager (EventManager _ev, Earth _earth) {
     eventManager = _ev;
     earth = _earth;
-    eventManager.abductionSubscribers.add(this);
 
     model = utils.sheetToSprites(loadImage("bronto-frames.png"), 3, 1)[0];
 
     spawningStart = millis();
     progress = 0;
     spawningFlickerStart = millis();
+    //spawning = false;
 
     eventManager.roidImpactSubscribers.add(this);
+    eventManager.abductionSubscribers.add(this);
+    eventManager.playerRespawnedSubscribers.add(this);
   }
 
   void roidImpactHandle(PVector impact) {
@@ -50,14 +52,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
         extralives--;
         if (extralives<0) {
           eventManager.dispatchGameOver();
-        } else {
-          respawning = true;
-          flickerStart = millis();
-          flickerRate = flickerInitialRate;
-          respawningStart = millis();
-          display = true;
-          progress = 0;
-        }
+        } 
       }
     }
   }
@@ -73,21 +68,17 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
     progress = 0;
   }
 
+  void playerRespawnedHandle(PVector position) {
+    player = new Player(eventManager, earth, 1, position);
+  }
+
   void playerDiedHandle (Player p) {
     println("player died");
     player = null;
     extralives--;
     if (extralives<0) {
       eventManager.dispatchGameOver();
-      //player = null;
-    } else {
-      respawning = true;
-      flickerStart = millis();
-      flickerRate = flickerInitialRate;
-      respawningStart = millis();
-      display = true;
-      progress = 0;
-    }
+    } 
   }
 
   void update() {
@@ -105,7 +96,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
         }
       } else {
         spawning = false;
-        player = new Player(eventManager, earth, 1);
+        player = new Player(eventManager, earth, 1, null);
       }
       if (display) {
         image(model, 0, respawningYTarget);
@@ -113,7 +104,6 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
     }
 
     if (player!=null) player.render();
-
 
     if (respawning) {
       progress = (millis() - respawningStart) / respawningDuration;
@@ -128,7 +118,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
         // allow respawning
         if (keys.anykey) {
           respawning = false;
-          player = new Player(eventManager, earth, 1);
+          player = new Player(eventManager, earth, 1, null);
         }
       }
       if (display) {
@@ -155,11 +145,11 @@ class Player extends Entity implements updateable, renderable, abductionEvent, g
   EventManager eventManager;
   Earth earth;
 
-  Player (EventManager _eventManager, Earth _earth, int whichPlayer) {
+  Player (EventManager _eventManager, Earth _earth, int whichPlayer, PVector pos) {
 
     eventManager = _eventManager;
     earth = _earth;
-    //keys = _keys;
+
 
     //PImage sheet = whichPlayer==1 ? loadImage("bronto-run.png") : loadImage("oviraptor-frames.png");
     //PImage[] frames = whichPlayer==1 ? utils.sheetToSprites(sheet, 3, 1) : utils.sheetToSprites(sheet, 2, 2, 1);
@@ -170,8 +160,9 @@ class Player extends Entity implements updateable, renderable, abductionEvent, g
     runFrames[1] = frames[2];
     model = idle;
     earth.addChild(this);
-    x = earth.x + cos(radians(-90)) * (earth.radius + 30);
-    y = earth.y + sin(radians(-90)) * (earth.radius + 30);
+    x = pos==null ? earth.x + cos(radians(-90)) * (earth.radius + 30) : pos.x;
+    y = pos==null ? earth.y + sin(radians(-90)) * (earth.radius + 30) : pos.y;
+    r = degrees(atan2(earth.y - y, earth.x - x)) - 90;
   }
 
   //void input(Keys _keys) {

@@ -1,15 +1,13 @@
-class UFOManager implements updateable, renderable {
+class UFOManager implements updateable, renderable, abductionEvent, playerDiedEvent {
 
-  //PImage brontoAbductionSheet;
-  //PImage[] brontoAbductionFrames = new PImage[9];
-  PImage model;
-  //PImage ufoSheet;
-  //PImage[] ufoFrames = new PImage[9];
   ColorDecider currentColor;
   UFO ufo = null;
+  UFOrespawn ufoRespawn = null;
   Earth earth;
   PlayerManager playerManager;
   EventManager eventManager;
+
+  int extralives = 0;
 
   UFOManager (ColorDecider _color, Earth _earth, PlayerManager _pm, EventManager _ev) {
 
@@ -17,6 +15,9 @@ class UFOManager implements updateable, renderable {
     earth = _earth;
     playerManager = _pm;
     eventManager = _ev;
+    
+    eventManager.abductionSubscribers.add(this);
+    eventManager.playerDiedSubscribers.add(this);
   }
 
   void spawnUFOAbducting () {
@@ -25,12 +26,27 @@ class UFOManager implements updateable, renderable {
   }
 
   void spawnUFOReturning () {
+    ufoRespawn = new UFOrespawn(currentColor, earth, playerManager, eventManager);
+  }
+
+  void abductionHandle(PVector p) {
+    extralives++;
+  }
+
+  void playerDiedHandle(PVector position) {
+    if (extralives > 0) spawnUFOReturning();
+    extralives--;
   }
 
   void update () {
+
+    if (ufoRespawn!=null) {
+      ufoRespawn.update();
+    }
+
     if (ufo!=null) {
       ufo.update();
-      if (ufo.state==ufo.DONE) {
+      if (ufo.state==UFO.DONE) {
         ufo = null;
       }
     }
@@ -38,15 +54,33 @@ class UFOManager implements updateable, renderable {
 
   void render () {
     if (ufo!=null) ufo.render();
+    if (ufoRespawn!=null) ufoRespawn.render();
   }
 }
 
+//abstract class UFO extends Entity {
+//  ColorDecider currentColor;
+//  Earth earth;
+//  PlayerManager playerManager;
+//  EventManager eventManager;
 
+//  final static int initialDist = 1000;
+//  final static int initialSpeed = 3;
+//  final static int initialRotate = 1;
+
+//  final float finalDist = 300;
+
+//  PVector lilBrontoPos = new PVector();
+//  int lilBrontoFacingDirection = -1;
+//  float lilBrontoAngle = 0;
+
+//  final float snatchDuration = 3e3;
+//  final float maxBeamWidth = 15;
+  
+//}
 
 class UFO extends Entity implements updateable, renderable {
 
-  //PShape model;
-  //PShape lilBronto;
   PImage[] brontoAbductionFrames;
   PImage[] ufoFrames;
   PImage model;
@@ -54,6 +88,7 @@ class UFO extends Entity implements updateable, renderable {
   ColorDecider currentColor;
   Earth earth;
   PlayerManager playerManager;
+  EventManager eventManager;
 
   final static int INTO_VIEW = 0;
   final static int APPROACHING = 1;
@@ -101,8 +136,6 @@ class UFO extends Entity implements updateable, renderable {
   float lilBrontoAngle = 0;
 
   float progress, dist, angle;
-
-  EventManager eventManager;
 
   //UFO (ColorDecider _color, PImage[] _brontoAbductionFrames, Earth _earth, Player _player, PImage[] _ufoFrames, EventManager _ev) {
   UFO (ColorDecider _color, Earth _earth, PlayerManager _pm, EventManager _ev) {
@@ -280,6 +313,140 @@ class UFO extends Entity implements updateable, renderable {
     fill(0, 0, 0);
     imageMode(CENTER);
     image(model, x, y);
+    popMatrix();
+    popStyle();
+  }
+}
+
+class UFOrespawn extends Entity {
+
+  ColorDecider currentColor;
+  Earth earth;
+  PlayerManager playerManager;
+  EventManager eventManager;
+
+  final static int APPROACHING = 0;
+  final static int ANTISNATCHING = 1;
+  final static int WAITING = 2;
+  final static int LEAVING = 5;
+  final static int DONE = 6;
+  int state = APPROACHING;
+
+  final static int initialDist = 1000;
+  final static int initialSpeed = 3;
+  final static int initialRotate = 1;
+
+  float startApproach;
+  final float finalDist = 300;
+
+  PVector lilBrontoPos = new PVector();
+  int lilBrontoFacingDirection = -1;
+  float lilBrontoAngle = 0;
+
+  float snatchStart;
+  final float snatchDuration = 3e3;
+  PVector snatchTarget;
+
+  final float maxBeamWidth = 15;
+
+  float dist, angle, progress;
+
+  UFOrespawn (ColorDecider _color, Earth _earth, PlayerManager _pm, EventManager _ev) {
+
+    currentColor = _color;
+    earth = _earth;
+    playerManager = _pm;
+    eventManager = _ev;
+
+    float angle = random(0, 360);
+    x = earth.x + cos(angle) * initialDist;
+    y = earth.y + sin(angle) * initialDist;
+    startApproach = millis();
+  }
+
+  void update() {
+    switch(state) {
+
+    case APPROACHING:
+      dist = dist(x, y, earth.x, earth.y);
+      if (dist > finalDist) {
+        angle = (float)Math.atan2(y - earth.y, x - earth.x);
+        x = earth.x + cos(angle) * (dist-initialSpeed);
+        y = earth.y + sin(angle) * (dist-initialSpeed);
+        setPosition(utils.rotateAroundPoint(getPosition(), earth.getPosition(), initialRotate * -1));
+      } else {
+        state = ANTISNATCHING;
+        snatchStart = millis();
+        float snatchAngle = atan2(y - earth.y, x - earth.x);
+        snatchTarget = new PVector(earth.x + cos(snatchAngle) * (earth.radius + 30), earth.y + sin(snatchAngle) * (earth.radius + 30));
+        lilBrontoAngle = atan2(earth.y - snatchTarget.y, earth.x - snatchTarget.x) + radians(-90);
+      }
+      break;
+
+    case ANTISNATCHING:
+      progress = (millis() - snatchStart)  / snatchDuration;
+      if (progress <= 1) {
+        lilBrontoPos.set(PVector.lerp(getPosition(), snatchTarget, progress));
+      } else {
+        state = WAITING;
+      }
+      break;
+
+    case WAITING:
+      if (keys.anykey) {
+        println("respawn dino pls");
+        state = LEAVING;
+        eventManager.dispatchPlayerRespawned(lilBrontoPos);
+      }
+      break;
+
+    case LEAVING:
+      dist = dist(x, y, earth.x, earth.y);
+      if (dist < 2000) {
+        angle = (float)Math.atan2(y - earth.y, x - earth.x);
+        x = earth.x + cos(angle) * (dist+initialSpeed);
+        y = earth.y + sin(angle) * (dist+initialSpeed);
+      } else {
+        state = DONE;
+      }
+      break;
+
+    case DONE:
+      break;
+
+    default:
+      println("ufo state wut");
+      break;
+    }
+  }
+  void render () {
+
+    if (state==ANTISNATCHING || state==WAITING) {
+      pushStyle();
+      noFill();
+      stroke(currentColor.getColor());
+      float angle = degrees(atan2(earth.y - y, earth.x - x));
+      line(x, y, x + cos(radians(angle + maxBeamWidth)) * 250, y + sin(radians(angle + maxBeamWidth)) * 250);
+      line(x, y, x + cos(radians(angle - maxBeamWidth)) * 250, y + sin(radians(angle - maxBeamWidth)) * 250);
+
+      pushMatrix();
+      scale(lilBrontoFacingDirection, 1);
+      translate(lilBrontoPos.x * lilBrontoFacingDirection, lilBrontoPos.y);
+      rotate(lilBrontoAngle  * lilBrontoFacingDirection);
+      imageMode(CENTER);      
+      progress = min((millis() - snatchStart)  / snatchDuration, .999);
+      image(assets.ufostuff.brontoAbductionFrames[ceil((1-progress) * 8)], 0, 0);
+      popMatrix();
+      popStyle();
+    }
+
+    pushStyle();
+    noFill();
+    tint(currentColor.getColor());
+    pushMatrix();
+    fill(0, 0, 0);
+    imageMode(CENTER);
+    image(assets.ufostuff.ufoFrames[8], x, y);
     popMatrix();
     popStyle();
   }

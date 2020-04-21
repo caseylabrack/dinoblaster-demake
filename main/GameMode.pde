@@ -77,20 +77,15 @@ class StoryMode extends GameMode {
     ui = new UIStory(eventManager, currentColor);
     ufoManager = new UFOManager (currentColor, earth, playerManager, eventManager);
 
-    //inputables.add(player);
-    //inputables.add(playerManager);
-
     updaters.add(ui);
     updaters.add(earth);
     updaters.add(roids);
     updaters.add(camera);
-    //updaters.add(player);
     updaters.add(currentColor);
     updaters.add(starManager);
     updaters.add(ufoManager);
     updaters.add(playerManager);
 
-    //renderers.add(player);
     renderers.add(ufoManager);
     renderers.add(playerManager);
     renderers.add(earth);
@@ -112,8 +107,9 @@ class StoryMode extends GameMode {
     translate(camera.x, camera.y);
     for (updateable u : updaters) u.update();
     for (renderable r : renderers) r.render();
+    
     popMatrix(); // screen-space
-
     for (renderableScreen rs : screeenRenderers) rs.render(); // UI
+    
   }
 }

@@ -4,6 +4,7 @@ class EventManager {
   ArrayList<abductionEvent> abductionSubscribers = new ArrayList<abductionEvent>();
   ArrayList<playerSpawnedEvent> playerSpawnedSubscribers = new ArrayList<playerSpawnedEvent>();
   ArrayList<playerDiedEvent> playerDiedSubscribers = new ArrayList<playerDiedEvent>();
+  ArrayList<playerRespawnedEvent> playerRespawnedSubscribers = new ArrayList<playerRespawnedEvent>();
   
   EventManager () {
   
@@ -28,6 +29,10 @@ class EventManager {
   void dispatchPlayerDied(PVector position) {
     for(playerDiedEvent s: playerDiedSubscribers) s.playerDiedHandle(position);
   }
+  
+  void dispatchPlayerRespawned(PVector position) {
+    for(playerRespawnedEvent s: playerRespawnedSubscribers) s.playerRespawnedHandle(position);
+  }
 } 
 
 interface gameOverEvent {
@@ -49,3 +54,11 @@ interface playerSpawnedEvent {
 interface playerDiedEvent {
   void playerDiedHandle(PVector position);
 }
+
+interface playerRespawnedEvent {
+  void playerRespawnedHandle(PVector position);
+}
+
+//interface playerToRespawnEvent {
+//  void playerToRespawn();
+//}
