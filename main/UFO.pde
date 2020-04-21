@@ -15,7 +15,7 @@ class UFOManager implements updateable, renderable, abductionEvent, playerDiedEv
     earth = _earth;
     playerManager = _pm;
     eventManager = _ev;
-    
+
     eventManager.abductionSubscribers.add(this);
     eventManager.playerDiedSubscribers.add(this);
   }
@@ -76,7 +76,7 @@ class UFOManager implements updateable, renderable, abductionEvent, playerDiedEv
 
 //  final float snatchDuration = 3e3;
 //  final float maxBeamWidth = 15;
-  
+
 //}
 
 class UFO extends Entity implements updateable, renderable {
@@ -347,6 +347,10 @@ class UFOrespawn extends Entity {
   final float snatchDuration = 3e3;
   PVector snatchTarget;
 
+  float flickerStart;
+  boolean display = true;
+  float flickerRate = 250;
+
   final float maxBeamWidth = 15;
 
   float dist, angle, progress;
@@ -389,6 +393,7 @@ class UFOrespawn extends Entity {
         lilBrontoPos.set(PVector.lerp(getPosition(), snatchTarget, progress));
       } else {
         state = WAITING;
+        flickerStart = millis();
       }
       break;
 
@@ -435,7 +440,15 @@ class UFOrespawn extends Entity {
       rotate(lilBrontoAngle  * lilBrontoFacingDirection);
       imageMode(CENTER);      
       progress = min((millis() - snatchStart)  / snatchDuration, .999);
-      image(assets.ufostuff.brontoAbductionFrames[ceil((1-progress) * 8)], 0, 0);
+      if (state==WAITING) {
+        if (millis() - flickerStart > flickerRate) {
+          display = !display;
+          flickerStart = millis();
+        }
+      }
+      
+      if(display) image(assets.ufostuff.brontoAbductionFrames[ceil((1-progress) * 8)], 0, 0);
+
       popMatrix();
       popStyle();
     }

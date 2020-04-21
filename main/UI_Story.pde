@@ -1,12 +1,12 @@
-class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, updateable, renderableScreen {
+class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerSpawnedEvent, playerRespawnedEvent, updateable, renderableScreen {
   PFont EXTINCT;
   PFont body;
   boolean isGameOver = false;
   float score = 0;
   int stage = 1;
   int lastScoreTick = 0;
-  String currentStage = "Triassic";
-  String nextStage = "Jurassic";
+  boolean scoring = false;
+  
   EventManager eventManager;
   ColorDecider currentColor;
 
@@ -26,6 +26,8 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, updatea
     eventManager.gameOverSubscribers.add(this);
     eventManager.abductionSubscribers.add(this);
     eventManager.playerDiedSubscribers.add(this);
+    eventManager.playerSpawnedSubscribers.add(this);
+    eventManager.playerRespawnedSubscribers.add(this);
 
     extralifeSheet = loadImage("bronto-abduction-sheet.png");
     extralifeIcons = utils.sheetToSprites(extralifeSheet, 3, 3);
@@ -37,28 +39,32 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, updatea
     isGameOver = true;
   }
   
+  void playerSpawnedHandle(Player p) {
+    scoring = true;
+  }
+  
+  void playerRespawnedHandle(PVector position) {
+  scoring = true;
+  }
+  
   void playerDiedHandle(PVector position) {
     extralives--;
+    scoring = false;
   }
 
   void abductionHandle(PVector p) {
     extralifeAnimationStart = millis();
     extralifeAnimating = true;
     extralives++;
+    scoring = false;
   }
 
   void update () {
     if (isGameOver) return;
-
-    if (millis() - lastScoreTick > 1000) {
+    
+    if (millis() - lastScoreTick > 1000 && scoring) {
       score++;
       lastScoreTick = millis();
-    }
-
-    if (score==100) {
-      stage++;
-      currentStage = "Jurassic";
-      nextStage = "Cretaceous";
     }
   }
 
@@ -76,7 +82,7 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, updatea
     pushStyle();
     stroke(0, 0, 100);
     strokeWeight(1);
-    line(64, 40, 64, 40 + score/100 * stage * (height - 40));
+    line(64, 40, 64, 40 + score/300 * stage * (height - 40));
     popStyle();
 
     // letterbox
@@ -84,15 +90,6 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, updatea
     imageMode(CORNER);
     image(letterbox, 0, 0);
     popStyle();
-
-    // letterboxes
-    //pushStyle();
-    //imageMode(CORNER);
-    //fill(0, 0, 0);
-    //noStroke();
-    //image(letterboxLeft, 0, 0);
-    //image(letterboxRight, 1024 - 128, 0);
-    //popStyle();
 
     if (extralives > 0) {
       int i = 0;
@@ -113,10 +110,6 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, updatea
 
     if (isGameOver) {
       pushStyle();
-      //textFont(EXTINCT);
-      //textAlign(CENTER, CENTER);
-
-      //text("EXTINCT", width/2, height/2);
       pushMatrix();
       imageMode(CORNER);
       tint(currentColor.getColor()); 

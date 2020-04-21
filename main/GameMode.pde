@@ -27,7 +27,6 @@ abstract class GameMode {
     roids = new RoidManager(70, 400, 100, earth, eventManager);
     currentColor = new ColorDecider();
     starManager = new StarManager(currentColor);
-    //keys = _keys;
 
     soundManager = new SoundManager(main, eventManager);
   }

@@ -73,7 +73,6 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
   }
 
   void playerDiedHandle (Player p) {
-    println("player died");
     player = null;
     extralives--;
     if (extralives<0) {
@@ -97,6 +96,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
       } else {
         spawning = false;
         player = new Player(eventManager, earth, 1, null);
+        eventManager.dispatchPlayerSpawned(player);
       }
       if (display) {
         image(model, 0, respawningYTarget);
@@ -114,11 +114,10 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
       if (progress < 1) {
         respawningY = utils.easeOutQuad(progress, -100, respawningYTarget - (-100), 1);    
         flickerRate = utils.easeOutExpo(progress, 250, 50 - 250, 1);
-      } else {
-        // allow respawning
+      } else { // allow respawning
         if (keys.anykey) {
           respawning = false;
-          player = new Player(eventManager, earth, 1, null);
+          eventManager.dispatchPlayerRespawned(null);
         }
       }
       if (display) {
@@ -128,7 +127,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
   }
 }
 
-class Player extends Entity implements updateable, renderable, abductionEvent, gameOverEvent {
+class Player extends Entity implements updateable, renderable {
   PImage model;
   PImage[] runFrames = new PImage[2];
   PImage idle;
@@ -150,9 +149,6 @@ class Player extends Entity implements updateable, renderable, abductionEvent, g
     eventManager = _eventManager;
     earth = _earth;
 
-
-    //PImage sheet = whichPlayer==1 ? loadImage("bronto-run.png") : loadImage("oviraptor-frames.png");
-    //PImage[] frames = whichPlayer==1 ? utils.sheetToSprites(sheet, 3, 1) : utils.sheetToSprites(sheet, 2, 2, 1);
     PImage sheet = whichPlayer==1 ? loadImage("bronto-frames.png") : loadImage("oviraptor-frames.png");
     PImage[] frames = whichPlayer==1 ? utils.sheetToSprites(sheet, 3, 1) : utils.sheetToSprites(sheet, 2, 2, 1);
     idle = frames[0];
@@ -165,44 +161,10 @@ class Player extends Entity implements updateable, renderable, abductionEvent, g
     r = degrees(atan2(earth.y - y, earth.x - x)) - 90;
   }
 
-  //void input(Keys _keys) {
-  //  keys = _keys;
-  //}
-
-  //void die () {
-  //  eventManager.abductionSubscribers.remove(this);
-  //  eventManager.gameOverSubscribers.remove(this);
-  //  eventManager.roidImpactSubscribers.remove(this);
-  //  earth.removeChild(this);
-  //  eventManager.dispatchPlayerDied(this);
-  //}
-
-  void destory() {
-  }
-
-  void gameOverHandle () {
-    //visible = false;
-  }
-
-  void abductionHandle(PVector p) {
-    println("time to disappear or something");
-  }
-
   float getAngleFromEarth () {
 
     return degrees((float)Math.atan2(earth.y - y, earth.x - x));
   }
-
-  //void setMove (int keyevent, boolean set) {
-  //  switch(keyevent) {
-  //  case LEFT: 
-  //    leftKey = set;
-  //    break;
-  //  case RIGHT:
-  //    rightKey = set;
-  //    break;
-  //  }
-  //} 
 
   void update () {
 

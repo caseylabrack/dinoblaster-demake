@@ -22,7 +22,7 @@ class EventManager {
     for(abductionEvent a : abductionSubscribers) a.abductionHandle(p);
   }
   
-  void playerSpawned(Player p) {
+  void dispatchPlayerSpawned(Player p) {
     for(playerSpawnedEvent s : playerSpawnedSubscribers) s.playerSpawnedHandle(p);
   }
   
