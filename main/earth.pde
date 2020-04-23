@@ -1,6 +1,5 @@
 class Earth extends Entity implements gameOverEvent, updateable, renderable {
   PImage model;
-  //PGraphics model;
   PShape modelV;
   float radius;
 
@@ -12,31 +11,24 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
   float shakingDur;
   float shakingMag;
   float shakingStart;
-  
-  GameMode mode;
 
-  Earth (GameMode _mode, float xpos, float ypos) {
-    x = xpos;
-    y = ypos;
+  EventManager eventManager;
+  Time time;
+
+  Earth (EventManager ev, Time t) {
+    eventManager = ev;
+    time = t;
+
+    x = 0;
+    y = 0;
     dx = 0;
     dy = 0;
     dr = 2.3;
-    //radius = 160;
-    //modelV = loadShape("earth.svg");
-    //modelV.disableStyle();
-    //model = createGraphics((int)radius * 2, (int)radius * 2);
-    //model.beginDraw();
-    //model.colorMode(HSB, 360, 100, 100);
-    //model.stroke(0,0,100);
-    //model.strokeWeight(2 * 291 / (radius * 2));
-    //model.noFill();
-    //model.shapeMode(CENTER);
-    //model.shape(modelV, radius, radius, model.width-3 * ((radius * 2) / 291), model.height-3 * ((radius * 2) / 291));
-    //model.endDraw();
+
     model = loadImage("earth-fill.png");
     radius = model.width/2;
-    mode = _mode;
-    mode.eventManager.gameOverSubscribers.add(this);
+
+    eventManager.gameOverSubscribers.add(this);    
   }
 
   void gameOverHandle () {
@@ -51,7 +43,7 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
   void shakeContinous (float _dur, float _mag) {
     shakingDur += _dur;
     shakingMag = _mag;
-    shakingStart = millis();
+    shakingStart = time.getClock();
     shaking = true;
   }
 
@@ -59,6 +51,7 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
 
     dx = 0 - x;
     dy = 0 - y;
+    dr = 2.3;
 
     if (shake) {
       shakeAngle = random(0, TWO_PI);
@@ -75,11 +68,15 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
       shakeAngle = random(0, TWO_PI);
       dx += cos(shakeAngle) * shakingMag;
       dy += sin(shakeAngle) * shakingMag;
-      if (millis() - shakingStart > shakingDur) {
+      if (time.getClock() - shakingStart > shakingDur) {
         shaking = false;
       }
     }
-    
+
+    dx *= time.getTimeScale();
+    dy *= time.getTimeScale();
+    dr *= time.getTimeScale();
+
     x += dx;
     y += dy;
     r += dr;

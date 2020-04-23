@@ -13,10 +13,12 @@ class StarManager implements updateable, renderable, renderableScreen {
   float nebulaOffset = 0;
 
   ColorDecider currentColor;
+  Time time;
 
-  StarManager (ColorDecider _color) {
+  StarManager (ColorDecider _color, Time t) {
 
     currentColor = _color;
+    time = t;
 
     int k = 0;
     for (int j = 0; j < 360; j+= 9) {
@@ -38,7 +40,7 @@ class StarManager implements updateable, renderable, renderableScreen {
   }
 
   void update () {
-    a += TWO_PI / (360 * 40);
+    a += (TWO_PI / (360 * 40)) * time.getTimeScale();
 
     nebulaModel = nebulaFrames[utils.cycleRangeWithDelay(nebulaFrames.length, 8, frameCount)];
   }

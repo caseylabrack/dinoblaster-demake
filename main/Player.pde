@@ -2,6 +2,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
 
   EventManager eventManager;
   Earth earth;
+  Time time;
 
   Player player = null;
 
@@ -26,9 +27,10 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
   float spawningRate = 125;
   float spawningFlickerStart;
 
-  PlayerManager (EventManager _ev, Earth _earth) {
+  PlayerManager (EventManager _ev, Earth _earth, Time t) {
     eventManager = _ev;
     earth = _earth;
+    time = t;
 
     model = utils.sheetToSprites(loadImage("bronto-frames.png"), 3, 1)[0];
 
@@ -46,18 +48,20 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
 
     if (player!=null) {
       if (dist(player.x, player.y, impact.x, impact.y) < 50) {
-        eventManager.dispatchPlayerDied(player.getPosition());
         player.cleanup();
         player = null;
         extralives--;
         if (extralives<0) {
           eventManager.dispatchGameOver();
-        } 
+        } else {
+          eventManager.dispatchPlayerDied(player.getPosition());
+        }
       }
     }
   }
 
   void abductionHandle(PVector p) {
+    player.cleanup();
     player = null;
     extralives++;
     respawning = true;
@@ -69,15 +73,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
   }
 
   void playerRespawnedHandle(PVector position) {
-    player = new Player(eventManager, earth, 1, position);
-  }
-
-  void playerDiedHandle (Player p) {
-    player = null;
-    extralives--;
-    if (extralives<0) {
-      eventManager.dispatchGameOver();
-    } 
+    player = new Player(eventManager, time, earth, 1, position);
   }
 
   void update() {
@@ -95,7 +91,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
         }
       } else {
         spawning = false;
-        player = new Player(eventManager, earth, 1, null);
+        player = new Player(eventManager, time, earth, 1, null);
         eventManager.dispatchPlayerSpawned(player);
       }
       if (display) {
@@ -143,11 +139,13 @@ class Player extends Entity implements updateable, renderable {
 
   EventManager eventManager;
   Earth earth;
+  Time time;
 
-  Player (EventManager _eventManager, Earth _earth, int whichPlayer, PVector pos) {
+  Player (EventManager _eventManager, Time t, Earth _earth, int whichPlayer, PVector pos) {
 
     eventManager = _eventManager;
     earth = _earth;
+    time = t;
 
     PImage sheet = whichPlayer==1 ? loadImage("bronto-frames.png") : loadImage("oviraptor-frames.png");
     PImage[] frames = whichPlayer==1 ? utils.sheetToSprites(sheet, 3, 1) : utils.sheetToSprites(sheet, 2, 2, 1);
@@ -171,12 +169,12 @@ class Player extends Entity implements updateable, renderable {
     if (keys.left != keys.right) { // xor
       model = runFrames[utils.cycleRangeWithDelay(runFrames.length, 4, frameCount)];
       if (keys.left) {
-        setPosition(utils.rotateAroundPoint(getPosition(), earth.getPosition(), runSpeed * -1));
-        dr -= runSpeed;
+        setPosition(utils.rotateAroundPoint(getPosition(), earth.getPosition(), runSpeed * -1 * time.getTimeScale()));
+        dr -= runSpeed * time.getTimeScale();
         direction = -1;
       } else {
-        setPosition(utils.rotateAroundPoint(getPosition(), earth.getPosition(), runSpeed * 1));
-        dr += runSpeed;
+        setPosition(utils.rotateAroundPoint(getPosition(), earth.getPosition(), runSpeed * 1 * time.getTimeScale()));
+        dr += runSpeed * time.getTimeScale();
         direction = 1;
       }
     } else {

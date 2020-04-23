@@ -399,7 +399,6 @@ class UFOrespawn extends Entity {
 
     case WAITING:
       if (keys.anykey) {
-        println("respawn dino pls");
         state = LEAVING;
         eventManager.dispatchPlayerRespawned(lilBrontoPos);
       }
@@ -424,6 +423,7 @@ class UFOrespawn extends Entity {
       break;
     }
   }
+  
   void render () {
 
     if (state==ANTISNATCHING || state==WAITING) {

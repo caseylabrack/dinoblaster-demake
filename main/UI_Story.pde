@@ -4,11 +4,12 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
   boolean isGameOver = false;
   float score = 0;
   int stage = 1;
-  int lastScoreTick = 0;
+  float lastScoreTick = 0;
   boolean scoring = false;
   
   EventManager eventManager;
   ColorDecider currentColor;
+  Time time;
 
   PImage extralifeSheet;
   PImage[] extralifeIcons;
@@ -19,9 +20,12 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
 
   PImage letterbox;
 
-  UIStory (EventManager _eventManager, ColorDecider _currentColor) {
+  UIStory (EventManager _eventManager, Time t, ColorDecider _currentColor) {
     eventManager = _eventManager;
     currentColor = _currentColor;
+    time = t;
+    
+    lastScoreTick = time.getClock();
 
     eventManager.gameOverSubscribers.add(this);
     eventManager.abductionSubscribers.add(this);
@@ -53,7 +57,7 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
   }
 
   void abductionHandle(PVector p) {
-    extralifeAnimationStart = millis();
+    extralifeAnimationStart = time.getClock();
     extralifeAnimating = true;
     extralives++;
     scoring = false;
@@ -62,9 +66,9 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
   void update () {
     if (isGameOver) return;
     
-    if (millis() - lastScoreTick > 1000 && scoring) {
+    if (time.getClock() - lastScoreTick > 1000 && scoring) {
       score++;
-      lastScoreTick = millis();
+      lastScoreTick = time.getClock();
     }
   }
 
@@ -98,7 +102,7 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
       }
       int index = 4;
       if (extralifeAnimating) {
-        float progress = (millis() - extralifeAnimationStart)/extralifeAnimationDuration;
+        float progress = (time.getClock() - extralifeAnimationStart)/extralifeAnimationDuration;
         if (progress < 1) {
           index = 4 + floor((1 - progress - .0001) * 5);
         } else {

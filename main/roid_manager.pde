@@ -1,4 +1,8 @@
 class RoidManager implements updateable, renderable {
+
+  EventManager events;
+  Time time;
+
   float wait;
   int min;
   int max;
@@ -6,55 +10,42 @@ class RoidManager implements updateable, renderable {
   float lastFire;
   int roidindex = 0;
   Earth earth;
-  EventManager events;
-  
+
   PShape roidsheetV;
   PGraphics roidsheet;
   float roidSize = 400;
 
   Explosion[] splodes = new Explosion[25];
-  //PShape sheet;
   PImage sheet;
   PImage[] frames;
   int splodeindex = 0;
 
-  RoidManager (int _min, int _max, int poolsize, Earth earf, EventManager _events) {
+  RoidManager (int _min, int _max, int poolsize, Earth earf, EventManager _events, Time t) {
     min = _min;
     max = _max;
     roids = new Roid[poolsize];
 
     earth = earf;
     events = _events;
-    
-    //roidsheetV = loadShape("roids.svg");
-    //roidsheetV.disableStyle();
-    //roidsheet = createGraphics((int)roidSize, (int)roidSize);
-    //roidsheet.beginDraw();
-    //roidsheet.colorMode(HSB, 360, 100, 100);
-    //roidsheet.stroke(0,0,100);
-    //roidsheet.strokeWeight(2 * 100 / roidSize);
-    //roidsheet.noFill();
-    ////roidsheet.shapeMode(CENTER);
-    //roidsheet.shape(roidsheetV, 0, 0, roidSize, roidSize);
-    //roidsheet.endDraw();
+    time = t;
+
     sheet = loadImage("roids.png");
 
     for (int i = 0; i < poolsize; i++) {
-      roids[i] = new Roid(earth, events, sheet);
+      roids[i] = new Roid(earth, events, sheet, time);
     }
 
-    //sheet = loadImage("explosion-sheet.png");
     sheet = loadImage("explosion.png");
     frames = utils.sheetToSprites(sheet, 3, 1);
 
     for (int j = 0; j < splodes.length; j++) {
-      splodes[j] = new Explosion(frames, earth);
+      splodes[j] = new Explosion(frames, earth, time);
     }
   }
 
   void update () {
-    if (millis() - lastFire > wait) {
-      lastFire = millis();
+    if (time.getClock() - lastFire > wait) {
+      lastFire = time.getClock();
       wait = random(min, max);
       roids[roidindex % roids.length].fire();
       roidindex++;
@@ -77,9 +68,6 @@ class RoidManager implements updateable, renderable {
   }
 
   void render () {
-    //image(roidsheet, 0, 0, roidsheet.width, roidsheet.height);
-    //shapeMode(CENTER);
-    //shape(roidsheetV, 0, 0, roidSize, roidSize);
     for (Roid r : roids) r.render();
     for (Explosion s : splodes) s.render();
   }
@@ -98,8 +86,9 @@ class Roid extends Entity {
   Earth earth;
   Player player;
   EventManager eventManager;
+  Time time;
 
-  Roid (Earth earf, EventManager _eventmanager, PImage _sheet) {
+  Roid (Earth earf, EventManager _eventmanager, PImage _sheet, Time t) {
     dr = .1;
     sheet = _sheet;
     //sheet = loadImage("roids.png");
@@ -110,6 +99,7 @@ class Roid extends Entity {
     radius = sqrt(sq(width/2) + sq(height/2)) + model.width;
     earth = earf;
     eventManager = _eventmanager;
+    time = t;
   }
 
   void fire () {
@@ -125,9 +115,9 @@ class Roid extends Entity {
   void update () {
 
     if (!enabled) return; 
-    x += dx;
-    y += dy;
-    r += dr;
+    x += dx * time.getTimeScale();
+    y += dy * time.getTimeScale();
+    r += dr * time.getTimeScale();
   }
 
   void render() {
@@ -149,22 +139,24 @@ class Roid extends Entity {
 class Explosion extends Entity {
   PImage model;
   float start;
-  float duration = 300;
+  float duration = 500;
   boolean visible = false;
   PImage[] frames;
   Earth earth;
+  Time time;
   float angle = 0;
 
-  Explosion (PImage[] _frames, Earth _earth) {
+  Explosion (PImage[] _frames, Earth _earth, Time t) {
 
     frames = _frames;
     earth = _earth;
+    time = t;
   }
 
   void fire(float xpos, float ypos) {
     visible = true;
     angle = atan2(ypos - earth.y, xpos - earth.x);
-    start = millis();
+    start = time.getClock();
     r = degrees(angle) + 90;
     x = earth.x + cos(angle) * (earth.radius + 20);
     y = earth.y + sin(angle) * (earth.radius + 20);
@@ -174,12 +166,14 @@ class Explosion extends Entity {
 
     if (!visible) return;
 
-    if (millis() - start > duration) {
+    float elapsed = time.getClock() - start;
+
+    if (elapsed < duration) {
+      model = frames[round((elapsed / duration) * (frames.length - 1))];
+    } else {
       visible = false;
       earth.removeChild(this);
     }
-    int frameNum = floor(map((millis() - start) / duration, 0, 1, 0, frames.length)); // animation progress is proportional to duration progress
-    model = frames[frameNum > 2 ? 2 : frameNum]; // mapping above is not clamped to frames.length, can create array out of index error 
 
     x += dx;
     y += dy;

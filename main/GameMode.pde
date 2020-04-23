@@ -1,14 +1,13 @@
 abstract class GameMode {
 
   Earth earth;
-  //Player player;
   EventManager eventManager;
   StarManager starManager;
   RoidManager roids;
   SoundManager soundManager;
   ColorDecider currentColor;
   int tick = 0;
-  //Keys keys;
+  Time time;
 
   Camera camera;
   int score = 0;
@@ -22,11 +21,12 @@ abstract class GameMode {
     renderers = new ArrayList<renderable>();
     screeenRenderers = new ArrayList<renderableScreen>();
     eventManager = new EventManager();
-    earth = new Earth(this, 0, 0);
+    time = new Time(eventManager);
+    earth = new Earth(eventManager, time);
     camera = new Camera(0, 0);
-    roids = new RoidManager(70, 400, 100, earth, eventManager);
+    roids = new RoidManager(70, 400, 100, earth, eventManager, time);
     currentColor = new ColorDecider();
-    starManager = new StarManager(currentColor);
+    starManager = new StarManager(currentColor, time);
 
     soundManager = new SoundManager(main, eventManager);
   }
@@ -40,13 +40,10 @@ class OviraptorMode extends GameMode {
 
   OviraptorMode (PApplet _main) {
     super(_main);
-    //player = new Player(eventManager, earth, 2);
-    //trex = new Trex(earth, player, camera);
     earth.addChild(trex);
     updaters.add(earth);
     updaters.add(roids);
     updaters.add(camera);
-    //updaters.add(player);
     updaters.add(currentColor);
     updaters.add(trex);
     updaters.add(starManager);
@@ -71,11 +68,11 @@ class StoryMode extends GameMode {
 
   StoryMode (PApplet _main) {
     super(_main);
-    playerManager = new PlayerManager(eventManager, earth);
-    //player = new Player(eventManager, earth, 1);
-    ui = new UIStory(eventManager, currentColor);
+    playerManager = new PlayerManager(eventManager, earth, time);
+    ui = new UIStory(eventManager, time, currentColor);
     ufoManager = new UFOManager (currentColor, earth, playerManager, eventManager);
 
+    updaters.add(time);
     updaters.add(ui);
     updaters.add(earth);
     updaters.add(roids);
@@ -99,16 +96,15 @@ class StoryMode extends GameMode {
     tick++;
 
     if (tick==30) {
-      ufoManager.spawnUFOAbducting();
+      //ufoManager.spawnUFOAbducting();
     }
-    
+
     pushMatrix(); // world-space
     translate(camera.x, camera.y);
     for (updateable u : updaters) u.update();
     for (renderable r : renderers) r.render();
-    
+
     popMatrix(); // screen-space
     for (renderableScreen rs : screeenRenderers) rs.render(); // UI
-    
   }
 }

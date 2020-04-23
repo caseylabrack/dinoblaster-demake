@@ -39,3 +39,66 @@ class ColorDecider implements updateable {
     return currentHue;
   }
 }
+
+class Time implements updateable, playerDiedEvent, gameOverEvent {
+
+  private float clock;
+  private float lastmillis;
+  private float timeScale = 1;
+  private long lastNanos;
+  private float delta;
+
+  private boolean dying = false;
+  private float dyingStartTime;
+  final float dyingDuration = 3e3;
+
+  EventManager eventManager;
+
+  Time (EventManager ev) {
+    eventManager = ev;
+
+    eventManager.playerDiedSubscribers.add(this);
+    eventManager.gameOverSubscribers.add(this);
+    
+    lastmillis = millis();
+    clock = millis();
+  }
+
+  void update () {
+    
+    clock += (millis() - lastmillis) * timeScale;
+    lastmillis = millis();
+    
+    delta = (frameRateLastNanos - lastNanos)/1e6/16.666;
+    lastNanos = frameRateLastNanos;
+
+    eventManager.playerDiedSubscribers.add(this);
+
+    if (dying) {
+      float progress = (millis() - dyingStartTime) / dyingDuration;
+      if (progress < 1) {
+        timeScale = utils.easeInOutExpo(progress, .1, .9, 1);
+      } else {
+        dying = false;
+      }
+    }
+  }
+
+  void gameOverHandle(){
+    dying = true;
+    dyingStartTime = millis();
+  }
+
+  void playerDiedHandle(PVector position) {
+    dying = true;
+    dyingStartTime = millis();
+  }
+
+  public float getTimeScale () {
+    //return timeScale; 
+    return timeScale * delta; 
+  }
+  public float getClock() {
+    return clock;
+  }
+}

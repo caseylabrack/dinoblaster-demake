@@ -2,7 +2,6 @@ import processing.sound.*;
 
 boolean paused = false;
 GameMode game;
-long prev;
 PShader glow;
 
 // recording
@@ -24,7 +23,6 @@ void setup () {
   glow = loadShader("glow2.glsl");
   //game = new OviraptorMode(this);
   game = new StoryMode(this);
-  prev = frameRateLastNanos;
 }
 
 void keyPressed() {
@@ -102,7 +100,6 @@ void draw () {
   }
 
   //if(frameCount % 60==0) println((frameRateLastNanos - prev)/1e6/16.666);
-  prev = frameRateLastNanos;
   //if(mousePressed) 
   //filter(glow);
 
