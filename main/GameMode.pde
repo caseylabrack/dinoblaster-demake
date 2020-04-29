@@ -24,7 +24,7 @@ abstract class GameMode {
     time = new Time(eventManager);
     earth = new Earth(eventManager, time);
     camera = new Camera(0, 0);
-    roids = new RoidManager(70, 400, 100, earth, eventManager, time);
+    //roids = new RoidManager(70, 400, 100, earth, eventManager, time);
     currentColor = new ColorDecider();
     starManager = new StarManager(currentColor, time);
 
@@ -75,7 +75,7 @@ class StoryMode extends GameMode {
     updaters.add(time);
     updaters.add(ui);
     updaters.add(earth);
-    updaters.add(roids);
+    //updaters.add(roids);
     updaters.add(camera);
     updaters.add(currentColor);
     updaters.add(starManager);
@@ -85,7 +85,7 @@ class StoryMode extends GameMode {
     renderers.add(ufoManager);
     renderers.add(playerManager);
     renderers.add(earth);
-    renderers.add(roids);
+    //renderers.add(roids);
     renderers.add(starManager);
 
     screeenRenderers.add(ui);

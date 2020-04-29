@@ -69,7 +69,7 @@ class Time implements updateable, playerDiedEvent, gameOverEvent {
     clock += (millis() - lastmillis) * timeScale;
     lastmillis = millis();
     
-    delta = (frameRateLastNanos - lastNanos)/1e6/16.666;
+    delta = min((frameRateLastNanos - lastNanos)/1e6/16.666, 2);
     lastNanos = frameRateLastNanos;
 
     eventManager.playerDiedSubscribers.add(this);

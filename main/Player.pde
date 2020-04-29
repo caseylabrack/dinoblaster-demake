@@ -123,7 +123,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
   }
 }
 
-class Player extends Entity implements updateable, renderable {
+class Player extends Entity implements updateable, renderable { 
   PImage model;
   PImage[] runFrames = new PImage[2];
   PImage idle;
@@ -153,10 +153,10 @@ class Player extends Entity implements updateable, renderable {
     runFrames[0] = frames[1];
     runFrames[1] = frames[2];
     model = idle;
-    earth.addChild(this);
     x = pos==null ? earth.x + cos(radians(-90)) * (earth.radius + 30) : pos.x;
     y = pos==null ? earth.y + sin(radians(-90)) * (earth.radius + 30) : pos.y;
     r = degrees(atan2(earth.y - y, earth.x - x)) - 90;
+    earth.addChild(this);
   }
 
   float getAngleFromEarth () {
@@ -168,15 +168,9 @@ class Player extends Entity implements updateable, renderable {
 
     if (keys.left != keys.right) { // xor
       model = runFrames[utils.cycleRangeWithDelay(runFrames.length, 4, frameCount)];
-      if (keys.left) {
-        setPosition(utils.rotateAroundPoint(getPosition(), earth.getPosition(), runSpeed * -1 * time.getTimeScale()));
-        dr -= runSpeed * time.getTimeScale();
-        direction = -1;
-      } else {
-        setPosition(utils.rotateAroundPoint(getPosition(), earth.getPosition(), runSpeed * 1 * time.getTimeScale()));
-        dr += runSpeed * time.getTimeScale();
-        direction = 1;
-      }
+      direction = keys.left ? -1 : 1;
+      setPosition(utils.rotateAroundPoint(getPosition(), new PVector(0, 0), runSpeed * time.getTimeScale() * direction));
+      dr += runSpeed * time.getTimeScale() * direction;
     } else {
       model = idle;
     }
@@ -194,13 +188,13 @@ class Player extends Entity implements updateable, renderable {
 
     if (!visible) return;
     pushMatrix();
-    scale(direction, 1);
-    translate(x * direction, y);
-    rotate(radians(r  * direction));
-    imageMode(CENTER);
     pushStyle();
-    //tint(currentColor.getColor());
-    image(model, 0, 0, model.width, model.height);
+    imageMode(CENTER);
+    PVector trans = globalPos();
+    scale(direction, 1);
+    translate(trans.x * direction, trans.y);
+    rotate(radians(globalRote() * direction));
+    image(model, 0, 0);
     popStyle();
     popMatrix();
   }

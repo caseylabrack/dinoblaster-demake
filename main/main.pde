@@ -15,7 +15,7 @@ void setup () {
   size(1024, 768, P2D);
   //fullScreen(P2D);
 
-  colorMode(HSB, 360, 100, 100);
+  colorMode(HSB, 360, 100, 100, 1);
   //noCursor();
 
   assets.load();
@@ -82,14 +82,14 @@ void keyReleased() {
   }
 }
 
-//void mousePressed () {
-//  frameRate(5);
-//}
+void mousePressed () {
+  frameRate(5);
+}
 
-//void mouseReleased () {
-//  frameRate(60);
-//  //rec = true;
-//}
+void mouseReleased () {
+  frameRate(60);
+  rec = true;
+}
 
 void draw () {
 

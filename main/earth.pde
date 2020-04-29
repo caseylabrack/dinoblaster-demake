@@ -21,14 +21,14 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
 
     x = 0;
     y = 0;
-    dx = 0;
+    dx = 1;
     dy = 0;
     dr = 2.3;
 
     model = loadImage("earth-fill.png");
     radius = model.width/2;
 
-    eventManager.gameOverSubscribers.add(this);    
+    eventManager.gameOverSubscribers.add(this);
   }
 
   void gameOverHandle () {
@@ -51,7 +51,6 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
 
     dx = 0 - x;
     dy = 0 - y;
-    dr = 2.3;
 
     if (shake) {
       shakeAngle = random(0, TWO_PI);
@@ -73,26 +72,20 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
       }
     }
 
-    dx *= time.getTimeScale();
-    dy *= time.getTimeScale();
-    dr *= time.getTimeScale();
-
-    x += dx;
-    y += dy;
-    r += dr;
-    updateChildren();
+    x += dx * time.getTimeScale();
+    y += dy * time.getTimeScale();
+    r += dr * time.getTimeScale();
   }
 
   void render () {
     pushMatrix();
-    rotate(radians(r));
-    imageMode(CENTER);
+    pushStyle();
+    tint(0, 0, 100, .5);
+    PVector trans = globalPos();
+    translate(trans.x, trans.y);
+    rotate(radians(globalRote()));
     image(model, 0, 0, model.width, model.height);
-    //pushStyle();
-    //stroke(30,60,60);
-    //noFill();
-    //line(0, 0, 0, radius);
-    //popStyle();
-    popMatrix();
+    popStyle();
+    popMatrix();    
   }
 }
