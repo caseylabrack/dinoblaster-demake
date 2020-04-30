@@ -39,8 +39,9 @@ class RoidManager implements updateable, renderable {
     frames = utils.sheetToSprites(sheet, 3, 1);
 
     for (int j = 0; j < splodes.length; j++) {
-      splodes[j] = new Explosion(frames, earth, time);
+      splodes[j] = new Explosion(frames, time);
     }
+
   }
 
   void update () {
@@ -56,10 +57,9 @@ class RoidManager implements updateable, renderable {
         r.update();
         if (dist(r.x, r.y, earth.x, earth.y) < earth.radius ) {
           r.enabled = false;
-          splodes[splodeindex % splodes.length].fire(r.x, r.y);
-          earth.addChild(splodes[splodeindex % splodes.length]);
+          splodes[splodeindex % splodes.length].enable(r.globalPos(), earth);
           splodeindex++;
-          events.dispatchRoidImpact(new PVector(r.x, r.y));
+          events.dispatchRoidImpact(r.globalPos());
         }
       }
     }
@@ -125,10 +125,12 @@ class Roid extends Entity {
     pushMatrix();
     imageMode(CENTER);
     translate(x, y);
+
     pushMatrix();
     rotate(radians(angle+90));
     image(trail, 0, -25, trail.width/2, trail.height/2);
     popMatrix();
+
     rotate(r);
     image(model, 0, 0, model.width, model.height);
     //image(model, 0, 0, model.width/2, model.height/2);
@@ -140,39 +142,41 @@ class Explosion extends Entity {
   PImage model;
   float start;
   float duration = 500;
-  boolean visible = false;
+  boolean enabled = false;
   PImage[] frames;
-  Earth earth;
   Time time;
   float angle = 0;
 
-  Explosion (PImage[] _frames, Earth _earth, Time t) {
+  Explosion (PImage[] _frames, Time t) {
 
     frames = _frames;
-    earth = _earth;
     time = t;
   }
 
-  void fire(float xpos, float ypos) {
-    visible = true;
-    angle = atan2(ypos - earth.y, xpos - earth.x);
+  void enable (PVector pos, Earth earth) {
+
+    enabled = true;
     start = time.getClock();
-    r = degrees(angle) + 90;
+
+    setPosition(pos);
+    angle = atan2(pos.y - earth.y, pos.x - earth.x);
     x = earth.x + cos(angle) * (earth.radius + 20);
     y = earth.y + sin(angle) * (earth.radius + 20);
+    r = degrees(angle) + 90;
+    earth.addChild(this);
   }
 
   void update () {
 
-    if (!visible) return;
+    if (!enabled) return;
 
     float elapsed = time.getClock() - start;
 
     if (elapsed < duration) {
       model = frames[round((elapsed / duration) * (frames.length - 1))];
     } else {
-      visible = false;
-      earth.removeChild(this);
+      enabled = false;
+      parent.removeChild(this);
     }
 
     x += dx;
@@ -185,12 +189,14 @@ class Explosion extends Entity {
   }
 
   void render () {
-    if (!visible) return;
+    if (!enabled) return;
     pushMatrix();
-    translate(x, y);
-    rotate(radians(r));
-    imageMode(CENTER);
+    pushStyle();
+    PVector trans = globalPos();
+    translate(trans.x, trans.y);
+    rotate(radians(globalRote()));
     image(model, 0, 0, model.width, model.height);
-    popMatrix();
+    popStyle();
+    popMatrix(); 
   }
 }

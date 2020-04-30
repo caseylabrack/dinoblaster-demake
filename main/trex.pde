@@ -45,7 +45,7 @@ class Trex extends Entity implements gameOverEvent, updateable, renderable {
     if (chasing) {
       model = runFrames[utils.cycleRangeWithDelay(runFrames.length, 12, frameCount)];
       if (model==runFrames[1]) earth.shake(.5);
-      setPosition(utils.rotateAroundPoint(getPosition(), earth.getPosition(), runSpeed * direction));
+      setPosition(utils.rotateAroundPoint(globalPos(), earth.globalPos(), runSpeed * direction));
       dr += runSpeed * direction;
     } else {
       model = idle;

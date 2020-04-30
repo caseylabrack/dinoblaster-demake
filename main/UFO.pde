@@ -58,27 +58,6 @@ class UFOManager implements updateable, renderable, abductionEvent, playerDiedEv
   }
 }
 
-//abstract class UFO extends Entity {
-//  ColorDecider currentColor;
-//  Earth earth;
-//  PlayerManager playerManager;
-//  EventManager eventManager;
-
-//  final static int initialDist = 1000;
-//  final static int initialSpeed = 3;
-//  final static int initialRotate = 1;
-
-//  final float finalDist = 300;
-
-//  PVector lilBrontoPos = new PVector();
-//  int lilBrontoFacingDirection = -1;
-//  float lilBrontoAngle = 0;
-
-//  final float snatchDuration = 3e3;
-//  final float maxBeamWidth = 15;
-
-//}
-
 class UFO extends Entity implements updateable, renderable {
 
   PImage[] brontoAbductionFrames;
@@ -137,7 +116,6 @@ class UFO extends Entity implements updateable, renderable {
 
   float progress, dist, angle;
 
-  //UFO (ColorDecider _color, PImage[] _brontoAbductionFrames, Earth _earth, Player _player, PImage[] _ufoFrames, EventManager _ev) {
   UFO (ColorDecider _color, Earth _earth, PlayerManager _pm, EventManager _ev) {
 
     currentColor = _color;
@@ -156,9 +134,6 @@ class UFO extends Entity implements updateable, renderable {
     startApproach = millis();
   }
 
-  void init() {
-  }
-
   void update() {
 
     switch(state) {
@@ -169,7 +144,7 @@ class UFO extends Entity implements updateable, renderable {
         angle = (float)Math.atan2(y - earth.y, x - earth.x);
         x = earth.x + cos(angle) * (dist-initialSpeed);
         y = earth.y + sin(angle) * (dist-initialSpeed);
-        setPosition(utils.rotateAroundPoint(getPosition(), earth.getPosition(), initialRotate * -1));
+        setPosition(utils.rotateAroundPoint(globalPos(), earth.globalPos(), initialRotate * -1));
       } else {
         state = APPROACHING;
         startApproach = millis();
@@ -184,7 +159,7 @@ class UFO extends Entity implements updateable, renderable {
         //model = ufoFrames[floor(progress * 9)];
         model = ufoFrames[floor(utils.easeInQuad(progress, 0, 9, 1))];
         //currentSize = utils.easeInOutExpo(progress * 100, startSize, normalSize - startSize, 100);
-        setPosition(utils.rotateAroundPoint(getPosition(), earth.getPosition(), (progress * circlingMaxSpeed + initialRotate) * -1));
+        setPosition(utils.rotateAroundPoint(globalPos(), earth.globalPos(), (progress * circlingMaxSpeed + initialRotate) * -1));
         angle = (float)Math.atan2(y - earth.y, x - earth.x);
         dist = utils.easeOutQuad(progress, startDist, -(startDist - finalDist), 1);
         x = earth.x + cos(angle) * dist;
@@ -198,7 +173,7 @@ class UFO extends Entity implements updateable, renderable {
     case CIRCLING:
       progress = (millis() - startCircling)  / circlingTime;
       if (progress < 1) {
-        setPosition(utils.rotateAroundPoint(getPosition(), earth.getPosition(), utils.easeOutQuad((1 - progress), initialRotate, circlingMaxSpeed + initialRotate, 1) * -1));
+        setPosition(utils.rotateAroundPoint(globalPos(), earth.globalPos(), utils.easeOutQuad((1 - progress), initialRotate, circlingMaxSpeed + initialRotate, 1) * -1));
         //setPosition(utils.rotateAroundPoint(getPosition(), earth.getPosition(), ((1 - progress) * (circlingMaxSpeed + initialRotate)) * -1));
       } else {
         scanstart = millis();
@@ -209,14 +184,14 @@ class UFO extends Entity implements updateable, renderable {
     case SCANNING:
       if (millis() - scanstart < scanDuration) {
         if (millis() - scanstart > scanningStartDelay + scanningTransitioning && millis() - scanstart < scanningStartDelay + scanningTransitioning + scanningPause) {
-          if (playerManager.player!=null) {
-            if (utils.unsignedAngleDiff(playerManager.player.getAngleFromEarth(), degrees((float)Math.atan2(earth.y - y, earth.x - x))) < snatchMargin) {
+          if (playerManager.player!=null) {            
+            if (utils.unsignedAngleDiff(utils.angleOf(earth.globalPos(), playerManager.player.globalPos()), utils.angleOf(earth.globalPos(), globalPos())) < snatchMargin) {
               snatchStart = millis();
-              snatchStartPos = playerManager.player.getPosition();
+              snatchStartPos = playerManager.player.globalPos();
               lilBrontoFacingDirection = playerManager.player.direction;
               state = SNATCHING;
-              lilBrontoAngle = playerManager.player.r;
-              eventManager.dispatchAbduction(playerManager.player.getPosition());
+              lilBrontoAngle = playerManager.player.globalRote();
+              eventManager.dispatchAbduction(playerManager.player.globalPos());
             }
           }
         }
@@ -228,7 +203,7 @@ class UFO extends Entity implements updateable, renderable {
     case SNATCHING:
       progress = (millis() - snatchStart)  / snatchDuration;
       if (progress <= 1) {
-        lilBrontoPos.set(PVector.lerp(snatchStartPos, getPosition(), progress));
+        lilBrontoPos.set(PVector.lerp(snatchStartPos, globalPos(), progress));
       } else {
         state = LEAVING;
       }
@@ -377,7 +352,7 @@ class UFOrespawn extends Entity {
         angle = (float)Math.atan2(y - earth.y, x - earth.x);
         x = earth.x + cos(angle) * (dist-initialSpeed);
         y = earth.y + sin(angle) * (dist-initialSpeed);
-        setPosition(utils.rotateAroundPoint(getPosition(), earth.getPosition(), initialRotate * -1));
+        setPosition(utils.rotateAroundPoint(globalPos(), earth.globalPos(), initialRotate * -1));
       } else {
         state = ANTISNATCHING;
         snatchStart = millis();
@@ -390,7 +365,7 @@ class UFOrespawn extends Entity {
     case ANTISNATCHING:
       progress = (millis() - snatchStart)  / snatchDuration;
       if (progress <= 1) {
-        lilBrontoPos.set(PVector.lerp(getPosition(), snatchTarget, progress));
+        lilBrontoPos.set(PVector.lerp(globalPos(), snatchTarget, progress));
       } else {
         state = WAITING;
         flickerStart = millis();
@@ -423,7 +398,7 @@ class UFOrespawn extends Entity {
       break;
     }
   }
-  
+
   void render () {
 
     if (state==ANTISNATCHING || state==WAITING) {
@@ -446,8 +421,8 @@ class UFOrespawn extends Entity {
           flickerStart = millis();
         }
       }
-      
-      if(display) image(assets.ufostuff.brontoAbductionFrames[ceil((1-progress) * 8)], 0, 0);
+
+      if (display) image(assets.ufostuff.brontoAbductionFrames[ceil((1-progress) * 8)], 0, 0);
 
       popMatrix();
       popStyle();

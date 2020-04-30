@@ -22,28 +22,13 @@ class Entity {
     children.remove(obj);
   }
 
-  float[] localToGlobal() {
-
-    if (parent!=null) {
-      float a = atan2(y, x) + radians(parent.r);
-      float d = dist(x, y, 0, 0);
-      float x = parent.x + cos(a) * d;
-      float y = parent.y + sin(a) * d;
-      float rote = parent.r + r;
-      float[] transform = {x, y, rote};
-      return transform;
-    }
-    float[] transform = {x, y, r};
-    return transform;
-  }
-
   PVector globalPos() {
     if (parent!=null) {
       float a = atan2(y, x) + radians(parent.r);
       float d = dist(x, y, 0, 0);
       return new PVector(parent.x + cos(a) * d, parent.y + sin(a) * d);
     }
-    return getPosition();
+    return new PVector(x, y);
   }
 
   float globalRote() {
@@ -57,8 +42,17 @@ class Entity {
     x = pos.x;
     y = pos.y;
   }
+  
+  void setPosition (float _x, float _y) {
+    x = _x;
+    y = _y;
+  }
 
-  PVector getPosition () {
+  PVector localPos () {
     return new PVector(x, y);
+  }
+  
+  float localRote() {
+    return r;
   }
 }

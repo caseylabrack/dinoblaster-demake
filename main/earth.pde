@@ -80,7 +80,6 @@ class Earth extends Entity implements gameOverEvent, updateable, renderable {
   void render () {
     pushMatrix();
     pushStyle();
-    tint(0, 0, 100, .5);
     PVector trans = globalPos();
     translate(trans.x, trans.y);
     rotate(radians(globalRote()));

@@ -1,5 +1,14 @@
 static class utils {
 
+  static float angleOf(PVector from, PVector to) {
+    
+    return degrees(atan2(to.y - from.y, to.x - from.x));
+  }
+  
+  static float angleOfRadians(PVector from, PVector to) {
+    return atan2(to.y - from.y, to.x - from.x);
+  }
+  
   static PVector rotateAroundPoint (PVector obj, PVector center, float degrees) {
     float angle = degrees(atan2(center.y - obj.y, center.x - obj.x));
     float dist = dist(center.x, center.y, obj.x, obj.y);

@@ -16,10 +16,12 @@ void setup () {
   //fullScreen(P2D);
 
   colorMode(HSB, 360, 100, 100, 1);
+  imageMode(CENTER);
+
   //noCursor();
 
-  assets.load();
 
+  assets.load();
   glow = loadShader("glow2.glsl");
   //game = new OviraptorMode(this);
   game = new StoryMode(this);
@@ -28,17 +30,17 @@ void setup () {
 void keyPressed() {
 
   switch (keyCode) {   
-    case 49:
-      game = new StoryMode(this);
-      break;
+  case 49:
+    game = new StoryMode(this);
+    break;
 
     //case '2':
     //  game = new OviraptorMode(this);
     //  break;
 
-    case 32:
-      paused = !paused;
-      break;
+  case 32:
+    paused = !paused;
+    break;
 
     //case '3':
     //  if (frameRate < 30) {
@@ -54,7 +56,7 @@ void keyPressed() {
     break;
 
   case 39:
-  keys.setKey(Keys.RIGHT, true);
+    keys.setKey(Keys.RIGHT, true);
     //keys.right = true;
     break;
 
@@ -64,7 +66,7 @@ void keyPressed() {
 }
 
 void keyReleased() {
-  
+
   switch (keyCode) {   
 
   case 37:
@@ -88,12 +90,11 @@ void mousePressed () {
 
 void mouseReleased () {
   frameRate(60);
-  rec = true;
+  //rec = true;
 }
 
 void draw () {
 
-  //tint(0,0,50);
   if (!paused) {
     background(0);
     game.update();
@@ -125,22 +126,22 @@ class Keys {
   boolean anykey = false;
 
   void setKey(int _key, boolean _value) {
-    
+
     switch(_key) {
-    
-      case LEFT:
+
+    case LEFT:
       left = _value;
       break;
-      
-      case RIGHT:
+
+    case RIGHT:
       right = _value;
       break;
-      
-      default:
+
+    default:
       println("unknown key press/release");
       break;
     }
-    
+
     anykey = left || right;
   }
 }

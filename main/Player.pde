@@ -47,15 +47,15 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
   void roidImpactHandle(PVector impact) {
 
     if (player!=null) {
-      if (dist(player.x, player.y, impact.x, impact.y) < 50) {
-        player.cleanup();
-        player = null;
+      if (PVector.dist(player.globalPos(), impact) < 50) {
         extralives--;
         if (extralives<0) {
           eventManager.dispatchGameOver();
         } else {
-          eventManager.dispatchPlayerDied(player.getPosition());
+          eventManager.dispatchPlayerDied(player.globalPos());
         }
+        player.cleanup();
+        player = null;
       }
     }
   }
@@ -169,7 +169,7 @@ class Player extends Entity implements updateable, renderable {
     if (keys.left != keys.right) { // xor
       model = runFrames[utils.cycleRangeWithDelay(runFrames.length, 4, frameCount)];
       direction = keys.left ? -1 : 1;
-      setPosition(utils.rotateAroundPoint(getPosition(), new PVector(0, 0), runSpeed * time.getTimeScale() * direction));
+      setPosition(utils.rotateAroundPoint(localPos(), new PVector(0, 0), runSpeed * time.getTimeScale() * direction));
       dr += runSpeed * time.getTimeScale() * direction;
     } else {
       model = idle;
