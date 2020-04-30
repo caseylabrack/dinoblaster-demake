@@ -8,12 +8,13 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
 
   PImage model;
   int extralives = 0;
-  int flicker = 60;
+  
   boolean display = true;
   float flickerStart = 0;
   float flickerDuration = 6e3;
   boolean respawning = false;
-  float flickerInitialRate = 250;
+  float flickerInitialRate = 1e3;
+  final static float respawnReadyFlickerRate = 50;
   float flickerRate = 250;
   float respawningY = -100;
   float respawningYTarget = -197;
@@ -25,7 +26,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
   float spawningStart = 0;
   float spawningDuration = 2e3;
   float spawningRate = 125;
-  float spawningFlickerStart;
+  private float spawningFlickerStart;
 
   PlayerManager (EventManager _ev, Earth _earth, Time t) {
     eventManager = _ev;
@@ -109,7 +110,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
       }
       if (progress < 1) {
         respawningY = utils.easeOutQuad(progress, -100, respawningYTarget - (-100), 1);    
-        flickerRate = utils.easeOutExpo(progress, 250, 50 - 250, 1);
+        flickerRate = utils.easeOutExpo(progress, flickerInitialRate, respawnReadyFlickerRate - flickerInitialRate, 1);
       } else { // allow respawning
         if (keys.anykey) {
           respawning = false;
@@ -129,22 +130,15 @@ class Player extends Entity implements updateable, renderable {
   PImage idle;
   float runSpeed = 5;
   int direction = 1;
-  String state = "idle";
-  Boolean leftKey = false;
-  Boolean rightKey = false;
-  Boolean visible = true;
   int playerNum = 1;
   int framesTotal = 8;
-  float delay = 100;
 
   EventManager eventManager;
-  Earth earth;
   Time time;
 
-  Player (EventManager _eventManager, Time t, Earth _earth, int whichPlayer, PVector pos) {
+  Player (EventManager _eventManager, Time t, Earth earth, int whichPlayer, PVector pos) {
 
     eventManager = _eventManager;
-    earth = _earth;
     time = t;
 
     PImage sheet = whichPlayer==1 ? loadImage("bronto-frames.png") : loadImage("oviraptor-frames.png");
@@ -157,11 +151,6 @@ class Player extends Entity implements updateable, renderable {
     y = pos==null ? earth.y + sin(radians(-90)) * (earth.radius + 30) : pos.y;
     r = degrees(atan2(earth.y - y, earth.x - x)) - 90;
     earth.addChild(this);
-  }
-
-  float getAngleFromEarth () {
-
-    return degrees((float)Math.atan2(earth.y - y, earth.x - x));
   }
 
   void update () {
@@ -185,8 +174,6 @@ class Player extends Entity implements updateable, renderable {
   }
 
   void render () {
-
-    if (!visible) return;
     pushMatrix();
     pushStyle();
     imageMode(CENTER);
@@ -200,6 +187,6 @@ class Player extends Entity implements updateable, renderable {
   }
 
   void cleanup () {
-    earth.removeChild(this);
+    parent.removeChild(this);
   }
 }
