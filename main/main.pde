@@ -1,7 +1,7 @@
 import processing.sound.*;
 
 boolean paused = false;
-GameMode game;
+Scene currentScene;
 PShader glow;
 
 // recording
@@ -20,44 +20,32 @@ void setup () {
 
   //noCursor();
 
-
   assets.load();
   glow = loadShader("glow2.glsl");
-  //game = new OviraptorMode(this);
-  game = new StoryMode(this);
+  currentScene = new SinglePlayer();
 }
 
 void keyPressed() {
 
+  //println(key, keyCode);
+  //println(keyCode == LEFT);
+  
   switch (keyCode) {   
+    
   case 49:
-    game = new StoryMode(this);
+    currentScene = new SinglePlayer();
     break;
-
-    //case '2':
-    //  game = new OviraptorMode(this);
-    //  break;
 
   case 32:
     paused = !paused;
     break;
 
-    //case '3':
-    //  if (frameRate < 30) {
-    //    frameRate(60);
-    //  } else {
-    //    frameRate(10);
-    //  }
-    //  break;
-
-  case 37:
-    //keys.left = true;
+  case LEFT:
     keys.setKey(Keys.LEFT, true);
     break;
 
-  case 39:
+  case RIGHT:
     keys.setKey(Keys.RIGHT, true);
-    //keys.right = true;
     break;
 
   default:
@@ -69,13 +57,11 @@ void keyReleased() {
 
   switch (keyCode) {   
 
-  case 37:
-    //keys.left = false;
+  case LEFT:
     keys.setKey(Keys.LEFT, false);
     break;
 
-  case 39:
-    //keys.right = false;
+  case RIGHT:
     keys.setKey(Keys.RIGHT, false);
     break;
 
@@ -97,8 +83,14 @@ void draw () {
 
   if (!paused) {
     background(0);
-    game.update();
+    currentScene.update();
+    currentScene.render();
   }
+
+  //if (!paused) {
+  //  background(0);
+  //  game.update();
+  //}
 
   //if(frameCount % 60==0) println((frameRateLastNanos - prev)/1e6/16.666);
   //if(mousePressed) 

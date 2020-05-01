@@ -47,6 +47,7 @@ class Time implements updateable, playerDiedEvent, gameOverEvent {
   private float timeScale = 1;
   private long lastNanos;
   private float delta;
+  private int tick;
 
   private boolean dying = false;
   private float dyingStartTime;
@@ -59,16 +60,18 @@ class Time implements updateable, playerDiedEvent, gameOverEvent {
 
     eventManager.playerDiedSubscribers.add(this);
     eventManager.gameOverSubscribers.add(this);
-    
+
     lastmillis = millis();
     clock = millis();
   }
 
   void update () {
-    
+
+    tick++;
+
     clock += (millis() - lastmillis) * timeScale;
     lastmillis = millis();
-    
+
     delta = min((frameRateLastNanos - lastNanos)/1e6/16.666, 2);
     lastNanos = frameRateLastNanos;
 
@@ -84,7 +87,7 @@ class Time implements updateable, playerDiedEvent, gameOverEvent {
     }
   }
 
-  void gameOverHandle(){
+  void gameOverHandle() {
     dying = true;
     dyingStartTime = millis();
   }
@@ -96,9 +99,12 @@ class Time implements updateable, playerDiedEvent, gameOverEvent {
 
   public float getTimeScale () {
     //return timeScale; 
-    return timeScale * delta; 
+    return timeScale * delta;
   }
   public float getClock() {
     return clock;
+  }
+  public float getTick() {
+    return tick;
   }
 }

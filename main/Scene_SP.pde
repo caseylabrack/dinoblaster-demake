@@ -1,4 +1,22 @@
-abstract class GameMode {
+abstract class Scene {
+  public int sceneID;
+  final static int SPLASH = 0;
+  final static int MENU = 1;
+  final static int PTUTORIAL = 2;
+  final static int SINGLEPLAYER = 3;
+  final static int MULTIPLAYER = 4;
+  final static int OVIRAPTOR = 5;
+
+  public int status;
+  final static int RUNNING = 1;
+  final static int DONE = 2;
+
+  abstract void update();
+  abstract void render();
+  abstract int nextScene();
+}
+
+class SinglePlayer extends Scene {
 
   Earth earth;
   EventManager eventManager;
@@ -6,20 +24,19 @@ abstract class GameMode {
   RoidManager roids;
   SoundManager soundManager;
   ColorDecider currentColor;
-  int tick = 0;
+  UIStory ui;
+  UFOManager ufoManager;
+  PlayerManager playerManager;
   Time time;
-
   Camera camera;
-  int score = 0;
-  ArrayList<updateable> updaters;
-  ArrayList<renderableScreen> screeenRenderers;
-  ArrayList<renderable> renderers;
-  ArrayList<deletable> deletables;
 
-  GameMode (PApplet main) {
-    updaters = new ArrayList<updateable>();
-    renderers = new ArrayList<renderable>();
-    screeenRenderers = new ArrayList<renderableScreen>();
+  ArrayList<updateable> updaters = new ArrayList<updateable>();
+  ArrayList<renderableScreen> screeenRenderers = new ArrayList<renderableScreen>();
+  ArrayList<renderable> renderers =  new ArrayList<renderable>();
+
+  SinglePlayer() {
+    sceneID = SINGLEPLAYER;
+
     eventManager = new EventManager();
     time = new Time(eventManager);
     earth = new Earth(eventManager, time);
@@ -28,46 +45,8 @@ abstract class GameMode {
     currentColor = new ColorDecider();
     starManager = new StarManager(currentColor, time);
 
-    soundManager = new SoundManager(main, eventManager);
-  }
+    //soundManager = new SoundManager(main, eventManager);
 
-  abstract void update();
-}
-
-class OviraptorMode extends GameMode {
-
-  Trex trex;
-
-  OviraptorMode (PApplet _main) {
-    super(_main);
-    earth.addChild(trex);
-    updaters.add(earth);
-    updaters.add(roids);
-    updaters.add(camera);
-    updaters.add(currentColor);
-    updaters.add(trex);
-    updaters.add(starManager);
-
-    //renderers.add(player);
-    renderers.add(earth);
-    renderers.add(starManager);
-    renderers.add(trex);
-  }
-
-  void update () {
-    for (updateable u : updaters) u.update();
-    for (renderable r : renderers) r.render();
-  }
-}
-
-class StoryMode extends GameMode {
-
-  UIStory ui;
-  UFOManager ufoManager;
-  PlayerManager playerManager;
-
-  StoryMode (PApplet _main) {
-    super(_main);
     playerManager = new PlayerManager(eventManager, earth, time);
     ui = new UIStory(eventManager, time, currentColor);
     ufoManager = new UFOManager (currentColor, earth, playerManager, eventManager);
@@ -93,18 +72,21 @@ class StoryMode extends GameMode {
 
   void update () {
 
-    tick++;
+    if (time.getTick()==20) ufoManager.spawnUFOAbducting();
 
-    if (tick==30) {
-      ufoManager.spawnUFOAbducting();
-    }
+    for (updateable u : updaters) u.update();
+  }
 
+  void render () {
     pushMatrix(); // world-space
     translate(camera.x, camera.y);
-    for (updateable u : updaters) u.update();
     for (renderable r : renderers) r.render();
 
     popMatrix(); // screen-space
     for (renderableScreen rs : screeenRenderers) rs.render(); // UI
+  }
+
+  int nextScene () {
+    return SINGLEPLAYER;
   }
 }

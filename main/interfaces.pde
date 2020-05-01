@@ -15,3 +15,8 @@ interface renderableScreen {
 interface deletable {
   void cleanupCheck();
 }
+
+//interface scene {
+//  int update();
+//  int render();
+//}
