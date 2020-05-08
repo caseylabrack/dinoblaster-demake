@@ -3,10 +3,16 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
   PFont body;
   boolean isGameOver = false;
   float score = 0;
-  int stage = 1;
+
+  final static int TRIASSIC = 0;
+  final static int JURASSIC = 1;
+  final static int CRETACEOUS = 2;
+  final static int FINAL = 3;
+  int stage = TRIASSIC;
+
   float lastScoreTick = 0;
   boolean scoring = false;
-  
+
   EventManager eventManager;
   ColorDecider currentColor;
   Time time;
@@ -24,7 +30,7 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
     eventManager = _eventManager;
     currentColor = _currentColor;
     time = t;
-    
+
     lastScoreTick = time.getClock();
 
     eventManager.gameOverSubscribers.add(this);
@@ -42,15 +48,15 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
   void gameOverHandle() {
     isGameOver = true;
   }
-  
+
   void playerSpawnedHandle(Player p) {
     scoring = true;
   }
-  
+
   void playerRespawnedHandle(PVector position) {
-  scoring = true;
+    scoring = true;
   }
-  
+
   void playerDiedHandle(PVector position) {
     extralives--;
     scoring = false;
@@ -70,6 +76,16 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
       score++;
       lastScoreTick = time.getClock();
     }
+
+    if (score==100 && stage==TRIASSIC) {
+      stage = JURASSIC;
+      eventManager.dispatchLevelChanged(stage);
+    }
+
+    if (score==200 && stage==JURASSIC) {
+      stage = CRETACEOUS;
+      eventManager.dispatchLevelChanged(stage);
+    }
   }
 
   void render () {
@@ -86,7 +102,7 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
     pushStyle();
     stroke(0, 0, 100);
     strokeWeight(1);
-    line(64, 40, 64, 40 + score/300 * stage * (height - 40));
+    line(64, 40, 64, 39 + score/300 * (height - 80));
     popStyle();
 
     // letterbox

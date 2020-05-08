@@ -5,6 +5,7 @@ class EventManager {
   ArrayList<playerSpawnedEvent> playerSpawnedSubscribers = new ArrayList<playerSpawnedEvent>();
   ArrayList<playerDiedEvent> playerDiedSubscribers = new ArrayList<playerDiedEvent>();
   ArrayList<playerRespawnedEvent> playerRespawnedSubscribers = new ArrayList<playerRespawnedEvent>();
+  ArrayList<levelChangeEvent> levelChangeSubscribers = new ArrayList<levelChangeEvent>();
   
   EventManager () {
   
@@ -33,6 +34,10 @@ class EventManager {
   void dispatchPlayerRespawned(PVector position) {
     for(playerRespawnedEvent s: playerRespawnedSubscribers) s.playerRespawnedHandle(position);
   }
+  
+  void dispatchLevelChanged(int stage) {
+    for(levelChangeEvent l: levelChangeSubscribers) l.levelChangeHandle(stage);
+  }
 } 
 
 interface gameOverEvent {
@@ -59,6 +64,10 @@ interface playerRespawnedEvent {
   void playerRespawnedHandle(PVector position);
 }
 
-//interface playerToRespawnEvent {
-//  void playerToRespawn();
+interface levelChangeEvent {
+  void levelChangeHandle(int stage);
+}
+
+//interface volcanoSpawnedEvent {
+//  void volcanoSpawnedHandle();
 //}

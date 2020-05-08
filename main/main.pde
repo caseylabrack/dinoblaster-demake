@@ -14,6 +14,7 @@ AssetManager assets = new AssetManager();
 void setup () {
   size(1024, 768, P2D);
   //fullScreen(P2D);
+  surface.setTitle("DinoBlaster DX");
 
   colorMode(HSB, 360, 100, 100, 1);
   imageMode(CENTER);
@@ -23,17 +24,26 @@ void setup () {
   assets.load();
   glow = loadShader("glow2.glsl");
   currentScene = new SinglePlayer();
+  //currentScene = new testScene();
 }
 
 void keyPressed() {
 
   //println(key, keyCode);
-  //println(keyCode == LEFT);
-  
+  //println(key==CODED);
+
   switch (keyCode) {   
-    
+
   case 49:
     currentScene = new SinglePlayer();
+    break;
+
+  case 50:
+    currentScene = new testScene();
+    break;
+
+  case 82:
+    rec = true;
     break;
 
   case 32:
@@ -87,17 +97,8 @@ void draw () {
     currentScene.render();
   }
 
-  //if (!paused) {
-  //  background(0);
-  //  game.update();
-  //}
-
-  //if(frameCount % 60==0) println((frameRateLastNanos - prev)/1e6/16.666);
-  //if(mousePressed) 
-  //filter(glow);
-
   if (rec) {
-    if (frameCount % 4 == 0) {
+    if (frameCount % 1 == 0) {
       saveFrame("spoofs-and-goofs/frames/dino-" + nf(fcount, 4) + ".png");
       fcount++;
     }
