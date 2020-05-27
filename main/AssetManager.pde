@@ -4,7 +4,7 @@ class AssetManager {
   UIStuff uiStuff = new UIStuff();
   VolcanoStuff volcanoStuff = new VolcanoStuff();
   RoidStuff roidStuff = new RoidStuff();
-  
+  PlayerStuff playerStuff = new PlayerStuff();
   
   void load () {
     ufostuff.ufoFrames = utils.sheetToSprites(loadImage("ufo-resizing-sheet.png"), 3, 3);
@@ -14,6 +14,9 @@ class AssetManager {
     
     volcanoStuff.volcanoFrames = utils.sheetToSprites(loadImage("volcanos.png"), 4, 1);
     roidStuff.explosionFrames = utils.sheetToSprites(loadImage("explosion.png"), 3, 1);
+    
+    playerStuff.dethSVG = loadShape("bronto-death.svg");
+    playerStuff.dethSVG.disableStyle();
   }
   
   class UFOstuff {
@@ -31,5 +34,9 @@ class AssetManager {
   
   class RoidStuff {
     PImage[] explosionFrames;
+  }
+  
+  class PlayerStuff {
+    PShape dethSVG;
   }
 }

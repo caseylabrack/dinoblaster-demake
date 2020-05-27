@@ -6,6 +6,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
   VolcanoManager volcanoManager;
 
   Player player = null;
+  PlayerDeath deathAnim = null;
 
   PImage model;
   int extralives = 0;
@@ -52,6 +53,11 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
     if (player!=null) {
       if (PVector.dist(player.globalPos(), impact) < 50) {
         extralives--;
+        float incomingAngle = utils.angleOf(earth.globalPos(), impact);
+        PVector adjustedPosition = new PVector(earth.globalPos().x + cos(radians(incomingAngle)) * (earth.radius - 20), earth.globalPos().y + sin(radians(incomingAngle)) * (earth.radius - 20));
+        //PVector relativePos = new PVector(player.globalPos().x - adjustedPosition.x, player.globalPos().y - adjustedPosition.y);
+        //deathAnim = new PlayerDeath(player.globalPos(), player.globalRote(), player.direction, relativePos);
+        deathAnim = new PlayerDeath(time, player.globalPos(), player.globalRote(), player.direction, adjustedPosition);
         if (extralives<0) {
           eventManager.dispatchGameOver();
         } else {
@@ -81,9 +87,13 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
 
   void update() {
     if (player!=null) player.update();
+
+    if (deathAnim!=null) deathAnim.update();
   }
 
   void render() {
+
+    if (deathAnim!=null) deathAnim.render();
 
     if (spawning) {
       progress = (millis() - spawningStart) / spawningDuration;
@@ -123,6 +133,110 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
         image(model, 0, respawningY);
       }
     }
+  }
+}
+
+class PlayerDeath extends Entity {
+
+  PVector ppos;
+  float pr;
+  float pDir;
+  PVector forcePoint;
+
+  Time time;
+  Particle[] parts;
+
+  PlayerDeath (Time t, PVector _spot, float _r, float _dir, PVector _forcePoint) {
+    time = t;
+    ppos = _spot;
+    pr = _r;
+    pDir =  _dir;
+    forcePoint = PVector.sub(ppos, _forcePoint);
+    parts = new Particle[assets.playerStuff.dethSVG.getChildCount()];
+
+    for (int i = 0; i < parts.length; i++) {
+      parts[i] = new Particle(time, assets.playerStuff.dethSVG.getChild(i), new PVector(51/2, 67/2));
+      float angle = atan2(parts[i].midpoint.y - forcePoint.y, parts[i].midpoint.x - forcePoint.x);
+      float d = dist(forcePoint.x, forcePoint.y, parts[i].midpoint.x, parts[i].midpoint.y);
+      //float force = (1/(d * d)) * 10000;
+      float force = (1/d) * 500;
+      //float force = 1;
+      parts[i].dx = cos(angle) * force;
+      parts[i].dy = sin(angle) * force;
+    }
+  }
+
+  void update () {
+    for (Particle p : parts) p.update();
+  }
+
+  void render () {
+    
+    pushMatrix();
+    pushStyle();
+    stroke(0, 0, 100);
+    strokeWeight(1);
+    shapeMode(CENTER);
+    scale(pDir, 1);
+    translate(ppos.x * pDir, ppos.y);
+    rotate(radians(pDir * pr));
+
+    for (Particle p : parts) {
+      if(!p.enabled) continue;
+      line(p.p1.x, p.p1.y, p.p2.x, p.p2.y);
+    }
+    popStyle();
+    popMatrix();
+  }
+} 
+
+class Particle {
+  //float x, y, r;
+  float r;
+  float dx, dy, dr;
+  PShape model;
+  float[] params = new float[4];
+  PVector points;
+  PVector p1, p2;
+  PVector midpoint;
+  PVector position;
+  PVector center;
+  boolean enabled = true;
+  final static int minDisable = 30;
+  final static int maxDisable = 120;
+  int disableCount = 0;
+  int disableDuration;
+  Time time;
+
+  Particle (Time t, PShape shape, PVector _center) {
+    time = t;
+    model = shape;
+    center = _center;
+    params = model.getParams();
+    //println(params);
+    points = new PVector(model.getParams()[0], model.getParams()[3]);
+    p1 = new PVector(model.getParams()[0], model.getParams()[1]);
+    p2 = new PVector(model.getParams()[2], model.getParams()[3]);
+    p1 = utils.offset(p1, _center);
+    p2 = utils.offset(p2, _center);
+    midpoint = utils.midpoint(p1, p2);
+    disableDuration = round(random(minDisable, maxDisable));
+  }
+
+  void update() {
+    
+    disableCount++;
+    if(disableCount > disableDuration) enabled = false;
+
+    p1.x += dx * time.getTimeScale();
+    p1.y += dy * time.getTimeScale();
+
+    p2.x += dx * time.getTimeScale();
+    p2.y += dy * time.getTimeScale();
+    r += dr;
+
+    dx *= .99;
+    dy *= .99;
   }
 }
 
@@ -172,7 +286,7 @@ class Player extends Entity implements updateable, renderable {
     }
 
     for (Volcano v : volcanoManager.volcanos) {
-      if(v.passable()) continue;
+      if (v.passable()) continue;
       float myAngle = utils.angleOf(new PVector(0, 0), targetPos);
       float vAngle = utils.angleOf(new PVector(0, 0), v.localPos());
       float volcanoDist = utils.signedAngleDiff(myAngle, vAngle);
@@ -183,7 +297,7 @@ class Player extends Entity implements updateable, renderable {
     }
 
     setPosition(targetPos);
-    r = utils.angleOf(new PVector(0,0),localPos()) + 90;
+    r = utils.angleOf(new PVector(0, 0), localPos()) + 90;
   }
 
   void render () {

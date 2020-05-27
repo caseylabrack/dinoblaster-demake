@@ -1,14 +1,24 @@
 static class utils {
 
   static float angleOf(PVector from, PVector to) {
-    
+
     return degrees(atan2(to.y - from.y, to.x - from.x));
   }
-  
+
   static float angleOfRadians(PVector from, PVector to) {
     return atan2(to.y - from.y, to.x - from.x);
   }
-  
+
+  static PVector midpoint (PVector p1, PVector p2) {
+    float angle = atan2(p2.y - p1.y, p2.x - p1.x);
+    float dist = PVector.dist(p1, p2);
+    return new PVector(p1.x + cos(angle) * dist/2, p1.y + sin(angle) * dist/2);
+  }
+
+  static PVector offset (PVector point, PVector offset) {
+    return new PVector(point.x - offset.x, point.y - offset.y);
+  }
+
   static PVector rotateAroundPoint (PVector obj, PVector center, float degrees) {
     float angle = degrees(atan2(center.y - obj.y, center.x - obj.x));
     float dist = dist(center.x, center.y, obj.x, obj.y);
@@ -48,14 +58,14 @@ static class utils {
   }
 
   static boolean rectOverlap (PVector l1, PVector r1, PVector l2, PVector r2) {
-    if(r1.x < l2.x || r2.x < l1.x) {
+    if (r1.x < l2.x || r2.x < l1.x) {
       return false;
     }
-    
-    if(r2.y < l1.y || r1.y < l2.y) {
+
+    if (r2.y < l1.y || r1.y < l2.y) {
       return false;
     }
-    
+
     return true;
   }
 
@@ -83,15 +93,15 @@ static class utils {
   static float easeInExpo (float t, float b, float c, float d) {
     return (float)((t==0) ? b : c * Math.pow(2, 10 * (t/d - 1)) + b);
   }
-  
+
   static float easeOutExpo (float t, float b, float c, float d) {
     return (t==d) ? b+c : (float)(c * (-Math.pow(2, -10 * t/d) + 1) + b);
   }
-  
+
   static float easeOutQuad (float t, float b, float c, float d) {
     return -c *(t/=d)*(t-2) + b;
   }
-  
+
   static float easeInQuad (float t, float b, float c, float d) {
     return c*(t/=d)*t + b;
   }

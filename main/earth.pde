@@ -71,10 +71,13 @@ class Earth extends Entity implements updateable, renderable {
 
   void render () {
     pushMatrix();
+    pushStyle();
+    //tint(0,0,100,.5);
     PVector trans = globalPos();
     translate(trans.x, trans.y);
     rotate(radians(globalRote()));
     image(model, 0, 0, model.width, model.height);
+    popStyle();
     popMatrix();
   }
 }

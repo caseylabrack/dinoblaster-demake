@@ -42,6 +42,8 @@ class RoidManager implements updateable, renderable {
       splodes[j] = new Explosion(frames, time);
     }
 
+    //roids[roidindex % roids.length].fire();
+    //roidindex++;
   }
 
   void update () {
@@ -197,6 +199,6 @@ class Explosion extends Entity {
     rotate(radians(globalRote()));
     image(model, 0, 0, model.width, model.height);
     popStyle();
-    popMatrix(); 
+    popMatrix();
   }
 }

@@ -75,6 +75,11 @@ void keyReleased() {
     keys.setKey(Keys.RIGHT, false);
     break;
 
+  case 82:
+    rec = false;
+    break;
+
+
   default:
     break;
   }

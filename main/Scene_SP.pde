@@ -65,8 +65,8 @@ class SinglePlayer extends Scene {
     updaters.add(volcanoManager);
 
     renderers.add(ufoManager);
-    renderers.add(playerManager);
     renderers.add(volcanoManager);
+    renderers.add(playerManager);
     renderers.add(earth);
     renderers.add(roids);
     renderers.add(starManager);
@@ -82,11 +82,12 @@ class SinglePlayer extends Scene {
   }
 
   void render () {
+
     pushMatrix(); // world-space
     translate(camera.x, camera.y);
     for (renderable r : renderers) r.render();
-
     popMatrix(); // screen-space
+
     for (renderableScreen rs : screeenRenderers) rs.render(); // UI
   }
 
@@ -118,7 +119,7 @@ class testScene extends Scene {
     eventManager = new EventManager();
     time = new Time(eventManager);
     earth = new Earth(time);
-    //earth.dr = 0;
+    earth.dr = 0;
 
     camera = new Camera(0, 0);
     roids = new RoidManager(70, 400, 100, earth, eventManager, time);
@@ -134,7 +135,7 @@ class testScene extends Scene {
     //ufoManager = new UFOManager (currentColor, earth, playerManager, eventManager);
 
     updaters.add(time);
-    updaters.add(ui);
+    //updaters.add(ui);
     updaters.add(earth);
     updaters.add(roids);
     updaters.add(camera);
@@ -142,17 +143,17 @@ class testScene extends Scene {
     //updaters.add(starManager);
     //updaters.add(ufoManager);
     updaters.add(playerManager);
-    updaters.add(volcanoManager);
+    //updaters.add(volcanoManager);
 
     //renderers.add(ufoManager);
     renderers.add(playerManager);
-    renderers.add(volcanoManager);
+    //renderers.add(volcanoManager);
 
     renderers.add(earth);
     renderers.add(roids);
     //renderers.add(starManager);
 
-    screeenRenderers.add(ui);
+    //screeenRenderers.add(ui);
   }
 
   void update () {
