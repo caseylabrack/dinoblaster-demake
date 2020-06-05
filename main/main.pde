@@ -44,6 +44,7 @@ void keyPressed() {
 
   case 82:
     rec = true;
+    println("recording");
     break;
 
   case 32:
@@ -77,8 +78,8 @@ void keyReleased() {
 
   case 82:
     rec = false;
+    println("recording stopped");
     break;
-
 
   default:
     break;
@@ -103,16 +104,18 @@ void draw () {
   }
 
   if (rec) {
-    if (frameCount % 1 == 0) {
+    if (frameCount % 4 == 0) {
       saveFrame("spoofs-and-goofs/frames/dino-" + nf(fcount, 4) + ".png");
       fcount++;
     }
-    if (fcount==360) exit();
+    //if (fcount==360) exit();
+    pushStyle();
+    stroke(0, 0, 100);
+    strokeWeight(2);
+    fill(0, 70, 80);
+    circle(width - 20, 20, 20);
+    popStyle();
   }
-
-  //if(frameCount % 200 == 0) { println(frameRate); }
-  //if(frameCount % 4 == 0) saveFrame("spoofs-and-goofs/frames/dino-####.png");
-  //if(frameCount==360) exit();
 }
 
 class Keys {

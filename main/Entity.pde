@@ -56,3 +56,10 @@ class Entity {
     return r;
   }
 }
+
+class Transform {
+  float x, y, r, dx, dy, dr;
+  Transform parent = null;
+  
+
+}

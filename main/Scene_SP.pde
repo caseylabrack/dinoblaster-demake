@@ -76,7 +76,7 @@ class SinglePlayer extends Scene {
 
   void update () {
 
-    if (time.getTick()==20) ufoManager.spawnUFOAbducting();
+    //if (time.getTick()==20) ufoManager.spawnUFOAbducting();
 
     for (updateable u : updaters) u.update();
   }
@@ -119,7 +119,7 @@ class testScene extends Scene {
     eventManager = new EventManager();
     time = new Time(eventManager);
     earth = new Earth(time);
-    earth.dr = 0;
+    //earth.dr = 0;
 
     camera = new Camera(0, 0);
     roids = new RoidManager(70, 400, 100, earth, eventManager, time);

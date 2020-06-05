@@ -54,10 +54,18 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
       if (PVector.dist(player.globalPos(), impact) < 50) {
         extralives--;
         float incomingAngle = utils.angleOf(earth.globalPos(), impact);
-        PVector adjustedPosition = new PVector(earth.globalPos().x + cos(radians(incomingAngle)) * (earth.radius - 20), earth.globalPos().y + sin(radians(incomingAngle)) * (earth.radius - 20));
-        //PVector relativePos = new PVector(player.globalPos().x - adjustedPosition.x, player.globalPos().y - adjustedPosition.y);
-        //deathAnim = new PlayerDeath(player.globalPos(), player.globalRote(), player.direction, relativePos);
-        deathAnim = new PlayerDeath(time, player.globalPos(), player.globalRote(), player.direction, adjustedPosition);
+        PVector adjustedPosition = new PVector(earth.globalPos().x + cos(radians(incomingAngle)) * (earth.radius - 50), earth.globalPos().y + sin(radians(incomingAngle)) * (earth.radius - 50));
+
+        Entity thing = new Entity();
+        thing.setPosition(adjustedPosition);
+        thing.r = player.globalRote();
+
+        Entity pl = new Entity();
+        pl.setPosition(player.globalPos());
+        pl.r = player.globalRote();
+        pl.addChild(thing);
+
+        deathAnim = new PlayerDeath(time, player.globalPos(), player.globalRote(), player.direction, thing.localPos());
         if (extralives<0) {
           eventManager.dispatchGameOver();
         } else {
@@ -150,16 +158,23 @@ class PlayerDeath extends Entity {
     time = t;
     ppos = _spot;
     pr = _r;
-    pDir =  _dir;
-    forcePoint = PVector.sub(ppos, _forcePoint);
+    pDir = 1;
+    //pDir = _dir;
+    forcePoint = _forcePoint;
+
+    float ang = utils.angleOf(new PVector(0, 0), _spot);
+
     parts = new Particle[assets.playerStuff.dethSVG.getChildCount()];
 
     for (int i = 0; i < parts.length; i++) {
-      parts[i] = new Particle(time, assets.playerStuff.dethSVG.getChild(i), new PVector(51/2, 67/2));
+      parts[i] = new Particle(time, assets.playerStuff.dethSVG.getChild(i), new PVector(51/2, 67/2), _dir==1);
+      //parts[i] = new Particle(time, assets.playerStuff.dethSVG.getChild(i), new PVector(0, 0));
       float angle = atan2(parts[i].midpoint.y - forcePoint.y, parts[i].midpoint.x - forcePoint.x);
+      //float angle = atan2(parts[i].midpoint.y - 67, parts[i].midpoint.x - 26);
       float d = dist(forcePoint.x, forcePoint.y, parts[i].midpoint.x, parts[i].midpoint.y);
+      //float d = dist(26, 67, parts[i].midpoint.x, parts[i].midpoint.y);
       //float force = (1/(d * d)) * 10000;
-      float force = (1/d) * 500;
+      float force = (1/d) * 1000;//500;
       //float force = 1;
       parts[i].dx = cos(angle) * force;
       parts[i].dy = sin(angle) * force;
@@ -171,19 +186,20 @@ class PlayerDeath extends Entity {
   }
 
   void render () {
-    
+
     pushMatrix();
     pushStyle();
     stroke(0, 0, 100);
     strokeWeight(1);
-    shapeMode(CENTER);
+    //shapeMode(CENTER);
     scale(pDir, 1);
     translate(ppos.x * pDir, ppos.y);
     rotate(radians(pDir * pr));
 
     for (Particle p : parts) {
-      if(!p.enabled) continue;
+      if (!p.enabled) continue;
       line(p.p1.x, p.p1.y, p.p2.x, p.p2.y);
+      //line(0, 0, p.dx * 10, p.dy * 10);
     }
     popStyle();
     popMatrix();
@@ -208,25 +224,27 @@ class Particle {
   int disableDuration;
   Time time;
 
-  Particle (Time t, PShape shape, PVector _center) {
+  Particle (Time t, PShape shape, PVector _center, boolean isLeft) {
     time = t;
     model = shape;
     center = _center;
     params = model.getParams();
-    //println(params);
-    points = new PVector(model.getParams()[0], model.getParams()[3]);
     p1 = new PVector(model.getParams()[0], model.getParams()[1]);
     p2 = new PVector(model.getParams()[2], model.getParams()[3]);
     p1 = utils.offset(p1, _center);
     p2 = utils.offset(p2, _center);
+    p1 = new PVector(isLeft ? p1.x : -p1.x, p1.y);
+    p2 = new PVector(isLeft ? p2.x : -p2.x, p2.y);
+    //p1.x*= isLeft ? -1 : 1;
+    //p2.x*= isLeft ? -1 : 1;
     midpoint = utils.midpoint(p1, p2);
     disableDuration = round(random(minDisable, maxDisable));
   }
 
   void update() {
-    
-    disableCount++;
-    if(disableCount > disableDuration) enabled = false;
+
+    //disableCount++;
+    if (disableCount > disableDuration) enabled = false;
 
     p1.x += dx * time.getTimeScale();
     p1.y += dy * time.getTimeScale();
