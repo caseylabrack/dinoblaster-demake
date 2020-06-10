@@ -1,10 +1,10 @@
 class Entity {
   float x, y, r, dx, dy, dr;
+  int facing = 1;
   Entity parent = null;
   ArrayList<Entity> children = new ArrayList<Entity>();
 
   void addChild (Entity child) {
-
     float d = dist(x, y, child.x, child.y);
     float a = degrees(atan2(child.y - y, child.x - x));
     float rote = a - r;
@@ -20,6 +20,15 @@ class Entity {
 
   void removeChild (Entity obj) {
     children.remove(obj);
+  }
+
+  public PVector globalToLocalPos (PVector globalPoint) {
+    PVector mypos = globalPos();
+    float d = dist(mypos.x, mypos.y, globalPoint.x, globalPoint.y);
+    float a = atan2(globalPoint.y - mypos.y, globalPoint.x - mypos.x);
+    float rote = a - radians(globalRote());
+
+    return new PVector(cos(rote) * d, sin(rote) * d);
   }
 
   PVector globalPos() {
@@ -42,7 +51,7 @@ class Entity {
     x = pos.x;
     y = pos.y;
   }
-  
+
   void setPosition (float _x, float _y) {
     x = _x;
     y = _y;
@@ -51,15 +60,16 @@ class Entity {
   PVector localPos () {
     return new PVector(x, y);
   }
-  
+
   float localRote() {
     return r;
   }
-}
-
-class Transform {
-  float x, y, r, dx, dy, dr;
-  Transform parent = null;
   
-
+  void pushTransforms () {
+    pushMatrix();
+    PVector pos = globalPos();
+    scale(facing, 1);
+    translate(pos.x * facing, pos.y);
+    rotate(radians(globalRote() * facing));
+  }
 }
