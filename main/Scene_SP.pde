@@ -42,7 +42,7 @@ class SinglePlayer extends Scene {
     time = new Time(eventManager);
     earth = new Earth(time);
     camera = new Camera(0, 0);
-    roids = new RoidManager(70, 400, 100, earth, eventManager, time);
+    roids = new RoidManager(earth, eventManager, time);
     currentColor = new ColorDecider();
     volcanoManager = new VolcanoManager(eventManager, time, currentColor, earth);
     starManager = new StarManager(currentColor, time);
@@ -122,7 +122,7 @@ class testScene extends Scene {
     //earth.dr = 0;
 
     camera = new Camera(0, 0);
-    roids = new RoidManager(70, 400, 100, earth, eventManager, time);
+    roids = new RoidManager(earth, eventManager, time);
     currentColor = new ColorDecider();
     //starManager = new StarManager(currentColor, time);
 

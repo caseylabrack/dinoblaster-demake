@@ -14,6 +14,8 @@ class AssetManager {
     
     volcanoStuff.volcanoFrames = utils.sheetToSprites(loadImage("volcanos.png"), 4, 1);
     roidStuff.explosionFrames = utils.sheetToSprites(loadImage("explosion.png"), 3, 1);
+    roidStuff.roidFrames = utils.sheetToSprites(loadImage("roids.png"), 2, 2);
+    roidStuff.trail = loadImage("roid-trail.png");
     
     playerStuff.dethSVG = loadShape("bronto-death.svg");
     playerStuff.dethSVG.disableStyle();
@@ -34,6 +36,8 @@ class AssetManager {
   
   class RoidStuff {
     PImage[] explosionFrames;
+    PImage[] roidFrames;
+    PImage trail;
   }
   
   class PlayerStuff {
