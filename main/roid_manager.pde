@@ -20,6 +20,14 @@ class RoidManager implements updateable, renderable {
   PImage[] frames;
   int splodeindex = 0;
 
+  class Explosion extends Entity {
+    PImage model;
+    float start;
+    final static float duration = 500;
+    boolean enabled = false;
+    float angle = 0;
+  }
+
   RoidManager (int _min, int _max, int poolsize, Earth earf, EventManager _events, Time t) {
     min = _min;
     max = _max;
@@ -35,11 +43,9 @@ class RoidManager implements updateable, renderable {
       roids[i] = new Roid(earth, events, sheet, time);
     }
 
-    sheet = loadImage("explosion.png");
-    frames = utils.sheetToSprites(sheet, 3, 1);
-
     for (int j = 0; j < splodes.length; j++) {
-      splodes[j] = new Explosion(frames, time);
+      splodes[j] = new Explosion();
+      earth.addChild(splodes[j]);
     }
 
     //roids[roidindex % roids.length].fire();
@@ -57,21 +63,42 @@ class RoidManager implements updateable, renderable {
     for (Roid r : roids) {
       if (r.enabled) {
         r.update();
-        if (dist(r.x, r.y, earth.x, earth.y) < earth.radius ) {
+        if (PVector.dist(r.globalPos(), earth.globalPos()) < earth.radius ) {
           r.enabled = false;
-          splodes[splodeindex % splodes.length].enable(r.globalPos(), earth);
+          Explosion splode = splodes[splodeindex % splodes.length];
           splodeindex++;
           events.dispatchRoidImpact(r.globalPos());
+
+          splode.enabled = true;
+          splode.start = time.getClock();
+          float angle = utils.angleOfRadians(earth.globalPos(), r.globalPos());
+          float offset = 20;
+          PVector adjustedPosition = new PVector(earth.x + cos(angle) * (earth.radius + offset), earth.y + sin(angle) * (earth.radius + offset));
+          splode.setPosition(earth.globalToLocalPos(adjustedPosition));
+          splode.r = utils.angleOf(earth.localPos(), splode.localPos()) + 90;
         }
       }
     }
 
-    for (Explosion s : splodes) s.update();
+    for (Explosion s : splodes) {
+      if (!s.enabled) continue;
+
+      float elapsed = time.getClock() - s.start;
+
+      if (elapsed < Explosion.duration) {
+        s.model = assets.roidStuff.explosionFrames[round((elapsed / Explosion.duration) * (assets.roidStuff.explosionFrames.length - 1))];
+      } else {
+        s.enabled = false;
+      }
+    }
   }
 
   void render () {
     for (Roid r : roids) r.render();
-    for (Explosion s : splodes) s.render();
+    for (Explosion s : splodes) {
+      if (!s.enabled) continue;
+      s.simpleRenderImage(s.model);
+    }
   }
 }
 
@@ -136,69 +163,6 @@ class Roid extends Entity {
     rotate(r);
     image(model, 0, 0, model.width, model.height);
     //image(model, 0, 0, model.width/2, model.height/2);
-    popMatrix();
-  }
-}
-
-class Explosion extends Entity {
-  PImage model;
-  float start;
-  float duration = 500;
-  boolean enabled = false;
-  PImage[] frames;
-  Time time;
-  float angle = 0;
-
-  Explosion (PImage[] _frames, Time t) {
-
-    frames = _frames;
-    time = t;
-  }
-
-  void enable (PVector pos, Earth earth) {
-
-    enabled = true;
-    start = time.getClock();
-
-    setPosition(pos);
-    angle = atan2(pos.y - earth.y, pos.x - earth.x);
-    x = earth.x + cos(angle) * (earth.radius + 20);
-    y = earth.y + sin(angle) * (earth.radius + 20);
-    r = degrees(angle) + 90;
-    earth.addChild(this);
-  }
-
-  void update () {
-
-    if (!enabled) return;
-
-    float elapsed = time.getClock() - start;
-
-    if (elapsed < duration) {
-      model = frames[round((elapsed / duration) * (frames.length - 1))];
-    } else {
-      enabled = false;
-      parent.removeChild(this);
-    }
-
-    x += dx;
-    y += dy;
-    r += dr;
-
-    dx = 0;
-    dy = 0;
-    dr = 0;
-  }
-
-  void render () {
-    if (!enabled) return;
-    pushMatrix();
-    pushStyle();
-    PVector trans = globalPos();
-    translate(trans.x, trans.y);
-    rotate(radians(globalRote()));
-    image(model, 0, 0, model.width, model.height);
-    popStyle();
     popMatrix();
   }
 }

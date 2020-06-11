@@ -22,7 +22,7 @@ void setup () {
   //noCursor();
 
   assets.load();
-  glow = loadShader("glow2.glsl");
+  glow = loadShader("glow.glsl");
   currentScene = new SinglePlayer();
   //currentScene = new testScene();
 }

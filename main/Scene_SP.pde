@@ -76,7 +76,7 @@ class SinglePlayer extends Scene {
 
   void update () {
 
-    //if (time.getTick()==20) ufoManager.spawnUFOAbducting();
+    if (time.getTick()==20) ufoManager.spawnUFOAbducting();
 
     for (updateable u : updaters) u.update();
   }

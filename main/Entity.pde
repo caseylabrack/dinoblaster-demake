@@ -5,15 +5,17 @@ class Entity {
   ArrayList<Entity> children = new ArrayList<Entity>();
 
   void addChild (Entity child) {
-    float d = dist(x, y, child.x, child.y);
-    float a = degrees(atan2(child.y - y, child.x - x));
-    float rote = a - r;
-    float x = cos(radians(rote)) * d;
-    float y = sin(radians(rote)) * d;
+    //float d = dist(x, y, child.x, child.y);
+    //float a = degrees(atan2(child.y - y, child.x - x));
+    //float rote = a - r;
+    //float x = cos(radians(rote)) * d;
+    //float y = sin(radians(rote)) * d;
 
-    child.x = x;
-    child.y = y;
-    child.r = child.r - r;
+    //child.x = x;
+    //child.y = y;
+    //child.r = child.r - r;
+    child.setPosition(globalToLocalPos(child.globalPos()));
+    child.r = child.globalRote() - r;
     child.parent = this;
     children.add(child);
   } 
@@ -71,5 +73,11 @@ class Entity {
     scale(facing, 1);
     translate(pos.x * facing, pos.y);
     rotate(radians(globalRote() * facing));
+  }
+  
+  void simpleRenderImage (PImage im) {
+    pushTransforms();
+    image(im, 0, 0);
+    popMatrix();
   }
 }
