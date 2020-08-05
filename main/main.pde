@@ -12,14 +12,14 @@ Keys keys = new Keys();
 AssetManager assets = new AssetManager();
 
 void setup () {
-  size(1024, 768, P2D);
-  //fullScreen(P2D);
+  //size(1028, 768, P2D);
+  fullScreen(P2D);
   surface.setTitle("DinoBlaster DX");
 
   colorMode(HSB, 360, 100, 100, 1);
   imageMode(CENTER);
 
-  //noCursor();
+  noCursor();
 
   assets.load();
   glow = loadShader("glow.glsl");
@@ -29,12 +29,13 @@ void setup () {
 
 void keyPressed() {
 
-  //println(key, keyCode);
+  println(key, keyCode);
   //println(key==CODED);
 
   switch (keyCode) {   
 
   case 49:
+  case 16:
     currentScene = new SinglePlayer();
     break;
 
@@ -120,6 +121,13 @@ void draw () {
 
 class Keys {
 
+  // keys on picade console:
+  // |joy|    |16| |90| |88|
+  //          |17| |18| |32|
+  
+  // front panel:
+  // |27|      |79|
+  
   static final int LEFT = 0;
   static final int RIGHT = 1;
   boolean left = false;
