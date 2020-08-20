@@ -25,8 +25,8 @@ class Camera extends Entity implements updateable {
 
 
 class ColorDecider implements updateable {
-  int currentHue = 0;
-  color[] hues = new color[]{#ff3800, #ffff00, #00ff00, #00ffff, #ff57ff};
+  private int currentHue = 0;
+  private color[] hues = new color[]{#ff3800, #ffff00, #00ff00, #00ffff, #ff57ff};
 
   ColorDecider () {
   }

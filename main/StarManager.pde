@@ -9,16 +9,20 @@ class StarManager implements updateable, renderable, renderableScreen {
   PImage nebulaModel;
   PVector nebulaVec;
   boolean nebulaActive = false;
-  float nebulaLead = 15;
+  float nebulaLead = 0;//15;
   float nebulaOffset = 0;
 
   ColorDecider currentColor;
   Time time;
 
+  Hypercube hypercube;
+
   StarManager (ColorDecider _color, Time t) {
 
     currentColor = _color;
     time = t;
+
+    nebulaVec = new PVector(cos(a) * r + random(-width/2, width/2), sin(a)*r + random(-height/2, height/2));
 
     int k = 0;
     for (int j = 0; j < 360; j+= 9) {
@@ -35,8 +39,11 @@ class StarManager implements updateable, renderable, renderableScreen {
 
   void spawnNeb () {
     nebulaActive = true;
-    nebulaOffset = random(1)<.5 ? 200 : -200; 
-    nebulaVec = new PVector(cos(a + radians(nebulaLead)) * (r + nebulaOffset), sin(a + radians(nebulaLead)) * (r + nebulaOffset));
+    nebulaOffset = 0; 
+    hypercube = new Hypercube(currentColor);
+    //nebulaOffset = random(1)<.5 ? 200 : -200; 
+    //nebulaVec = new PVector(cos(a + radians(nebulaLead)) * (r + nebulaOffset), sin(a + radians(nebulaLead)) * (r + nebulaOffset));
+    //nebulaVec = new PVector(cos(0) * (r-300), sin(0)*(r-300));
   }
 
   void update () {
@@ -52,18 +59,28 @@ class StarManager implements updateable, renderable, renderableScreen {
     pushStyle();
     pushMatrix();
     noStroke();
-    fill(0,0,100);
+    fill(0, 0, 100);
     for (PVector s : stars) {
       if (abs(s.x - x) < width && abs(s.y - y) < height) {
         pushMatrix();
         rotate(TWO_PI/8);
         square(s.x - x, s.y - y, 2);
+        circle(nebulaVec.x - x, nebulaVec.y - y, 10);
+
         popMatrix();
       }
     }
+    pushMatrix();
+    rotate(TWO_PI/8);
+    //circle(nebulaVec.x - x, nebulaVec.y - y, 10);
+    //translate(nebulaVec.x - x, nebulaVec.y - y, 50);
+    //translate(width/2, height/2, 100);
+    //hypercube.update();
+    popMatrix();
+
+    //image(nebulaModel, nebulaVec.x - x, nebulaVec.y - y);
     popMatrix();
     popStyle();
-
 
     //if (nebulaActive) {
     //  x = nebulaVec.x - (cos(a) * r - width / 2);

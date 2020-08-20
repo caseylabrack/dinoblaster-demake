@@ -13,7 +13,8 @@ AssetManager assets = new AssetManager();
 
 void setup () {
   //size(1028, 768, P2D);
-  fullScreen(P2D);
+  size(1028, 768, P3D);
+  //fullScreen(P2D);
   surface.setTitle("DinoBlaster DX");
 
   colorMode(HSB, 360, 100, 100, 1);
@@ -23,7 +24,7 @@ void setup () {
 
   assets.load();
   glow = loadShader("glow.glsl");
-  currentScene = new SinglePlayer();
+  currentScene = new SinglePlayer(10);
   //currentScene = new testScene();
 }
 
@@ -36,7 +37,7 @@ void keyPressed() {
 
   case 49:
   case 16:
-    currentScene = new SinglePlayer();
+    currentScene = new SinglePlayer(10);
     break;
 
   case 50:

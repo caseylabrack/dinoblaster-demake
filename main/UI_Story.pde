@@ -69,6 +69,11 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
     scoring = false;
   }
 
+  public void setLevel (int lvl) {
+    stage = lvl;
+    score = lvl * 100;
+  }
+
   void update () {
     if (isGameOver) return;
     
@@ -108,7 +113,10 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
     // letterbox
     pushStyle();
     imageMode(CORNER);
+    pushMatrix();
+    //translate(0,0,10);
     image(letterbox, 0, 0);
+    popMatrix();
     popStyle();
 
     if (extralives > 0) {

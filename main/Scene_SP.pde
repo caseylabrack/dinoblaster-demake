@@ -30,12 +30,13 @@ class SinglePlayer extends Scene {
   PlayerManager playerManager;
   Time time;
   Camera camera;
+  //Hypercube hypercube;
 
   ArrayList<updateable> updaters = new ArrayList<updateable>();
   ArrayList<renderableScreen> screeenRenderers = new ArrayList<renderableScreen>();
   ArrayList<renderable> renderers =  new ArrayList<renderable>();
 
-  SinglePlayer() {
+  SinglePlayer(int lvl) {
     sceneID = SINGLEPLAYER;
 
     eventManager = new EventManager();
@@ -46,6 +47,7 @@ class SinglePlayer extends Scene {
     currentColor = new ColorDecider();
     volcanoManager = new VolcanoManager(eventManager, time, currentColor, earth);
     starManager = new StarManager(currentColor, time);
+    //hypercube = new Hypercube(currentColor);
 
     //soundManager = new SoundManager(main, eventManager);
 
@@ -63,6 +65,7 @@ class SinglePlayer extends Scene {
     updaters.add(ufoManager);
     updaters.add(playerManager);
     updaters.add(volcanoManager);
+    //updaters.add(hypercube);
 
     renderers.add(ufoManager);
     renderers.add(volcanoManager);
