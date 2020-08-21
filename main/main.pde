@@ -12,8 +12,8 @@ Keys keys = new Keys();
 AssetManager assets = new AssetManager();
 
 void setup () {
-  //size(1028, 768, P2D);
-  size(1028, 768, P3D);
+  //size(1024, 768, P2D);
+  size(1024, 768, P2D);
   //fullScreen(P2D);
   surface.setTitle("DinoBlaster DX");
 
@@ -30,7 +30,7 @@ void setup () {
 
 void keyPressed() {
 
-  println(key, keyCode);
+  //println(key, keyCode);
   //println(key==CODED);
 
   switch (keyCode) {   
@@ -106,7 +106,7 @@ void draw () {
   }
 
   if (rec) {
-    if (frameCount % 4 == 0) {
+    if (frameCount % 8 == 0) {
       saveFrame("spoofs-and-goofs/frames/dino-" + nf(fcount, 4) + ".png");
       fcount++;
     }

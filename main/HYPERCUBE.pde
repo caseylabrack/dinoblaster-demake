@@ -12,14 +12,19 @@ class Hypercube implements updateable, renderable {
 
   float angle = 0;
   float angle2 = PI/4;
+  final int w = 500;
+  final int h = 500;
+
   ColorDecider colors;
+
+  PGraphics pg;
 
   P4Vector[] points = new P4Vector[16];
 
   Hypercube(ColorDecider c) {
-    
+
     colors = c;
-    
+
     points[0] = new P4Vector(-1, -1, -1, 1);
     points[1] = new P4Vector(1, -1, -1, 1);
     points[2] = new P4Vector(1, 1, -1, 1);
@@ -36,14 +41,22 @@ class Hypercube implements updateable, renderable {
     points[13] = new P4Vector(1, -1, 1, -1);
     points[14] = new P4Vector(1, 1, 1, -1);
     points[15] = new P4Vector(-1, 1, 1, -1);
+
+    pg = createGraphics(w, h, P3D);
   }
 
   void update () {
-    pushMatrix();
-    pushStyle();
-    stroke(colors.getColor());
-    //translate(width/2, height/2, 100);
-    rotateX(-PI/2);
+    pg.beginDraw();
+    pg.pushMatrix();
+    pg.pushStyle();
+    pg.stroke(colors.getColor());
+    pg.strokeWeight(2);
+    pg.noFill();
+    pg.clear();
+
+
+    pg.translate(w/2, h/2);
+    pg.rotateX(-PI/2);
     PVector[] projected3d = new PVector[16];
 
     for (int i = 0; i < points.length; i++) {
@@ -55,13 +68,6 @@ class Hypercube implements updateable, renderable {
         {0, 0, 1, 0}, 
         {0, 0, 0, 1}
       };
-
-      //float[][] rotationYZ = {
-      //  {1, 0, 0, 0},
-      //  {0, cos(angle), -sin(angle), 0},
-      //  {0, sin(angle), cos(angle), 0},
-      //  {0, 0, 0, 1}
-      //};
 
       float[][] rotationYZ = {
         {1, 0, 0, 0}, 
@@ -82,7 +88,7 @@ class Hypercube implements updateable, renderable {
       rotated = matmul4D(rotationXY, rotated, true);
       rotated = matmul4D(rotationZW, rotated, true);
 
-      float distance = 4;
+      float distance = 2.5;
       float w = 1 / (distance - rotated.w);
 
       float[][] projection = {
@@ -113,22 +119,20 @@ class Hypercube implements updateable, renderable {
       connect(0, i, i + 8, projected3d);
     }
 
-    //angle = map(mouseX, 0, width, 0, TWO_PI);
     angle += 0.02;
-    //angle2 += 0.02;
-    popStyle();
-    popMatrix();
+    pg.popStyle();
+    pg.popMatrix();
+    pg.endDraw();
+    image(pg, 0, 0);
   }
 
   void connect(int offset, int i, int j, PVector[] points) {
     PVector a = points[i+offset];
     PVector b = points[j+offset];
-    strokeWeight(1);
-    line(a.x, a.y, a.z, b.x, b.y, b.z);
+    pg.line(a.x, a.y, a.z, b.x, b.y, b.z);
   }
-  
+
   void render () {
-  
   }
 }
 

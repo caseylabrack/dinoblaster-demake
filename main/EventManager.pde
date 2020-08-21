@@ -6,11 +6,8 @@ class EventManager {
   ArrayList<playerDiedEvent> playerDiedSubscribers = new ArrayList<playerDiedEvent>();
   ArrayList<playerRespawnedEvent> playerRespawnedSubscribers = new ArrayList<playerRespawnedEvent>();
   ArrayList<levelChangeEvent> levelChangeSubscribers = new ArrayList<levelChangeEvent>();
-  
-  EventManager () {
-  
-  }
-  
+  ArrayList<nebulaStartEvent> nebulaStartSubscribers = new ArrayList<nebulaStartEvent>();  
+    
   void dispatchGameOver () {
     for(gameOverEvent g : gameOverSubscribers) g.gameOverHandle();
   }
@@ -38,6 +35,11 @@ class EventManager {
   void dispatchLevelChanged(int stage) {
     for(levelChangeEvent l: levelChangeSubscribers) l.levelChangeHandle(stage);
   }
+  
+  void dispatchNebulaStarted () {
+    for(nebulaStartEvent n : nebulaStartSubscribers) n.nebulaStartHandle();
+  }
+
 } 
 
 interface gameOverEvent {
@@ -68,6 +70,6 @@ interface levelChangeEvent {
   void levelChangeHandle(int stage);
 }
 
-//interface volcanoSpawnedEvent {
-//  void volcanoSpawnedHandle();
-//}
+interface nebulaStartEvent {
+  void nebulaStartHandle();
+}

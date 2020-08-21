@@ -30,7 +30,6 @@ class SinglePlayer extends Scene {
   PlayerManager playerManager;
   Time time;
   Camera camera;
-  //Hypercube hypercube;
 
   ArrayList<updateable> updaters = new ArrayList<updateable>();
   ArrayList<renderableScreen> screeenRenderers = new ArrayList<renderableScreen>();
@@ -46,12 +45,11 @@ class SinglePlayer extends Scene {
     roids = new RoidManager(earth, eventManager, time);
     currentColor = new ColorDecider();
     volcanoManager = new VolcanoManager(eventManager, time, currentColor, earth);
-    starManager = new StarManager(currentColor, time);
-    //hypercube = new Hypercube(currentColor);
+    starManager = new StarManager(currentColor, time, eventManager);
 
     //soundManager = new SoundManager(main, eventManager);
 
-    playerManager = new PlayerManager(eventManager, earth, time, volcanoManager);
+    playerManager = new PlayerManager(eventManager, earth, time, volcanoManager, starManager);
     ui = new UIStory(eventManager, time, currentColor);
     ufoManager = new UFOManager (currentColor, earth, playerManager, eventManager);
 
@@ -65,7 +63,6 @@ class SinglePlayer extends Scene {
     updaters.add(ufoManager);
     updaters.add(playerManager);
     updaters.add(volcanoManager);
-    //updaters.add(hypercube);
 
     renderers.add(ufoManager);
     renderers.add(volcanoManager);
@@ -104,6 +101,7 @@ class testScene extends Scene {
   Earth earth;
   EventManager eventManager;
   ColorDecider currentColor;
+  StarManager starManager;  
   UIStory ui;
   RoidManager roids;
   //UFOManager ufoManager;
@@ -127,11 +125,12 @@ class testScene extends Scene {
     camera = new Camera(0, 0);
     roids = new RoidManager(earth, eventManager, time);
     currentColor = new ColorDecider();
+    starManager = new StarManager(currentColor, time, eventManager);
     //starManager = new StarManager(currentColor, time);
 
     //soundManager = new SoundManager(main, eventManager);
     volcanoManager = new VolcanoManager(eventManager, time, currentColor, earth);
-    playerManager = new PlayerManager(eventManager, earth, time, volcanoManager);
+    playerManager = new PlayerManager(eventManager, earth, time, volcanoManager, starManager);
     playerManager.spawningDuration = 10;
     ui = new UIStory(eventManager, time, currentColor);
     ui.score = 90;

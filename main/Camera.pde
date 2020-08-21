@@ -40,7 +40,7 @@ class ColorDecider implements updateable {
   }
 }
 
-class Time implements updateable, playerDiedEvent, gameOverEvent {
+class Time implements updateable, playerDiedEvent, gameOverEvent, nebulaStartEvent {
 
   private float clock;
   private float lastmillis;
@@ -53,6 +53,8 @@ class Time implements updateable, playerDiedEvent, gameOverEvent {
   private float dyingStartTime;
   final float dyingDuration = 3e3;
 
+  private boolean hyperspace = false;
+
   EventManager eventManager;
 
   Time (EventManager ev) {
@@ -60,6 +62,7 @@ class Time implements updateable, playerDiedEvent, gameOverEvent {
 
     eventManager.playerDiedSubscribers.add(this);
     eventManager.gameOverSubscribers.add(this);
+    eventManager.nebulaStartSubscribers.add(this);
 
     lastmillis = millis();
     clock = millis();
@@ -84,6 +87,14 @@ class Time implements updateable, playerDiedEvent, gameOverEvent {
       } else {
         dying = false;
       }
+    }
+  }
+
+  void nebulaStartHandle() {
+
+    if (!hyperspace) {
+      timeScale = 2;
+      hyperspace = true;
     }
   }
 

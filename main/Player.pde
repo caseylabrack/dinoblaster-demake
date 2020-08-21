@@ -4,6 +4,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
   Earth earth;
   Time time;
   VolcanoManager volcanoManager;
+  StarManager stars;
 
   Player player = null;
   PlayerDeath deathAnim = null;
@@ -30,11 +31,12 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
   float spawningRate = 125;
   private float spawningFlickerStart;
 
-  PlayerManager (EventManager _ev, Earth _earth, Time t, VolcanoManager volcs) {
+  PlayerManager (EventManager _ev, Earth _earth, Time t, VolcanoManager volcs, StarManager _stars) {
     eventManager = _ev;
     earth = _earth;
     time = t;
     volcanoManager = volcs;
+    stars = _stars;
 
     model = utils.sheetToSprites(loadImage("bronto-frames.png"), 3, 1)[0];
 
@@ -88,6 +90,21 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
     if (player!=null) player.update();
 
     if (deathAnim!=null) deathAnim.update();
+
+    if (player!=null && stars!=null) {
+      float dist = PVector.dist(player.globalPos(), stars.nebulaPosition());
+      pushMatrix();
+      translate(width/2, height/2);
+      circle(stars.nebulaPosition().x, stars.nebulaPosition().y, 25);
+      println(dist);
+      popMatrix();
+      if (dist < 125) {
+        println("hitting");
+        eventManager.dispatchNebulaStarted();
+      } else {
+        println("not hitting");
+      }
+    }
   }
 
   void render() {
