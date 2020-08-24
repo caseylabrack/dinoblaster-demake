@@ -106,7 +106,7 @@ void draw () {
   }
 
   if (rec) {
-    if (frameCount % 8 == 0) {
+    if (frameCount % 1 == 0) {
       saveFrame("spoofs-and-goofs/frames/dino-" + nf(fcount, 4) + ".png");
       fcount++;
     }

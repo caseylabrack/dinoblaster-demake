@@ -51,18 +51,18 @@ class RoidManager implements updateable, renderable {
   }
 
   void update () {
-    //if (time.getClock() - lastFire > spawnInterval) {
-    //  lastFire = time.getClock();
-    //  spawnInterval = random(minSpawnInterval, maxSpawnInterval);
+    if (time.getClock() - lastFire > spawnInterval) {
+      lastFire = time.getClock();
+      spawnInterval = random(minSpawnInterval, maxSpawnInterval);
       
-    //  Roid r = roids[roidindex++ % roids.length]; // increment roid index and wrap to length of pool
-    //  r.enabled = true;
-    //  r.angle = random(0, 359);
-    //  r.x = earth.x + cos(radians(r.angle)) * spawnDist;
-    //  r.y = earth.y + sin(radians(r.angle)) * spawnDist;
-    //  r.dx = cos(radians(r.angle+180)) * Roid.speed;
-    //  r.dy = sin(radians(r.angle+180)) * Roid.speed;
-    //};
+      Roid r = roids[roidindex++ % roids.length]; // increment roid index and wrap to length of pool
+      r.enabled = true;
+      r.angle = random(0, 359);
+      r.x = earth.x + cos(radians(r.angle)) * spawnDist;
+      r.y = earth.y + sin(radians(r.angle)) * spawnDist;
+      r.dx = cos(radians(r.angle+180)) * Roid.speed;
+      r.dy = sin(radians(r.angle+180)) * Roid.speed;
+    };
 
     for (Roid r : roids) {
       if (!r.enabled) continue;

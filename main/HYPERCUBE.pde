@@ -11,19 +11,20 @@
 class Hypercube implements updateable, renderable {
 
   float angle = 0;
-  float angle2 = PI/4;
   final int w = 500;
   final int h = 500;
 
   ColorDecider colors;
+  Time time;
 
   PGraphics pg;
 
   P4Vector[] points = new P4Vector[16];
 
-  Hypercube(ColorDecider c) {
+  Hypercube(ColorDecider c, Time _t) {
 
     colors = c;
+    time = _t;
 
     points[0] = new P4Vector(-1, -1, -1, 1);
     points[1] = new P4Vector(1, -1, -1, 1);
@@ -50,10 +51,9 @@ class Hypercube implements updateable, renderable {
     pg.pushMatrix();
     pg.pushStyle();
     pg.stroke(colors.getColor());
-    pg.strokeWeight(2);
+    pg.strokeWeight(1.25);
     pg.noFill();
     pg.clear();
-
 
     pg.translate(w/2, h/2);
     pg.rotateX(-PI/2);
@@ -71,8 +71,8 @@ class Hypercube implements updateable, renderable {
 
       float[][] rotationYZ = {
         {1, 0, 0, 0}, 
-        {0, cos(angle2), -sin(angle2), 0}, 
-        {0, sin(angle2), cos(angle2), 0}, 
+        {0, cos(PI/4), -sin(PI/4), 0}, 
+        {0, sin(PI/4), cos(PI/4), 0}, 
         {0, 0, 0, 1}
       };
 
@@ -119,7 +119,7 @@ class Hypercube implements updateable, renderable {
       connect(0, i, i + 8, projected3d);
     }
 
-    angle += 0.02;
+    angle += 0.02 * time.getTimeScale();
     pg.popStyle();
     pg.popMatrix();
     pg.endDraw();

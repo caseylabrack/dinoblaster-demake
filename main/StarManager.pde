@@ -1,23 +1,24 @@
-class StarManager implements updateable, renderable, renderableScreen, nebulaStartEvent {
+class StarManager implements updateable, renderable, renderableScreen, nebulaEvents {
 
   PVector[] stars = new PVector[800];
   float r = 2000;
-  float a = 180;
-  float x, y;
+  float a = 0;//PI/2;
   final float defaultStarSpeed = TWO_PI / (360 * 40);
   float starSpeed = defaultStarSpeed;
 
-  PVector nebulaPos;
-  boolean nebulaActive = false;
-  final float nebulaLead = 15;
-  final float nebulaOffset = -150;
+  PVector hypercubePos;
+  boolean hypercubeActive = false;
+  final float hypercubeLead = 17;
+  final float hypercubeOffset = -150;
+  final float HYPERSPACE_DURATION = 15e3;
+  float hyperspaceStart;
+  Hypercube hypercube;
+  boolean hyperspace = false;
+  IntList hyperspaceSpawns = new IntList();
 
   ColorDecider currentColor;
   Time time;
   EventManager events;
-
-  Hypercube hypercube;
-  boolean hyperspace = false;
 
   StarManager (ColorDecider _color, Time t, EventManager evs) {
 
@@ -35,80 +36,78 @@ class StarManager implements updateable, renderable, renderableScreen, nebulaSta
 
     evs.nebulaStartSubscribers.add(this);
 
-    spawnNeb();
+    int i = int(random(5, 80));
+    while (i < 80) {
+      hyperspaceSpawns.append(i);
+      i += int(random(30, 80));
+    }
   }
 
   void nebulaStartHandle() {
     hyperspace = true;
     starSpeed = defaultStarSpeed * 5;
+    hyperspaceStart = millis();
   }
 
-  void spawnNeb () {
-    nebulaActive = true;
-    hypercube = new Hypercube(currentColor);
-    nebulaPos = new PVector(cos(a + radians(nebulaLead)) * (r + nebulaOffset), sin(a + radians(nebulaLead)) * (r + nebulaOffset));
+  void nebulaStopHandle() {
   }
 
   void update () {
     a += starSpeed * time.getTimeScale();
+
+    if (hyperspaceSpawns.size()!=0) {
+      if (time.getClock() > hyperspaceSpawns.get(0) * 1000) {
+        if (hyperspaceSpawns.size() >= 1) hyperspaceSpawns.remove(0);
+        hypercubeActive = true;
+        hypercube = new Hypercube(currentColor, time);
+        hypercubePos = new PVector(cos(a + radians(hypercubeLead)) * (r + hypercubeOffset), sin(a + radians(hypercubeLead)) * (r + hypercubeOffset));
+      }
+    }
+
+    if (millis() - hyperspaceStart > HYPERSPACE_DURATION) {
+      hyperspace = false;
+      starSpeed = defaultStarSpeed;
+      events.dispatchNebulaEnded();
+    }
   }
 
-  PVector nebulaPosition () {
-    return nebulaActive ? new PVector(nebulaPos.x - x, nebulaPos.y - y) : new PVector(Float.MAX_VALUE, Float.MAX_VALUE);
+  PVector hypercubePosition () {
+    return hypercubeActive ? new PVector(hypercubePos.x - cos(a) * r, hypercubePos.y - sin(a) * r) : new PVector(Float.MAX_VALUE, Float.MAX_VALUE);
   }
 
   void render () {
 
-    x = (cos(a) * r) ;
-    y = (sin(a) * r) ;
-    pushStyle();
-    pushMatrix();
-    noStroke();
-    fill(0, 0, 100);
-    for (PVector s : stars) {
-      if (abs(s.x - x) < width && abs(s.y - y) < height) {
-        pushMatrix();
-        //rotate(TWO_PI/8);
-        square(s.x - x, s.y - y, 2);
-        //circle(nebulaPos.x - x, nebulaPos.y - y, 25);
+    float x = cos(a) * r;
+    float y = sin(a) * r;
+    float x2 = cos(a-(starSpeed * 6)) * r;
+    float y2 = sin(a-(starSpeed * 6)) * r;
 
-        popMatrix();
+    pushStyle();
+    for (int i = 0; i < stars.length; i++) {
+      if (abs(stars[i].x - x) < width && abs(stars[i].y - y) < height) {
+        if (hyperspace) {
+          fill(currentColor.getColor());
+          if (i % 6 == 0) {
+            stroke(currentColor.getColor());
+            line(stars[i].x - x, stars[i].y - y, stars[i].x - x2, stars[i].y - y2);
+          } else {
+            noStroke();
+            square(stars[i].x - x, stars[i].y - y, 2);
+          }
+        } else {
+          noStroke();
+          fill(0, 0, 100);
+          square(stars[i].x - x, stars[i].y - y, 2);
+        }
       }
     }
-    pushMatrix();
-    //rotate(TWO_PI/8);
-    translate(nebulaPos.x - x, nebulaPos.y - y);
     popStyle();
-    hypercube.update();
-    pushStyle();
-    noFill();
-    if (hyperspace) {
-      stroke(40, 50, 70);
-      strokeWeight(10);
-    } else {
-      stroke(0, 50, 70);
+
+    if (hypercubeActive) {
+      pushMatrix();
+      translate(hypercubePos.x - x, hypercubePos.y - y);
+      hypercube.update();
+      popMatrix();
     }
-    ellipse(0, 0, 225, 225);
-    popStyle();
-    popMatrix();
-
-    //image(nebulaModel, nebulaPos.x - x, nebulaPos.y - y);
-    popMatrix();
-
-
-    //if (nebulaActive) {
-    //  x = nebulaPos.x - (cos(a) * r - width / 2);
-    //  y = nebulaPos.y - (sin(a) * r - height / 2);
-
-    //  if (x>-640 && x < width + 640 && y > -640 && y < height + 640) {
-    //    pushStyle();
-    //    pushMatrix();
-    //    translate(x, y);
-    //    tint(currentColor.getColor());
-    //    image(nebulaModel, 0, 0);
-    //    popMatrix();
-    //    popStyle();
-    //  }
-    //}
   }
 }

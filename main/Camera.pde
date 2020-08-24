@@ -28,9 +28,6 @@ class ColorDecider implements updateable {
   private int currentHue = 0;
   private color[] hues = new color[]{#ff3800, #ffff00, #00ff00, #00ffff, #ff57ff};
 
-  ColorDecider () {
-  }
-
   void update () {
     currentHue = hues[utils.cycleRangeWithDelay(hues.length, 10, frameCount)];
   }
@@ -40,7 +37,7 @@ class ColorDecider implements updateable {
   }
 }
 
-class Time implements updateable, playerDiedEvent, gameOverEvent, nebulaStartEvent {
+class Time implements updateable, playerDiedEvent, gameOverEvent, nebulaEvents {
 
   private float clock;
   private float lastmillis;
@@ -54,6 +51,7 @@ class Time implements updateable, playerDiedEvent, gameOverEvent, nebulaStartEve
   final float dyingDuration = 3e3;
 
   private boolean hyperspace = false;
+  final float HYPERSPACE_TIME = 1.75;
 
   EventManager eventManager;
 
@@ -65,7 +63,8 @@ class Time implements updateable, playerDiedEvent, gameOverEvent, nebulaStartEve
     eventManager.nebulaStartSubscribers.add(this);
 
     lastmillis = millis();
-    clock = millis();
+    //clock = millis();
+    clock = 0;
   }
 
   void update () {
@@ -83,7 +82,8 @@ class Time implements updateable, playerDiedEvent, gameOverEvent, nebulaStartEve
     if (dying) {
       float progress = (millis() - dyingStartTime) / dyingDuration;
       if (progress < 1) {
-        timeScale = utils.easeInOutExpo(progress, .1, .9, 1);
+        float targetTimeScale = hyperspace ? HYPERSPACE_TIME: 1;
+        timeScale = utils.easeInOutExpo(progress, .1, HYPERSPACE_TIME - .1, HYPERSPACE_TIME);
       } else {
         dying = false;
       }
@@ -93,9 +93,17 @@ class Time implements updateable, playerDiedEvent, gameOverEvent, nebulaStartEve
   void nebulaStartHandle() {
 
     if (!hyperspace) {
-      timeScale = 2;
+      timeScale = HYPERSPACE_TIME;
       hyperspace = true;
     }
+  }
+
+  void nebulaStopHandle() {
+   
+      hyperspace = false;
+      if(!dying) { 
+        timeScale = 1;
+      }
   }
 
   void gameOverHandle() {

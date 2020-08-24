@@ -6,40 +6,43 @@ class EventManager {
   ArrayList<playerDiedEvent> playerDiedSubscribers = new ArrayList<playerDiedEvent>();
   ArrayList<playerRespawnedEvent> playerRespawnedSubscribers = new ArrayList<playerRespawnedEvent>();
   ArrayList<levelChangeEvent> levelChangeSubscribers = new ArrayList<levelChangeEvent>();
-  ArrayList<nebulaStartEvent> nebulaStartSubscribers = new ArrayList<nebulaStartEvent>();  
-    
+  ArrayList<nebulaEvents> nebulaStartSubscribers = new ArrayList<nebulaEvents>();  
+
   void dispatchGameOver () {
-    for(gameOverEvent g : gameOverSubscribers) g.gameOverHandle();
-  }
-  
-  void dispatchRoidImpact(PVector p) {
-    for(roidImpactEvent r : roidImpactSubscribers) r.roidImpactHandle(p);
-  }
-  
-  void dispatchAbduction(PVector p) {
-    for(abductionEvent a : abductionSubscribers) a.abductionHandle(p);
-  }
-  
-  void dispatchPlayerSpawned(Player p) {
-    for(playerSpawnedEvent s : playerSpawnedSubscribers) s.playerSpawnedHandle(p);
-  }
-  
-  void dispatchPlayerDied(PVector position) {
-    for(playerDiedEvent s: playerDiedSubscribers) s.playerDiedHandle(position);
-  }
-  
-  void dispatchPlayerRespawned(PVector position) {
-    for(playerRespawnedEvent s: playerRespawnedSubscribers) s.playerRespawnedHandle(position);
-  }
-  
-  void dispatchLevelChanged(int stage) {
-    for(levelChangeEvent l: levelChangeSubscribers) l.levelChangeHandle(stage);
-  }
-  
-  void dispatchNebulaStarted () {
-    for(nebulaStartEvent n : nebulaStartSubscribers) n.nebulaStartHandle();
+    for (gameOverEvent g : gameOverSubscribers) g.gameOverHandle();
   }
 
+  void dispatchRoidImpact(PVector p) {
+    for (roidImpactEvent r : roidImpactSubscribers) r.roidImpactHandle(p);
+  }
+
+  void dispatchAbduction(PVector p) {
+    for (abductionEvent a : abductionSubscribers) a.abductionHandle(p);
+  }
+
+  void dispatchPlayerSpawned(Player p) {
+    for (playerSpawnedEvent s : playerSpawnedSubscribers) s.playerSpawnedHandle(p);
+  }
+
+  void dispatchPlayerDied(PVector position) {
+    for (playerDiedEvent s : playerDiedSubscribers) s.playerDiedHandle(position);
+  }
+
+  void dispatchPlayerRespawned(PVector position) {
+    for (playerRespawnedEvent s : playerRespawnedSubscribers) s.playerRespawnedHandle(position);
+  }
+
+  void dispatchLevelChanged(int stage) {
+    for (levelChangeEvent l : levelChangeSubscribers) l.levelChangeHandle(stage);
+  }
+
+  void dispatchNebulaStarted () {
+    for (nebulaEvents n : nebulaStartSubscribers) n.nebulaStartHandle();
+  }
+
+  void dispatchNebulaEnded () {
+    for (nebulaEvents n : nebulaStartSubscribers) n.nebulaStopHandle();
+  }
 } 
 
 interface gameOverEvent {
@@ -70,6 +73,7 @@ interface levelChangeEvent {
   void levelChangeHandle(int stage);
 }
 
-interface nebulaStartEvent {
+interface nebulaEvents {
   void nebulaStartHandle();
+  void nebulaStopHandle();
 }

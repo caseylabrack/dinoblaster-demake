@@ -92,18 +92,10 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
     if (deathAnim!=null) deathAnim.update();
 
     if (player!=null && stars!=null) {
-      float dist = PVector.dist(player.globalPos(), stars.nebulaPosition());
-      pushMatrix();
-      translate(width/2, height/2);
-      circle(stars.nebulaPosition().x, stars.nebulaPosition().y, 25);
-      println(dist);
-      popMatrix();
-      if (dist < 125) {
-        println("hitting");
+      float hypercubeDist = PVector.dist(player.globalPos(), stars.hypercubePosition());
+      if (hypercubeDist < 125) {
         eventManager.dispatchNebulaStarted();
-      } else {
-        println("not hitting");
-      }
+      } 
     }
   }
 
