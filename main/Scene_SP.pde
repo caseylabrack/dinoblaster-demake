@@ -51,7 +51,7 @@ class SinglePlayer extends Scene {
 
     playerManager = new PlayerManager(eventManager, earth, time, volcanoManager, starManager);
     ui = new UIStory(eventManager, time, currentColor);
-    ufoManager = new UFOManager (currentColor, earth, playerManager, eventManager);
+    ufoManager = new UFOManager (currentColor, earth, playerManager, eventManager, time);
 
     updaters.add(time);
     updaters.add(ui);

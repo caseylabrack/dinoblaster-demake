@@ -55,6 +55,7 @@ class StarManager implements updateable, renderable, renderableScreen, nebulaEve
   void update () {
     a += starSpeed * time.getTimeScale();
 
+    println(hyperspaceSpawns);
     if (hyperspaceSpawns.size()!=0) {
       if (time.getClock() > hyperspaceSpawns.get(0) * 1000) {
         if (hyperspaceSpawns.size() >= 1) hyperspaceSpawns.remove(0);
@@ -66,6 +67,7 @@ class StarManager implements updateable, renderable, renderableScreen, nebulaEve
 
     if (millis() - hyperspaceStart > HYPERSPACE_DURATION) {
       hyperspace = false;
+      hypercubeActive = false;
       starSpeed = defaultStarSpeed;
       events.dispatchNebulaEnded();
     }

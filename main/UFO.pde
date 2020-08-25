@@ -1,4 +1,4 @@
-class UFOManager implements updateable, renderable, abductionEvent, playerDiedEvent {
+class UFOManager implements updateable, renderable, abductionEvent, playerDiedEvent, playerRespawnedEvent {
 
   ColorDecider currentColor;
   UFO ufo = null;
@@ -6,42 +6,61 @@ class UFOManager implements updateable, renderable, abductionEvent, playerDiedEv
   Earth earth;
   PlayerManager playerManager;
   EventManager eventManager;
+  Time time;
 
   int extralives = 0;
 
-  UFOManager (ColorDecider _color, Earth _earth, PlayerManager _pm, EventManager _ev) {
+  float spawnCountDown;
+  boolean playerAlive = true;
+
+
+  UFOManager (ColorDecider _color, Earth _earth, PlayerManager _pm, EventManager _ev, Time t) {
 
     currentColor = _color;
     earth = _earth;
     playerManager = _pm;
     eventManager = _ev;
+    time = t;
 
     eventManager.abductionSubscribers.add(this);
     eventManager.playerDiedSubscribers.add(this);
-  }
+    eventManager.playerRespawnedSubscribers.add(this);
 
-  void spawnUFOAbducting () {
-
-    ufo = new UFO(currentColor, earth, playerManager, eventManager);
-  }
-
-  void spawnUFOReturning () {
-    ufoRespawn = new UFOrespawn(currentColor, earth, eventManager);
+    spawnCountDown = random(5, 90) * 1000;
   }
 
   void abductionHandle(PVector p) {
     extralives++;
+    playerAlive = false;
   }
 
   void playerDiedHandle(PVector position) {
-    if (extralives > 0) spawnUFOReturning();
+    if (extralives > 0) {
+      ufoRespawn = new UFOrespawn(currentColor, earth, eventManager);
+    }
     extralives--;
+    playerAlive = false;
+  }
+
+  void playerRespawnedHandle(PVector position) {
+    playerAlive = true;
   }
 
   void update () {
 
+    if (playerAlive) {
+      spawnCountDown -= (1e3/60) * time.getTimeScale();
+      if (spawnCountDown < 0) {
+        spawnCountDown = random(40, 90) * 1000;
+        ufo = new UFO(currentColor, earth, playerManager, eventManager);
+      }
+    }
+
     if (ufoRespawn!=null) {
       ufoRespawn.update();
+      if (ufoRespawn.state==UFOrespawn.DONE) {
+        ufoRespawn = null;
+      }
     }
 
     if (ufo!=null) {
