@@ -26,6 +26,11 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
 
   PImage letterbox;
 
+  float highscore = 85;
+  boolean newHighScore = false;
+
+  final String SCORE_DATA_FILENAME = "dino.dat";
+
   UIStory (EventManager _eventManager, Time t, ColorDecider _currentColor) {
     eventManager = _eventManager;
     currentColor = _currentColor;
@@ -43,10 +48,26 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
     extralifeIcons = utils.sheetToSprites(extralifeSheet, 3, 3);
 
     letterbox = loadImage("letterboxes.png");
+
+    byte[] scoreData = loadBytes(SCORE_DATA_FILENAME);
+    if (scoreData==null) {
+      highscore = 0;
+    } else {
+      highscore = 0;
+      for (byte n : scoreData) {
+        highscore += float(n + 128);
+      }
+    }
   }
 
   void gameOverHandle() {
     isGameOver = true;
+    if (score > highscore) {
+      byte[] nums = new byte[score > 255 ? 2 : 1];
+      nums[0] = byte(highscore > 255 ? 127 : floor(score) - 128);
+      if (highscore > 256) nums[1] = byte(floor(score) - 256 - 127);
+      saveBytes(SCORE_DATA_FILENAME, nums);
+    }
   }
 
   void playerSpawnedHandle(Player p) {
@@ -77,6 +98,12 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
   void update () {
     if (isGameOver) return;
     
+    if(!newHighScore) {
+      if(score > highscore) {
+         newHighScore = true; 
+      }
+    }
+
     if (time.getClock() - lastScoreTick > 1000 && scoring) {
       score++;
       lastScoreTick = time.getClock();
@@ -106,8 +133,24 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
     // score tracker
     pushStyle();
     stroke(0, 0, 100);
+    noFill();
     strokeWeight(1);
-    line(64, 40, 64, 39 + score/300 * (height - 80));
+    //line(64, 40, 64, endpoint);
+    pushMatrix();
+    //translate(64, 100);
+    translate(64, 40 + (highscore/300.0) * (height - 80));
+    //println((85.0/300.0) * (height - 80));
+    rotate(PI/4);
+    rect(0, 0, 8, 8);
+    popMatrix();
+    pushMatrix();
+    int endpoint = 40 + round(score/300 * (height - 80));
+    translate(64, endpoint);
+    rotate(PI/4);
+    if(newHighScore) stroke(currentColor.getColor());
+    rect(0, 0, 16, 16);
+    //image(assets.ufostuff.brontoAbductionFrames[5], 0,0);
+    popMatrix();
     popStyle();
 
     // letterbox

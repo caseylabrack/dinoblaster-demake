@@ -1,0 +1,9 @@
+{
+  "extraLives": 0,
+  "ufosEnabled": true,
+  "roidsEnabled": true,
+  "earthRotationSpeed": 2.299999952316284,
+  "playerSpeed": 5,
+  "hypercubesEnabled": true,
+  "defaultTimeScale": 1
+}

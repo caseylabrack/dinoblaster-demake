@@ -15,6 +15,7 @@ class StarManager implements updateable, renderable, renderableScreen, nebulaEve
   Hypercube hypercube;
   boolean hyperspace = false;
   IntList hyperspaceSpawns = new IntList();
+  boolean hypercubesEnabled;
 
   ColorDecider currentColor;
   Time time;
@@ -36,6 +37,7 @@ class StarManager implements updateable, renderable, renderableScreen, nebulaEve
 
     evs.nebulaStartSubscribers.add(this);
 
+    hypercubesEnabled = settings.getBoolean("hypercubesEnabled", true);
     int i = int(random(5, 80));
     while (i < 80) {
       hyperspaceSpawns.append(i);
@@ -55,7 +57,8 @@ class StarManager implements updateable, renderable, renderableScreen, nebulaEve
   void update () {
     a += starSpeed * time.getTimeScale();
 
-    println(hyperspaceSpawns);
+    if (!hypercubesEnabled) return;
+
     if (hyperspaceSpawns.size()!=0) {
       if (time.getClock() > hyperspaceSpawns.get(0) * 1000) {
         if (hyperspaceSpawns.size() >= 1) hyperspaceSpawns.remove(0);
@@ -65,11 +68,13 @@ class StarManager implements updateable, renderable, renderableScreen, nebulaEve
       }
     }
 
-    if (millis() - hyperspaceStart > HYPERSPACE_DURATION) {
-      hyperspace = false;
-      hypercubeActive = false;
-      starSpeed = defaultStarSpeed;
-      events.dispatchNebulaEnded();
+    if (hyperspace) {
+      if (millis() - hyperspaceStart > HYPERSPACE_DURATION) {
+        hyperspace = false;
+        hypercubeActive = false;
+        starSpeed = defaultStarSpeed;
+        events.dispatchNebulaEnded();
+      }
     }
   }
 

@@ -56,7 +56,8 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
       if (PVector.dist(player.globalPos(), impact) < 65) {
         extralives--;
         float incomingAngle = utils.angleOf(earth.globalPos(), impact);
-        PVector adjustedPosition = new PVector(earth.globalPos().x + cos(radians(incomingAngle)) * (earth.radius), earth.globalPos().y + sin(radians(incomingAngle)) * (earth.radius));
+        float offset = -20;
+        PVector adjustedPosition = new PVector(earth.globalPos().x + cos(radians(incomingAngle)) * (earth.radius + offset), earth.globalPos().y + sin(radians(incomingAngle)) * (earth.radius + offset));
 
         deathAnim = new PlayerDeath(time, player.globalPos(), player.globalRote(), player.direction, player.globalToLocalPos(adjustedPosition));
         if (extralives<0) {
@@ -95,7 +96,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
       float hypercubeDist = PVector.dist(player.globalPos(), stars.hypercubePosition());
       if (hypercubeDist < 125) {
         eventManager.dispatchNebulaStarted();
-      } 
+      }
     }
   }
 
@@ -186,11 +187,15 @@ class PlayerDeath extends Entity {
       g.midpoint = PVector.add(g.p1, g.p2).div(2); // part of line to apply force to
       g.disableDuration = random(DinoGib.minDisable, DinoGib.maxDisable);
       g.disableStart = time.getClock();
+      //g.disableStart = millis();
 
       float angle = utils.angleOfRadians(forcePoint, g.midpoint);
       float d = forcePoint.dist(g.midpoint);
-      float force = (1/(d * d)) * 5000;
+      //float force = (1/(d * d)) * 5000;
       //float force = (1/d) * 500;
+      float force = (1/d) * 250;
+      //float force = 5;
+      //float force = (1/ (d * d)) * 1e3;
       g.dx = cos(angle) * force;
       g.dy = sin(angle) * force;
     }
@@ -199,6 +204,7 @@ class PlayerDeath extends Entity {
   void update () {
     for (DinoGib g : gibs) {
       if (time.getClock() - g.disableStart > g.disableDuration) g.enabled = false;
+      //if (millis() - g.disableStart > g.disableDuration) g.enabled = false;
 
       g.p1.x += g.dx * time.getTimeScale();
       g.p1.y += g.dy * time.getTimeScale();
@@ -231,7 +237,9 @@ class Player extends Entity implements updateable, renderable {
   PImage model;
   PImage[] runFrames = new PImage[2];
   PImage idle;
-  final static float runSpeed = 5;
+  //final static float runSpeed = 5;
+  float runSpeed;
+  //final static float runSpeed = settings.getFloat("playerSpeed", 5);
   int direction = 1;
   int playerNum = 1;
   int framesTotal = 8;
@@ -245,6 +253,8 @@ class Player extends Entity implements updateable, renderable {
     eventManager = _eventManager;
     time = t;
     volcanoManager = volcs;
+
+    runSpeed = settings.getFloat("playerSpeed", 5);
 
     PImage sheet = whichPlayer==1 ? loadImage("bronto-frames.png") : loadImage("oviraptor-frames.png");
     PImage[] frames = whichPlayer==1 ? utils.sheetToSprites(sheet, 3, 1) : utils.sheetToSprites(sheet, 2, 2, 1);

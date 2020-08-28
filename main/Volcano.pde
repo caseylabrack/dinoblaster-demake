@@ -105,6 +105,8 @@ class Volcano extends Entity {
   private float flareDuration = 500;
   private boolean flareLeft = true;
 
+  float playerRunspeed;
+
   Time time;
   ColorDecider currentColor;
 
@@ -112,6 +114,8 @@ class Volcano extends Entity {
     angle = _angle;
     time = t;
     currentColor = _c;
+
+    playerRunspeed = settings.getFloat("playerSpeed", 5);
 
     x = earth.x + cos(radians(angle)) * eruptStartDist;
     y = earth.y + sin(radians(angle)) * eruptStartDist; 
@@ -133,7 +137,8 @@ class Volcano extends Entity {
       if (progress < 1) {
         dist = utils.easeInQuad(progress, eruptStartDist, eruptEndDist - eruptStartDist, 1);
         setPosition(new PVector(cos(radians(angle)) * dist, sin(radians(angle)) * dist));
-        margin = utils.easeLinear(progress, Player.runSpeed, maxMargin - Player.runSpeed, 1);
+        margin = utils.easeLinear(progress, playerRunspeed, maxMargin - playerRunspeed, 1);
+        //margin = utils.easeLinear(progress, Player.runSpeed, maxMargin - Player.runSpeed, 1);
       } else {
         setPosition(new PVector(cos(radians(angle)) * eruptEndDist, sin(radians(angle)) * eruptEndDist));
         margin = maxMargin;

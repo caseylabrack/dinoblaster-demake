@@ -15,6 +15,8 @@ class RoidManager implements updateable, renderable {
   Explosion[] splodes = new Explosion[25];
   int splodeindex = 0;
 
+  public boolean enabled;
+
   class Explosion extends Entity {
     PImage model;
     float start;
@@ -46,15 +48,21 @@ class RoidManager implements updateable, renderable {
       earth.addChild(splodes[j]);
     }
 
+    enabled = settings.getBoolean("roidsEnabled", true);
+
+
     //roids[roidindex % roids.length].fire();
     //roidindex++;
   }
 
   void update () {
+
+    if (!enabled) return;
+
     if (time.getClock() - lastFire > spawnInterval) {
       lastFire = time.getClock();
       spawnInterval = random(minSpawnInterval, maxSpawnInterval);
-      
+
       Roid r = roids[roidindex++ % roids.length]; // increment roid index and wrap to length of pool
       r.enabled = true;
       r.angle = random(0, 359);
@@ -99,6 +107,9 @@ class RoidManager implements updateable, renderable {
   }
 
   void render () {
+
+    if (!enabled) return;
+
     for (Roid r : roids) {
       if (!r.enabled) continue;
       pushMatrix();

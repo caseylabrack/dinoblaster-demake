@@ -10,6 +10,7 @@ boolean rec = false;
 
 Keys keys = new Keys();
 AssetManager assets = new AssetManager();
+JSONObject settings;
 
 void setup () {
   //size(1024, 768, P2D);
@@ -24,8 +25,25 @@ void setup () {
 
   assets.load();
   glow = loadShader("glow.glsl");
+
+  try {
+    settings = loadJSONObject("user-settings.json");
+  }
+  catch(Exception e) {
+    settings = new JSONObject();
+    settings.setBoolean("roidsEnabled", true);
+    settings.setBoolean("hypercubesEnabled", true);
+    settings.setBoolean("ufosEnabled", true);
+    settings.setFloat("defaultTimeScale", 1);
+    settings.setInt("extraLives", 0);
+    settings.setFloat("earthRotationSpeed", 2.3);
+    settings.setFloat("playerSpeed", 5);
+    saveJSONObject(settings, "user-settings.json");
+  }
+
+  //println(settings.getBoolean("roidsEnabled", true));
+
   currentScene = new SinglePlayer(10);
-  //currentScene = new testScene();
 }
 
 void keyPressed() {
@@ -125,10 +143,10 @@ class Keys {
   // keys on picade console:
   // |joy|    |16| |90| |88|
   //          |17| |18| |32|
-  
+
   // front panel:
   // |27|      |79|
-  
+
   static final int LEFT = 0;
   static final int RIGHT = 1;
   boolean left = false;
