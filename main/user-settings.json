@@ -1,9 +1,16 @@
 {
-  "extraLives": 0,
+  "player1LeftKey": "m",
+  "player1RightKey": "n",
   "ufosEnabled": true,
   "roidsEnabled": true,
-  "earthRotationSpeed": 2.299999952316284,
+  "hideHelpButton": true,
   "playerSpeed": 5,
-  "hypercubesEnabled": true,
-  "defaultTimeScale": 1
+  "player2LeftKey": "l",
+  "player2RightKey": "k",
+  "defaultTimeScale": 1,
+  "extraLives": 0,
+  "JurassicUnlocked": true,
+  "earthRotationSpeed": 2.299999952316284,
+  "CretaceousUnlocked": true,
+  "hypercubesEnabled": true
 }

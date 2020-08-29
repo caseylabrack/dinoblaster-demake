@@ -2,6 +2,8 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
   PFont EXTINCT;
   PFont body;
   boolean isGameOver = false;
+  float gameOverGracePeriodStart;
+  final float gameOverGracePeriodDuration = 4e3;
   float score = 0;
 
   final static int TRIASSIC = 0;
@@ -31,10 +33,13 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
 
   final String SCORE_DATA_FILENAME = "dino.dat";
 
-  UIStory (EventManager _eventManager, Time t, ColorDecider _currentColor) {
+  UIStory (EventManager _eventManager, Time t, ColorDecider _currentColor, int lvl) {
     eventManager = _eventManager;
     currentColor = _currentColor;
     time = t;
+
+    stage = lvl;
+    score = lvl * 100;
 
     lastScoreTick = time.getClock();
 
@@ -62,6 +67,7 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
 
   void gameOverHandle() {
     isGameOver = true;
+    gameOverGracePeriodStart = millis();
     if (score > highscore) {
       byte[] nums = new byte[score > 255 ? 2 : 1];
       nums[0] = byte(highscore > 255 ? 127 : floor(score) - 128);
@@ -96,11 +102,18 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
   }
 
   void update () {
-    if (isGameOver) return;
-    
-    if(!newHighScore) {
-      if(score > highscore) {
-         newHighScore = true; 
+    if (isGameOver) {
+      if (millis() - gameOverGracePeriodStart> gameOverGracePeriodDuration) {
+        if (keys.anykey) {
+          currentScene = new SinglePlayer(stage);
+        }
+      }
+      return;
+    }
+
+    if (!newHighScore) {
+      if (score > highscore) {
+        newHighScore = true;
       }
     }
 
@@ -147,7 +160,7 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
     int endpoint = 40 + round(score/300 * (height - 80));
     translate(64, endpoint);
     rotate(PI/4);
-    if(newHighScore) stroke(currentColor.getColor());
+    if (newHighScore) stroke(currentColor.getColor());
     rect(0, 0, 16, 16);
     //image(assets.ufostuff.brontoAbductionFrames[5], 0,0);
     popMatrix();

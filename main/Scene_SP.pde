@@ -3,9 +3,11 @@ abstract class Scene {
   final static int SPLASH = 0;
   final static int MENU = 1;
   final static int PTUTORIAL = 2;
-  final static int SINGLEPLAYER = 3;
-  final static int MULTIPLAYER = 4;
-  final static int OVIRAPTOR = 5;
+  final static int TRIASSIC = 3;
+  final static int JURASSIC = 4;
+  final static int CRETACEOUS = 5;
+  final static int MULTIPLAYER = 6;
+  final static int OVIRAPTOR = 7;
 
   public int status;
   final static int RUNNING = 1;
@@ -13,7 +15,7 @@ abstract class Scene {
 
   abstract void update();
   abstract void render();
-  abstract int nextScene();
+  //abstract int nextScene();
 }
 
 class SinglePlayer extends Scene {
@@ -36,7 +38,7 @@ class SinglePlayer extends Scene {
   ArrayList<renderable> renderers =  new ArrayList<renderable>();
 
   SinglePlayer(int lvl) {
-    sceneID = SINGLEPLAYER;
+    sceneID = TRIASSIC + lvl - 1;
 
     eventManager = new EventManager();
     time = new Time(eventManager);
@@ -44,13 +46,13 @@ class SinglePlayer extends Scene {
     camera = new Camera(0, 0);
     roids = new RoidManager(earth, eventManager, time);
     currentColor = new ColorDecider();
-    volcanoManager = new VolcanoManager(eventManager, time, currentColor, earth);
-    starManager = new StarManager(currentColor, time, eventManager);
+    volcanoManager = new VolcanoManager(eventManager, time, currentColor, earth, lvl);
+    starManager = new StarManager(currentColor, time, eventManager, lvl);
 
     //soundManager = new SoundManager(main, eventManager);
 
     playerManager = new PlayerManager(eventManager, earth, time, volcanoManager, starManager);
-    ui = new UIStory(eventManager, time, currentColor);
+    ui = new UIStory(eventManager, time, currentColor, lvl);
     ufoManager = new UFOManager (currentColor, earth, playerManager, eventManager, time);
 
     updaters.add(time);
@@ -72,6 +74,8 @@ class SinglePlayer extends Scene {
     renderers.add(starManager);
 
     screeenRenderers.add(ui);
+
+    status = RUNNING;
   }
 
   void update () {
@@ -91,9 +95,9 @@ class SinglePlayer extends Scene {
     for (renderableScreen rs : screeenRenderers) rs.render(); // UI
   }
 
-  int nextScene () {
-    return SINGLEPLAYER;
-  }
+  //int nextScene () {
+  //  return SINGLEPLAYER;
+  //}
 }
 
 class testScene extends Scene {
@@ -114,8 +118,8 @@ class testScene extends Scene {
   ArrayList<renderableScreen> screeenRenderers = new ArrayList<renderableScreen>();
   ArrayList<renderable> renderers =  new ArrayList<renderable>();
 
-  testScene () {
-    sceneID = SINGLEPLAYER;
+  testScene (int lvl) {
+    sceneID = TRIASSIC;
 
     eventManager = new EventManager();
     time = new Time(eventManager);
@@ -125,14 +129,14 @@ class testScene extends Scene {
     camera = new Camera(0, 0);
     roids = new RoidManager(earth, eventManager, time);
     currentColor = new ColorDecider();
-    starManager = new StarManager(currentColor, time, eventManager);
+    starManager = new StarManager(currentColor, time, eventManager, lvl);
     //starManager = new StarManager(currentColor, time);
 
     //soundManager = new SoundManager(main, eventManager);
-    volcanoManager = new VolcanoManager(eventManager, time, currentColor, earth);
+    volcanoManager = new VolcanoManager(eventManager, time, currentColor, earth, lvl);
     playerManager = new PlayerManager(eventManager, earth, time, volcanoManager, starManager);
     playerManager.spawningDuration = 10;
-    ui = new UIStory(eventManager, time, currentColor);
+    ui = new UIStory(eventManager, time, currentColor, lvl);
     ui.score = 90;
     //ufoManager = new UFOManager (currentColor, earth, playerManager, eventManager);
 
@@ -174,7 +178,7 @@ class testScene extends Scene {
     for (renderableScreen rs : screeenRenderers) rs.render(); // UI
   }
 
-  int nextScene () {
-    return SINGLEPLAYER;
-  }
+  //int nextScene () {
+  //  return SINGLEPLAYER;
+  //}
 }

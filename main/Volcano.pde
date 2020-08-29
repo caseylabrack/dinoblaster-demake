@@ -12,11 +12,16 @@ class VolcanoManager implements levelChangeEvent, updateable, renderable {
   final float spawnMax = 100e3;
   float spawnSpacing;
 
-  VolcanoManager(EventManager events, Time t, ColorDecider _c, Earth e) {
+  VolcanoManager(EventManager events, Time t, ColorDecider _c, Earth e, int lvl) {
 
     time = t;
     earth = e;
     currentColor = _c;
+
+    if (lvl==UIStory.JURASSIC) {
+      spawn();
+      enabled = true;
+    }
 
     events.levelChangeSubscribers.add(this);
   }

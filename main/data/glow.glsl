@@ -13,7 +13,7 @@ void main(void) {
   int i = 0;
   int j= 0;
   int range = 8;
-  float intensity = .02;
+  float intensity = .0025;
   float dist = 6;
   vec4 sum = vec4(0.0);
 

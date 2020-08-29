@@ -12,9 +12,14 @@ Keys keys = new Keys();
 AssetManager assets = new AssetManager();
 JSONObject settings;
 
+boolean jurassicUnlocked, cretaceousUnlocked;
+char leftkey, rightkey, leftkey2p, rightkey2p;
+
 void setup () {
   //size(1024, 768, P2D);
   size(1024, 768, P2D);
+  pixelDensity(displayDensity());
+
   //fullScreen(P2D);
   surface.setTitle("DinoBlaster DX");
 
@@ -22,7 +27,6 @@ void setup () {
   imageMode(CENTER);
 
   noCursor();
-
   assets.load();
   glow = loadShader("glow.glsl");
 
@@ -38,12 +42,22 @@ void setup () {
     settings.setInt("extraLives", 0);
     settings.setFloat("earthRotationSpeed", 2.3);
     settings.setFloat("playerSpeed", 5);
+    settings.setBoolean("JurassicUnlocked", true);
+    settings.setBoolean("CretaceousUnlocked", true);
+    settings.setBoolean("hideHelpButton", true);
+    settings.setString("player1LeftKey", "a");
+    settings.setString("player1RightKey", "d");
+    settings.setString("player2LeftKey", "l");
+    settings.setString("player2RightKey", "k");
     saveJSONObject(settings, "user-settings.json");
   }
 
-  //println(settings.getBoolean("roidsEnabled", true));
+  jurassicUnlocked = settings.getBoolean("JurassicUnlocked", false);
+  cretaceousUnlocked = settings.getBoolean("CretaceousUnlocked", false);
+  leftkey = settings.getString("player1LeftKey", "a").charAt(0);
+  rightkey = settings.getString("player1RightKey", "d").charAt(0);
 
-  currentScene = new SinglePlayer(10);
+  currentScene = new SinglePlayer(UIStory.TRIASSIC);
 }
 
 void keyPressed() {
@@ -51,58 +65,34 @@ void keyPressed() {
   //println(key, keyCode);
   //println(key==CODED);
 
-  switch (keyCode) {   
-
-  case 49:
-  case 16:
-    currentScene = new SinglePlayer(10);
-    break;
-
-  case 50:
-    currentScene = new testScene();
-    break;
-
-  case 82:
-    rec = true;
-    println("recording");
-    break;
-
-  case 32:
-    paused = !paused;
-    break;
-
-  case LEFT:
-    keys.setKey(Keys.LEFT, true);
-    break;
-
-  case RIGHT:
-    keys.setKey(Keys.RIGHT, true);
-    break;
-
-  default:
-    break;
+  if (key==CODED) {
+    if (keyCode==LEFT) keys.setKey(Keys.LEFT, true);
+    if (keyCode==RIGHT) keys.setKey(Keys.RIGHT, true);  
+  } else {
+    if (key=='1') currentScene = new SinglePlayer(UIStory.TRIASSIC);
+    if (key=='2') currentScene = new SinglePlayer(UIStory.JURASSIC);
+    if (key=='3') currentScene = new SinglePlayer(UIStory.CRETACEOUS);
+    if (key==leftkey) keys.setKey(Keys.LEFT, true);
+    if (key==rightkey) keys.setKey(Keys.RIGHT, true);
+    if (key=='r') {
+      rec = true;
+      println("recording");
+    }
   }
 }
 
 void keyReleased() {
 
-  switch (keyCode) {   
-
-  case LEFT:
-    keys.setKey(Keys.LEFT, false);
-    break;
-
-  case RIGHT:
-    keys.setKey(Keys.RIGHT, false);
-    break;
-
-  case 82:
-    rec = false;
-    println("recording stopped");
-    break;
-
-  default:
-    break;
+  if (key==CODED) {
+    if (keyCode==LEFT) keys.setKey(Keys.LEFT, false);
+    if (keyCode==RIGHT) keys.setKey(Keys.RIGHT, false);
+  } else {
+    if (key==leftkey) keys.setKey(Keys.LEFT, false);
+    if (key==rightkey) keys.setKey(Keys.RIGHT, false);
+    if (key=='r') {
+      rec = false;
+      println("stopped recording");
+    }
   }
 }
 
@@ -119,6 +109,9 @@ void draw () {
 
   if (!paused) {
     background(0);
+    if(currentScene.status==Scene.DONE) {
+      println("oh shit");
+    }
     currentScene.update();
     currentScene.render();
   }

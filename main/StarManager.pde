@@ -21,7 +21,7 @@ class StarManager implements updateable, renderable, renderableScreen, nebulaEve
   Time time;
   EventManager events;
 
-  StarManager (ColorDecider _color, Time t, EventManager evs) {
+  StarManager (ColorDecider _color, Time t, EventManager evs, int lvl) {
 
     currentColor = _color;
     time = t;
@@ -38,10 +38,13 @@ class StarManager implements updateable, renderable, renderableScreen, nebulaEve
     evs.nebulaStartSubscribers.add(this);
 
     hypercubesEnabled = settings.getBoolean("hypercubesEnabled", true);
-    int i = int(random(5, 80));
-    while (i < 80) {
-      hyperspaceSpawns.append(i);
-      i += int(random(30, 80));
+
+    if (lvl==UIStory.TRIASSIC) {
+      int i = int(random(5, 80));
+      while (i < 80) {
+        hyperspaceSpawns.append(i);
+        i += int(random(30, 80));
+      }
     }
   }
 
