@@ -11,6 +11,8 @@ class Earth extends Entity implements updateable, renderable {
   float shakingDur;
   float shakingMag;
   float shakingStart;
+  
+  final static float DEFAULT_EARTH_ROTATION = 2.3;
 
   Time time;
 
@@ -21,7 +23,7 @@ class Earth extends Entity implements updateable, renderable {
     y = 0;
     dx = 0;
     dy = 0;
-    dr = settings.getFloat("earthRotationSpeed", 2.3);
+    dr = settings.getFloat("earthRotationSpeed", DEFAULT_EARTH_ROTATION);
 
     model = loadImage("earth-fill.png");
     radius = model.width/2;

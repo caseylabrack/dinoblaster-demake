@@ -244,6 +244,7 @@ class Player extends Entity implements updateable, renderable {
   int playerNum = 1;
   int framesTotal = 8;
   final static float DIST_FROM_EARTH = 197;
+  final static float DEFAULT_RUNSPEED = 5;
 
   EventManager eventManager;
   Time time;
@@ -254,7 +255,7 @@ class Player extends Entity implements updateable, renderable {
     time = t;
     volcanoManager = volcs;
 
-    runSpeed = settings.getFloat("playerSpeed", 5);
+    runSpeed = settings.getFloat("playerSpeed", DEFAULT_RUNSPEED);
 
     PImage sheet = whichPlayer==1 ? loadImage("bronto-frames.png") : loadImage("oviraptor-frames.png");
     PImage[] frames = whichPlayer==1 ? utils.sheetToSprites(sheet, 3, 1) : utils.sheetToSprites(sheet, 2, 2, 1);

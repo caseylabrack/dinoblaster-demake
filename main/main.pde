@@ -11,16 +11,16 @@ boolean rec = false;
 Keys keys = new Keys();
 AssetManager assets = new AssetManager();
 JSONObject settings;
+JSONObject inputs;
 
 boolean jurassicUnlocked, cretaceousUnlocked;
-char leftkey, rightkey, leftkey2p, rightkey2p;
+char leftkey, rightkey, leftkey2p, rightkey2p, triassicSelect, jurassicSelect, cretaceousSelect;
 
 void setup () {
-  //size(1024, 768, P2D);
   size(1024, 768, P2D);
+  //fullScreen(P2D);
   pixelDensity(displayDensity());
 
-  //fullScreen(P2D);
   surface.setTitle("DinoBlaster DX");
 
   colorMode(HSB, 360, 100, 100, 1);
@@ -31,31 +31,78 @@ void setup () {
   glow = loadShader("glow.glsl");
 
   try {
-    settings = loadJSONObject("user-settings.json");
+    settings = loadJSONObject("game-settings.txt");
   }
   catch(Exception e) {
     settings = new JSONObject();
+    PrintWriter output;
+    output = createWriter("game-settings.txt"); 
+    output.println("{");
     settings.setBoolean("roidsEnabled", true);
+    output.println("\t\"roidsEnabled\": true,");
     settings.setBoolean("hypercubesEnabled", true);
+    output.println("\t\"hypercubesEnabled\": true,");
     settings.setBoolean("ufosEnabled", true);
+    output.println("\t\"ufosEnabled\": true,");
     settings.setFloat("defaultTimeScale", 1);
+    output.println("\t\"defaultTimeScale\": 1,");
     settings.setInt("extraLives", 0);
-    settings.setFloat("earthRotationSpeed", 2.3);
-    settings.setFloat("playerSpeed", 5);
+    output.println("\t\"extraLives\": 0,");
+    settings.setFloat("earthRotationSpeed", Earth.DEFAULT_EARTH_ROTATION);
+    output.println("\t\"earthRotationSpeed\": " + Earth.DEFAULT_EARTH_ROTATION + ",");
+    settings.setFloat("playerSpeed", Player.DEFAULT_RUNSPEED);
+    output.println("\t\"playerSpeed\": " + Player.DEFAULT_RUNSPEED + ",");
+    settings.setFloat("roidImpactRateInMilliseconds", RoidManager.DEFAULT_SPAWN_RATE);
+    output.println("\t\"roidImpactRateInMilliseconds\": " + (int)(RoidManager.DEFAULT_SPAWN_RATE) + ",");
+    settings.setFloat("roidImpactRateVariation", RoidManager.DEFAULT_SPAWN_DEVIATION);
+    output.println("\t\"roidImpactRateVariation\": " + (int)(RoidManager.DEFAULT_SPAWN_DEVIATION) + ",");
     settings.setBoolean("JurassicUnlocked", true);
+    output.println("\t\"JurassicUnlocked\": true,");
     settings.setBoolean("CretaceousUnlocked", true);
+    output.println("\t\"CretaceousUnlocked\": true,");
     settings.setBoolean("hideHelpButton", true);
-    settings.setString("player1LeftKey", "a");
-    settings.setString("player1RightKey", "d");
-    settings.setString("player2LeftKey", "l");
-    settings.setString("player2RightKey", "k");
-    saveJSONObject(settings, "user-settings.json");
+    output.println("\t\"hideHelpButton\": true");
+    output.println("}");
+    output.flush();
+    output.close();
+  }
+
+  try {
+    inputs = loadJSONObject("controls-settings.txt");
+  }
+  catch(Exception e) {
+    inputs = new JSONObject();
+    PrintWriter output;
+    output = createWriter("controls-settings.txt"); 
+    output.println("{");
+    inputs.setString("player1LeftKey", "a");
+    output.println("\t\"player1LeftKey\": \"a\",");
+    inputs.setString("player1RightKey", "d");
+    output.println("\t\"player1RightKey\": \"d\",");
+    inputs.setString("player2LeftKey", "k");
+    output.println("\t\"player2LeftKey\": \"k\",");
+    inputs.setString("player2RightKey", "l");
+    output.println("\t\"player2RightKey\": \"l\",");
+    inputs.setBoolean("player2UsesArrowKeys", false);
+    output.println("\t\"player2UsesArrowKeys\": false,");
+    inputs.setString("triassicSelect", "1");
+    output.println("\t\"triassicSelect\": \"1\",");
+    inputs.setString("jurassicSelect", "2");
+    output.println("\t\"jurassicSelect\": \"2\",");
+    inputs.setString("cretaceousSelect", "3");
+    output.println("\t\"cretaceousSelect\": \"3\"");    
+    output.println("}");
+    output.flush();
+    output.close();
   }
 
   jurassicUnlocked = settings.getBoolean("JurassicUnlocked", false);
   cretaceousUnlocked = settings.getBoolean("CretaceousUnlocked", false);
-  leftkey = settings.getString("player1LeftKey", "a").charAt(0);
-  rightkey = settings.getString("player1RightKey", "d").charAt(0);
+  leftkey = inputs.getString("player1LeftKey", "a").charAt(0);
+  rightkey = inputs.getString("player1RightKey", "d").charAt(0);
+  triassicSelect = inputs.getString("triassicSelect", "1").charAt(0);
+  jurassicSelect = inputs.getString("jurassicSelect", "2").charAt(0);
+  cretaceousSelect = inputs.getString("cretaceousSelect", "3").charAt(0);  
 
   currentScene = new SinglePlayer(UIStory.TRIASSIC);
 }
@@ -67,11 +114,11 @@ void keyPressed() {
 
   if (key==CODED) {
     if (keyCode==LEFT) keys.setKey(Keys.LEFT, true);
-    if (keyCode==RIGHT) keys.setKey(Keys.RIGHT, true);  
+    if (keyCode==RIGHT) keys.setKey(Keys.RIGHT, true);
   } else {
-    if (key=='1') currentScene = new SinglePlayer(UIStory.TRIASSIC);
-    if (key=='2') currentScene = new SinglePlayer(UIStory.JURASSIC);
-    if (key=='3') currentScene = new SinglePlayer(UIStory.CRETACEOUS);
+    if (key=='1' || key==triassicSelect) currentScene = new SinglePlayer(UIStory.TRIASSIC);
+    if (key=='2' || key==jurassicSelect) currentScene = new SinglePlayer(UIStory.JURASSIC);
+    if (key=='3' || key==cretaceousSelect) currentScene = new SinglePlayer(UIStory.CRETACEOUS);
     if (key==leftkey) keys.setKey(Keys.LEFT, true);
     if (key==rightkey) keys.setKey(Keys.RIGHT, true);
     if (key=='r') {
@@ -106,15 +153,15 @@ void mouseReleased () {
 }
 
 void draw () {
-
   if (!paused) {
     background(0);
-    if(currentScene.status==Scene.DONE) {
+    if (currentScene.status==Scene.DONE) {
       println("oh shit");
     }
     currentScene.update();
     currentScene.render();
   }
+  //filter(glow);
 
   if (rec) {
     if (frameCount % 1 == 0) {

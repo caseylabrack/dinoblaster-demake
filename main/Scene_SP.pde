@@ -91,6 +91,7 @@ class SinglePlayer extends Scene {
     translate(camera.x, camera.y);
     for (renderable r : renderers) r.render();
     popMatrix(); // screen-space
+    //filter(glow);
 
     for (renderableScreen rs : screeenRenderers) rs.render(); // UI
   }

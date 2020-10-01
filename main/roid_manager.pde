@@ -5,8 +5,10 @@ class RoidManager implements updateable, renderable {
   Earth earth;
 
   float spawnInterval;
-  final static int minSpawnInterval = 70;
-  final static int maxSpawnInterval = 400;
+  float minSpawnInterval;//70;
+  float maxSpawnInterval;//400;
+  final static float DEFAULT_SPAWN_RATE = 300;
+  final static float DEFAULT_SPAWN_DEVIATION = 100;
   final static float spawnDist = 720;
   Roid[] roids = new Roid[100];
   float lastFire;
@@ -49,7 +51,8 @@ class RoidManager implements updateable, renderable {
     }
 
     enabled = settings.getBoolean("roidsEnabled", true);
-
+    minSpawnInterval = settings.getFloat("roidImpactRateInMilliseconds", DEFAULT_SPAWN_RATE) - settings.getFloat("roidImpactRateVariation", DEFAULT_SPAWN_DEVIATION)/2;
+    maxSpawnInterval = settings.getFloat("roidImpactRateInMilliseconds", DEFAULT_SPAWN_RATE) + settings.getFloat("roidImpactRateVariation", DEFAULT_SPAWN_DEVIATION)/2;
 
     //roids[roidindex % roids.length].fire();
     //roidindex++;
