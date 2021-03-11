@@ -57,6 +57,8 @@ class Hypercube implements updateable, renderable {
 
     pg.translate(w/2, h/2);
     pg.rotateX(-PI/2);
+    //pg.scale(SCALE);
+
     PVector[] projected3d = new PVector[16];
 
     for (int i = 0; i < points.length; i++) {
@@ -88,7 +90,7 @@ class Hypercube implements updateable, renderable {
       rotated = matmul4D(rotationXY, rotated, true);
       rotated = matmul4D(rotationZW, rotated, true);
 
-      float distance = 2.5;
+      float distance = 2.75;
       float w = 1 / (distance - rotated.w);
 
       float[][] projection = {
@@ -98,7 +100,8 @@ class Hypercube implements updateable, renderable {
       };
 
       PVector projected = matmul4D(projection, rotated);
-      projected.mult(width/8);
+      //projected.mult(width/8);
+      projected.mult(WIDTH_REFERENCE/8);
       projected3d[i] = projected;
     }
 

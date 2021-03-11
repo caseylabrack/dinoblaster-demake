@@ -83,7 +83,7 @@ class Time implements updateable, playerDiedEvent, gameOverEvent, nebulaEvents {
       float progress = (millis() - dyingStartTime) / dyingDuration;
       if (progress < 1) {
         float targetTimeScale = hyperspace ? HYPERSPACE_TIME: 1;
-        timeScale = utils.easeInOutExpo(progress, .1, HYPERSPACE_TIME - .1, HYPERSPACE_TIME);
+        timeScale = utils.easeInOutExpo(progress, .1, targetTimeScale - .1, targetTimeScale);
       } else {
         dying = false;
       }

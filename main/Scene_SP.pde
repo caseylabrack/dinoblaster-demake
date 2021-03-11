@@ -89,11 +89,20 @@ class SinglePlayer extends Scene {
 
     pushMatrix(); // world-space
     translate(camera.x, camera.y);
+    scale(SCALE);
     for (renderable r : renderers) r.render();
-    popMatrix(); // screen-space
-    //filter(glow);
-
     for (renderableScreen rs : screeenRenderers) rs.render(); // UI
+    popMatrix(); 
+
+    // pillarboxing (for extreme aspect ratios)
+    pushMatrix();
+    pushStyle();
+    float w = 2678 / 2 * SCALE;
+    fill(0, 0, 0, 1);
+    rect(0,0,(width-w)/2,height);
+    rect((width-w)/2 + w, 0, (width-w)/2, height);
+    popStyle();
+    popMatrix();
   }
 
   //int nextScene () {

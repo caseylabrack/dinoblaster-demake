@@ -52,7 +52,8 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
     extralifeSheet = loadImage("bronto-abduction-sheet.png");
     extralifeIcons = utils.sheetToSprites(extralifeSheet, 3, 3);
 
-    letterbox = loadImage("letterboxes.png");
+    //letterbox = loadImage("letterboxes.png");
+    letterbox = loadImage("letterboxes2.png");
 
     byte[] scoreData = loadBytes(SCORE_DATA_FILENAME);
     if (scoreData==null) {
@@ -63,6 +64,7 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
         highscore += float(n + 128);
       }
     }
+    
   }
 
   void gameOverHandle() {
@@ -103,7 +105,7 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
 
   void update () {
     if (isGameOver) {
-      if (millis() - gameOverGracePeriodStart> gameOverGracePeriodDuration) {
+      if (millis() - gameOverGracePeriodStart > gameOverGracePeriodDuration) {
         if (keys.anykey) {
           currentScene = new SinglePlayer(stage);
         }
@@ -135,43 +137,46 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
 
   void render () {
 
-    // letterbox bg
+    //  acrylics transparent portions bg
     pushStyle();
     fill(0, 0, 0);
     noStroke();
-    rect(0, 0, 128, height);
-    rect(1024 - 128, 0, 128, height);
+    rect(-WIDTH_REF_HALF, -HEIGHT_REF_HALF, 128, HEIGHT_REFERENCE);
+    rect(WIDTH_REF_HALF - 128, -HEIGHT_REF_HALF, 128, HEIGHT_REFERENCE);
+    //rect(0, 0, 128, height);
+    //rect(1024 - 128, 0, 128, height);
     popStyle();
 
-    // score tracker
+    // score tracker 
+    // highscore
     pushStyle();
     stroke(0, 0, 100);
     noFill();
     strokeWeight(1);
-    //line(64, 40, 64, endpoint);
     pushMatrix();
-    //translate(64, 100);
-    translate(64, 40 + (highscore/300.0) * (height - 80));
-    //println((85.0/300.0) * (height - 80));
+    rectMode(CENTER);
+    translate(-WIDTH_REF_HALF + 64, -HEIGHT_REF_HALF + 40 + (highscore/300.0) * (HEIGHT_REFERENCE - 80));
     rotate(PI/4);
     rect(0, 0, 8, 8);
     popMatrix();
+    // current score
     pushMatrix();
-    int endpoint = 40 + round(score/300 * (height - 80));
-    translate(64, endpoint);
+    int endpoint = 40 + round(score/300 * (HEIGHT_REFERENCE - 80));
+    translate(-WIDTH_REF_HALF + 64, -HEIGHT_REF_HALF + endpoint);
     rotate(PI/4);
     if (newHighScore) stroke(currentColor.getColor());
+    rectMode(CENTER);
     rect(0, 0, 16, 16);
     //image(assets.ufostuff.brontoAbductionFrames[5], 0,0);
     popMatrix();
     popStyle();
 
-    // letterbox
+    // acrylics
     pushStyle();
-    imageMode(CORNER);
+    imageMode(CENTER);
     pushMatrix();
-    //translate(0,0,10);
-    image(letterbox, 0, 0);
+    image(letterbox, 0, 0, 2678 / 2, HEIGHT_REFERENCE);
+    //image(letterbox, width/2, height/2, letterbox.width * height/letterbox.height, height);
     popMatrix();
     popStyle();
 
@@ -195,7 +200,7 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
     if (isGameOver) {
       pushStyle();
       pushMatrix();
-      imageMode(CORNER);
+      imageMode(CENTER);
       tint(currentColor.getColor()); 
       image(assets.uiStuff.extinctSign, 0, 0);
       popMatrix();

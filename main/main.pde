@@ -16,17 +16,28 @@ JSONObject inputs;
 boolean jurassicUnlocked, cretaceousUnlocked;
 char leftkey, rightkey, leftkey2p, rightkey2p, triassicSelect, jurassicSelect, cretaceousSelect;
 
-void setup () {
-  size(1024, 768, P2D);
-  //fullScreen(P2D);
-  pixelDensity(displayDensity());
+boolean touching = false;
 
-  surface.setTitle("DinoBlaster DX");
+float SCALE;
+float WIDTH_REFERENCE = 1024;
+float WIDTH_REF_HALF = WIDTH_REFERENCE/2;
+float HEIGHT_REFERENCE = 768;
+float HEIGHT_REF_HALF = HEIGHT_REFERENCE/2;
+
+void setup () {
+  //size(1024, 768, P2D);
+  fullScreen(P2D);
+  orientation(LANDSCAPE);
+  //pixelDensity(displayDensity());
+
+  SCALE = (float)height / 768.0;
+  
+  //surface.setTitle("DinoBlaster DX");
 
   colorMode(HSB, 360, 100, 100, 1);
   imageMode(CENTER);
 
-  noCursor();
+  //noCursor();
   assets.load();
   glow = loadShader("glow.glsl");
 
@@ -128,6 +139,11 @@ void keyPressed() {
   }
 }
 
+void touchStarted() {
+  //println("touch started");
+  
+}
+
 void keyReleased() {
 
   if (key==CODED) {
@@ -144,17 +160,27 @@ void keyReleased() {
 }
 
 void mousePressed () {
-  frameRate(5);
+//  frameRate(5);
 }
 
-void mouseReleased () {
-  frameRate(60);
-  //rec = true;
-}
+//void mouseReleased () {
+//  frameRate(60);
+//  //rec = true;
+//}
 
 void draw () {
+  
+  //if(touches.length==0) {
+  //  keys.setKey(Keys.LEFT, false);
+  //  keys.setKey(Keys.RIGHT, false);
+  //} else {
+  //  keys.setKey(touches[0].x < width/2 ? Keys.LEFT : Keys.RIGHT, true);
+  //}
+  
   if (!paused) {
-    background(0);
+    background(0,0,0,1);
+    //fill(0,0,0,.3);
+    //rect(0,0,width,height);
     if (currentScene.status==Scene.DONE) {
       println("oh shit");
     }
