@@ -121,6 +121,7 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
 
     if (time.getClock() - lastScoreTick > 1000 && scoring) {
       score++;
+      //score+=10;
       lastScoreTick = time.getClock();
     }
 

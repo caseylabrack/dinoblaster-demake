@@ -105,4 +105,29 @@ static class utils {
   static float easeInQuad (float t, float b, float c, float d) {
     return c*(t/=d)*t + b;
   }
+
+  static float easeOutBounce(float x) {
+    float n1 = 7.5625;
+    float d1 = 2.75;
+
+    if (x < 1 / d1) {
+      return n1 * x * x;
+    } else if (x < 2 / d1) {
+      return n1 * (x -= 1.5 / d1) * x + 0.75;
+    } else if (x < 2.5 / d1) {
+      return n1 * (x -= 2.25 / d1) * x + 0.9375;
+    } else {
+      return n1 * (x -= 2.625 / d1) * x + 0.984375;
+    }
+  }
+
+  static float easeOutElastic(float x) {
+    float c4 = (2 * PI) / 3;
+
+    return x == 0
+      ? 0
+      : x == 1
+      ? 1
+      : pow(2, -10 * x) * sin((x * 10 - 0.75) * c4) + 1;
+  }
 } 

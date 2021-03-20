@@ -6,7 +6,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
   VolcanoManager volcanoManager;
   StarManager stars;
 
-  Player player = null;
+  public Player player = null;
   PlayerDeath deathAnim = null;
 
   PImage model;

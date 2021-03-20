@@ -5,6 +5,7 @@ class AssetManager {
   VolcanoStuff volcanoStuff = new VolcanoStuff();
   RoidStuff roidStuff = new RoidStuff();
   PlayerStuff playerStuff = new PlayerStuff();
+  TrexStuff trexStuff = new TrexStuff();
 
   void load () {
     ufostuff.ufoFrames = utils.sheetToSprites(loadImage("ufo-resizing-sheet.png"), 3, 3);
@@ -19,6 +20,12 @@ class AssetManager {
 
     playerStuff.dethSVG = loadShape("bronto-death.svg");
     playerStuff.dethSVG.disableStyle();
+    
+    trexStuff.trexIdle = loadImage("trex-idle.png");
+    trexStuff.trexRun1 = loadImage("trex-run1.png");
+    trexStuff.trexRun2 = loadImage("trex-run2.png");
+    trexStuff.eggCracked = loadImage("egg-cracked.png");
+    trexStuff.eggBurst = loadImage("egg-burst.png");
   }
 
   class UFOstuff {
@@ -42,5 +49,13 @@ class AssetManager {
 
   class PlayerStuff {
     PShape dethSVG;
+  }
+  
+  class TrexStuff {
+    PImage trexIdle;
+    PImage trexRun1;
+    PImage trexRun2;
+    PImage eggCracked;
+    PImage eggBurst;
   }
 }

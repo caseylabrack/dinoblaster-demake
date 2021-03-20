@@ -32,6 +32,7 @@ class SinglePlayer extends Scene {
   PlayerManager playerManager;
   Time time;
   Camera camera;
+  TrexManager trexManager;
 
   ArrayList<updateable> updaters = new ArrayList<updateable>();
   ArrayList<renderableScreen> screeenRenderers = new ArrayList<renderableScreen>();
@@ -52,6 +53,8 @@ class SinglePlayer extends Scene {
     //soundManager = new SoundManager(main, eventManager);
 
     playerManager = new PlayerManager(eventManager, earth, time, volcanoManager, starManager);
+    trexManager = new TrexManager(eventManager, time, earth, playerManager, currentColor, lvl);
+
     ui = new UIStory(eventManager, time, currentColor, lvl);
     ufoManager = new UFOManager (currentColor, earth, playerManager, eventManager, time);
 
@@ -65,10 +68,12 @@ class SinglePlayer extends Scene {
     updaters.add(ufoManager);
     updaters.add(playerManager);
     updaters.add(volcanoManager);
+    updaters.add(trexManager);
 
     renderers.add(ufoManager);
     renderers.add(volcanoManager);
     renderers.add(playerManager);
+    renderers.add(trexManager);
     renderers.add(earth);
     renderers.add(roids);
     renderers.add(starManager);
@@ -94,12 +99,12 @@ class SinglePlayer extends Scene {
     for (renderableScreen rs : screeenRenderers) rs.render(); // UI
     popMatrix(); 
 
-    // pillarboxing (for extreme aspect ratios)
+    // pillarboxing (for high aspect ratios)
     pushMatrix();
     pushStyle();
     float w = 2678 / 2 * SCALE;
     fill(0, 0, 0, 1);
-    rect(0,0,(width-w)/2,height);
+    rect(0, 0, (width-w)/2, height);
     rect((width-w)/2 + w, 0, (width-w)/2, height);
     popStyle();
     popMatrix();

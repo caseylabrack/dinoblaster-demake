@@ -26,7 +26,9 @@ class Camera extends Entity implements updateable {
 
 class ColorDecider implements updateable {
   private int currentHue = 0;
-  private color[] hues = new color[]{#ff3800, #ffff00, #00ff00, #00ffff, #ff57ff};
+  private color[] hues = new color[]{#ff3800, #ffff00, #00ff00, #00ffff, #ff57ff};   // photoshop LAB
+  //private color[] hues = new color[]{#FEA7DD,#ABC3FB,#4BD7E4,#5DDDA6,#ADD568,#F7C155}; // chroma.js
+  //private color[] hues = new color[]{#926E9B,#5384A8,#009293,#3C9867,#7C953D,#B58834}; // chroma.js darker 
 
   void update () {
     currentHue = hues[utils.cycleRangeWithDelay(hues.length, 10, frameCount)];
