@@ -10,6 +10,8 @@ class AssetManager {
   void load () {
     ufostuff.ufoFrames = utils.sheetToSprites(loadImage("ufo-resizing-sheet.png"), 3, 3);
     ufostuff.brontoAbductionFrames = utils.sheetToSprites(loadImage("bronto-abduction-sheet.png"), 3, 3);    
+    ufostuff.ufoSVG = loadShape("UFO.svg");
+    ufostuff.ufoSVG.disableStyle();
 
     uiStuff.extinctSign = loadImage("gameover-lettering.png");
 
@@ -31,6 +33,7 @@ class AssetManager {
   class UFOstuff {
     PImage[] ufoFrames;  
     PImage[] brontoAbductionFrames;
+    PShape ufoSVG;
   }
 
   class UIStuff {

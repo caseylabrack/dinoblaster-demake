@@ -1,5 +1,5 @@
 {
-	"roidsEnabled": true,
+	"roidsEnabled": false,
 	"hypercubesEnabled": true,
 	"ufosEnabled": true,
 	"defaultTimeScale": 1,

@@ -26,7 +26,8 @@ class UFOManager implements updateable, renderable, abductionEvent, playerDiedEv
     eventManager.playerDiedSubscribers.add(this);
     eventManager.playerRespawnedSubscribers.add(this);
 
-    spawnCountDown = random(5, 90) * 1000;
+    spawnCountDown = 2e3;
+    //spawnCountDown = random(5, 90) * 1000;
   }
 
   void abductionHandle(PVector p) {
@@ -81,7 +82,8 @@ class UFO extends Entity implements updateable, renderable {
 
   PImage[] brontoAbductionFrames;
   PImage[] ufoFrames;
-  PImage model;
+  //PImage model;
+  PShape model;
   ColorDecider currentColor;
   Earth earth;
   PlayerManager playerManager;
@@ -98,14 +100,14 @@ class UFO extends Entity implements updateable, renderable {
 
   final static int initialDist = 1000;
   final static int initialSpeed = 3;
-  final static int initialRotate = 1;
+  final static float initialRotate = .5;
 
   final float normalSize = 64;
   final float startSize = 500;
   final float startDist = 530;
   final static float finalDist = 300;
   float currentSize = startSize;
-  final float approachTime = 1e3;
+  final float approachTime = 5e3;
   float startApproach;
 
   final float circlingMaxSpeed = 3;
@@ -142,7 +144,9 @@ class UFO extends Entity implements updateable, renderable {
     brontoAbductionFrames = assets.ufostuff.brontoAbductionFrames;
     eventManager = _ev;
 
-    model = ufoFrames[0];
+    //model = loadShape("UFO.svg");
+    //model.disableStyle();
+    //model = ufoFrames[0];
 
     float angle = random(0, 360);
     x = earth.x + cos(angle) * initialDist;
@@ -171,7 +175,8 @@ class UFO extends Entity implements updateable, renderable {
     case APPROACHING:
       progress = (millis() - startApproach)  / approachTime;
       if (progress < 1) {
-        model = ufoFrames[floor(utils.easeInQuad(progress, 0, 9, 1))];
+        currentSize = utils.easeInOutExpo(progress * 100, startSize, normalSize - startSize, 100);
+        //model = ufoFrames[floor(utils.easeInQuad(progress, 0, 9, 1))];
         setPosition(utils.rotateAroundPoint(globalPos(), earth.globalPos(), (progress * circlingMaxSpeed + initialRotate) * -1));
         angle = (float)Math.atan2(y - earth.y, x - earth.x);
         dist = utils.easeOutQuad(progress, startDist, -(startDist - finalDist), 1);
@@ -295,13 +300,26 @@ class UFO extends Entity implements updateable, renderable {
 
     pushStyle();
     noFill();
-    tint(currentColor.getColor());
+    strokeWeight(1 * assets.ufostuff.ufoSVG.width/currentSize);
+    stroke(currentColor.getColor());
+    //tint(currentColor.getColor());
     pushMatrix();
     fill(0, 0, 0);
-    imageMode(CENTER);
-    image(model, x, y);
+    shapeMode(CENTER);
+    //image(model, x, y, currentSize, currentSize);
+    shape(assets.ufostuff.ufoSVG, x, y, currentSize, currentSize * (assets.ufostuff.ufoSVG.height/assets.ufostuff.ufoSVG.width));
     popMatrix();
     popStyle();
+
+    //pushStyle();
+    //noFill();
+    //tint(currentColor.getColor());
+    //pushMatrix();
+    //fill(0, 0, 0);
+    //imageMode(CENTER);
+    //image(model, x, y);
+    //popMatrix();
+    //popStyle();
   }
 }
 
