@@ -30,7 +30,7 @@ void setup () {
   orientation(LANDSCAPE);
   //pixelDensity(displayDensity());
 
-  SCALE = (float)height / 768.0;
+  SCALE = (float)height / HEIGHT_REFERENCE;
   
   //surface.setTitle("DinoBlaster DX");
 

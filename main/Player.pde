@@ -5,6 +5,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
   Time time;
   VolcanoManager volcanoManager;
   StarManager stars;
+  Camera cam;
 
   public Player player = null;
   PlayerDeath deathAnim = null;
@@ -31,12 +32,13 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
   float spawningRate = 125;
   private float spawningFlickerStart;
 
-  PlayerManager (EventManager _ev, Earth _earth, Time t, VolcanoManager volcs, StarManager _stars) {
+  PlayerManager (EventManager _ev, Earth _earth, Time t, VolcanoManager volcs, StarManager _stars, Camera c) {
     eventManager = _ev;
     earth = _earth;
     time = t;
     volcanoManager = volcs;
     stars = _stars;
+    cam = c;
 
     model = utils.sheetToSprites(loadImage("bronto-frames.png"), 3, 1)[0];
 
@@ -53,6 +55,10 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
   void roidImpactHandle(PVector impact) {
 
     if (player!=null) {
+      if (PVector.dist(player.globalPos(), impact) < 65*2) { // close call
+        cam.magn += 6;
+      }
+
       if (PVector.dist(player.globalPos(), impact) < 65) {
         extralives--;
         float incomingAngle = utils.angleOf(earth.globalPos(), impact);

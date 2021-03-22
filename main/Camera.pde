@@ -1,5 +1,7 @@
 class Camera extends Entity implements updateable {
 
+  public float magn = 0;
+
   Camera (float _x, float _y) {
 
     x = _x + width/2;
@@ -7,6 +9,18 @@ class Camera extends Entity implements updateable {
   }
 
   void update () {
+
+    dx = 0;
+    dy = 0;
+    x = width/2;
+    y = height/2;
+
+    //if (mousePressed) magn += 3;
+
+    float angle = random(360);
+    dx += cos(radians(angle)) * magn;
+    dy += sin(radians(angle)) * magn;
+    magn *= .9;
 
     //cute screenshake idea
     //float magnitude = 25;
@@ -101,11 +115,11 @@ class Time implements updateable, playerDiedEvent, gameOverEvent, nebulaEvents {
   }
 
   void nebulaStopHandle() {
-   
-      hyperspace = false;
-      if(!dying) { 
-        timeScale = 1;
-      }
+
+    hyperspace = false;
+    if (!dying) { 
+      timeScale = 1;
+    }
   }
 
   void gameOverHandle() {

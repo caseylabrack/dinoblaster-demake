@@ -52,7 +52,7 @@ class SinglePlayer extends Scene {
 
     //soundManager = new SoundManager(main, eventManager);
 
-    playerManager = new PlayerManager(eventManager, earth, time, volcanoManager, starManager);
+    playerManager = new PlayerManager(eventManager, earth, time, volcanoManager, starManager, camera);
     trexManager = new TrexManager(eventManager, time, earth, playerManager, currentColor, lvl);
 
     ui = new UIStory(eventManager, time, currentColor, lvl);
@@ -96,12 +96,17 @@ class SinglePlayer extends Scene {
     translate(camera.x, camera.y);
     scale(SCALE);
     for (renderable r : renderers) r.render();
-    for (renderableScreen rs : screeenRenderers) rs.render(); // UI
     popMatrix(); 
+    
+    pushMatrix(); // screen-space (UI)
+    translate(width/2, height/2);
+    scale(SCALE);
+    for (renderableScreen rs : screeenRenderers) rs.render(); 
+    popMatrix();
 
-    // pillarboxing (for high aspect ratios)
-    pushMatrix();
+    pushMatrix(); // pillarboxing (for high aspect ratios)
     pushStyle();
+    translate(0, 0);
     float w = 2678 / 2 * SCALE;
     fill(0, 0, 0, 1);
     rect(0, 0, (width-w)/2, height);
@@ -149,7 +154,7 @@ class testScene extends Scene {
 
     //soundManager = new SoundManager(main, eventManager);
     volcanoManager = new VolcanoManager(eventManager, time, currentColor, earth, lvl);
-    playerManager = new PlayerManager(eventManager, earth, time, volcanoManager, starManager);
+    playerManager = new PlayerManager(eventManager, earth, time, volcanoManager, starManager, camera);
     playerManager.spawningDuration = 10;
     ui = new UIStory(eventManager, time, currentColor, lvl);
     ui.score = 90;
@@ -185,12 +190,12 @@ class testScene extends Scene {
   }
 
   void render () {
-    pushMatrix(); // world-space
-    translate(camera.x, camera.y);
-    for (renderable r : renderers) r.render();
+    //pushMatrix(); // world-space
+    //translate(camera.x, camera.y);
+    //for (renderable r : renderers) r.render();
 
-    popMatrix(); // screen-space
-    for (renderableScreen rs : screeenRenderers) rs.render(); // UI
+    //popMatrix(); // screen-space
+    //for (renderableScreen rs : screeenRenderers) rs.render(); // UI
   }
 
   //int nextScene () {
