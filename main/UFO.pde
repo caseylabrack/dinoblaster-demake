@@ -13,7 +13,6 @@ class UFOManager implements updateable, renderable, abductionEvent, playerDiedEv
   float spawnCountDown;
   boolean playerAlive = true;
 
-
   UFOManager (ColorDecider _color, Earth _earth, PlayerManager _pm, EventManager _ev, Time t) {
 
     currentColor = _color;
@@ -26,8 +25,7 @@ class UFOManager implements updateable, renderable, abductionEvent, playerDiedEv
     eventManager.playerDiedSubscribers.add(this);
     eventManager.playerRespawnedSubscribers.add(this);
 
-    spawnCountDown = 2e3;
-    //spawnCountDown = random(5, 90) * 1000;
+    spawnCountDown = random(5, 90) * 1000;
   }
 
   void abductionHandle(PVector p) {
@@ -132,6 +130,9 @@ class UFO extends Entity implements updateable, renderable {
   PVector lilBrontoPos = new PVector();
   int lilBrontoFacingDirection = -1;
   float lilBrontoAngle = 0;
+  final static float lilBrontoStartSize = 55;//40;
+  final static float lilBrontoEndSize = 4;
+  float lilBrontoSize = lilBrontoStartSize;
 
   float progress, dist, angle;
 
@@ -143,9 +144,6 @@ class UFO extends Entity implements updateable, renderable {
     playerManager = _pm;
     brontoAbductionFrames = assets.ufostuff.brontoAbductionFrames;
     eventManager = _ev;
-
-    //model = loadShape("UFO.svg");
-    //model.disableStyle();
     //model = ufoFrames[0];
 
     float angle = random(0, 360);
@@ -221,6 +219,7 @@ class UFO extends Entity implements updateable, renderable {
       progress = (millis() - snatchStart)  / snatchDuration;
       if (progress <= 1) {
         lilBrontoPos.set(PVector.lerp(snatchStartPos, globalPos(), progress));
+        lilBrontoSize = utils.easeLinear(progress, lilBrontoStartSize, lilBrontoEndSize - lilBrontoStartSize, 1);
       } else {
         state = LEAVING;
       }
@@ -286,16 +285,30 @@ class UFO extends Entity implements updateable, renderable {
       float angle = degrees(atan2(earth.y - y, earth.x - x));
       line(x, y, x + cos(radians(angle + maxBeamWidth)) * 250, y + sin(radians(angle + maxBeamWidth)) * 250);
       line(x, y, x + cos(radians(angle - maxBeamWidth)) * 250, y + sin(radians(angle - maxBeamWidth)) * 250);
+      popStyle();
 
       pushMatrix();
+      pushStyle();
+      noFill();
+      stroke(0, 0, 100, 1);
+      strokeWeight(1 * assets.playerStuff.brontoSVG.width/lilBrontoSize);
       scale(lilBrontoFacingDirection, 1);
       translate(lilBrontoPos.x * lilBrontoFacingDirection, lilBrontoPos.y);
       rotate(radians(lilBrontoAngle  * lilBrontoFacingDirection));
-      imageMode(CENTER);      
-      progress = (millis() - snatchStart)  / snatchDuration;
-      image(brontoAbductionFrames[ceil(progress * 8)], 0, 0);
+      shapeMode(CENTER);      
+      shape(assets.playerStuff.brontoSVG, 0, 0, lilBrontoSize, lilBrontoSize * (assets.playerStuff.brontoSVG.height/assets.playerStuff.brontoSVG.width));
       popMatrix();
       popStyle();
+
+      //pushMatrix();
+      //scale(lilBrontoFacingDirection, 1);
+      //translate(lilBrontoPos.x * lilBrontoFacingDirection, lilBrontoPos.y);
+      //rotate(radians(lilBrontoAngle  * lilBrontoFacingDirection));
+      //imageMode(CENTER);      
+      //progress = (millis() - snatchStart)  / snatchDuration;
+      //image(brontoAbductionFrames[ceil(progress * 8)], 0, 0);
+      //popMatrix();
+      //popStyle();
     }
 
     pushStyle();
@@ -351,6 +364,7 @@ class UFOrespawn extends Entity {
   boolean display = true;
 
   float dist, angle, progress;
+  float lilBrontoSize = UFO.lilBrontoStartSize;
 
   UFOrespawn (ColorDecider _color, Earth _earth, EventManager _ev) {
 
@@ -387,6 +401,7 @@ class UFOrespawn extends Entity {
       progress = (millis() - snatchStart)  / UFO.snatchDuration;
       if (progress <= 1) {
         lilBrontoPos.set(PVector.lerp(globalPos(), snatchTarget, progress));
+        lilBrontoSize = utils.easeLinear(progress, UFO.lilBrontoEndSize, UFO.lilBrontoStartSize - UFO.lilBrontoEndSize, 1);
       } else {
         state = WAITING;
         flickerStart = millis();
@@ -429,24 +444,42 @@ class UFOrespawn extends Entity {
       float angle = degrees(atan2(earth.y - y, earth.x - x));
       line(x, y, x + cos(radians(angle + UFO.maxBeamWidth)) * 250, y + sin(radians(angle + UFO.maxBeamWidth)) * 250);
       line(x, y, x + cos(radians(angle - UFO.maxBeamWidth)) * 250, y + sin(radians(angle - UFO.maxBeamWidth)) * 250);
+      popStyle();
 
       pushMatrix();
+      pushStyle();
+      noFill();
+      stroke(0, 0, 100, 1);
+      strokeWeight(1 * assets.playerStuff.brontoSVG.width/lilBrontoSize);
       scale(lilBrontoFacingDirection, 1);
       translate(lilBrontoPos.x * lilBrontoFacingDirection, lilBrontoPos.y);
       rotate(lilBrontoAngle  * lilBrontoFacingDirection);
-      imageMode(CENTER);      
-      progress = min((millis() - snatchStart)  / UFO.snatchDuration, .999);
+      shapeMode(CENTER);  
       if (state==WAITING) {
         if (millis() - flickerStart > PlayerManager.respawnReadyFlickerRate) {
           display = !display;
           flickerStart = millis();
         }
       }
-
-      if (display) image(assets.ufostuff.brontoAbductionFrames[ceil((1-progress) * 8)], 0, 0);
-
-      popMatrix();
+      if(display) shape(assets.playerStuff.brontoSVG, 0, 0, lilBrontoSize, lilBrontoSize * (assets.playerStuff.brontoSVG.height/assets.playerStuff.brontoSVG.width));
       popStyle();
+      popMatrix();
+
+      //pushMatrix();
+      //scale(lilBrontoFacingDirection, 1);
+      //translate(lilBrontoPos.x * lilBrontoFacingDirection, lilBrontoPos.y);
+      //rotate(lilBrontoAngle  * lilBrontoFacingDirection);
+      //imageMode(CENTER);      
+      //progress = min((millis() - snatchStart)  / UFO.snatchDuration, .999);
+      //if (state==WAITING) {
+      //  if (millis() - flickerStart > PlayerManager.respawnReadyFlickerRate) {
+      //    display = !display;
+      //    flickerStart = millis();
+      //  }
+      //}
+      //if (display) image(assets.ufostuff.brontoAbductionFrames[ceil((1-progress) * 8)], 0, 0);
+      //popMatrix();
+      //popStyle();
     }
 
     pushStyle();

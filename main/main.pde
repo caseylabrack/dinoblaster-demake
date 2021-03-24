@@ -16,8 +16,6 @@ JSONObject inputs;
 boolean jurassicUnlocked, cretaceousUnlocked;
 char leftkey, rightkey, leftkey2p, rightkey2p, triassicSelect, jurassicSelect, cretaceousSelect;
 
-boolean touching = false;
-
 float SCALE;
 float WIDTH_REFERENCE = 1024;
 float WIDTH_REF_HALF = WIDTH_REFERENCE/2;
@@ -25,8 +23,8 @@ float HEIGHT_REFERENCE = 768;
 float HEIGHT_REF_HALF = HEIGHT_REFERENCE/2;
 
 void setup () {
-  size(1024, 768, P2D);
-  //fullScreen(P2D);
+  //size(1024, 768, P2D);
+  fullScreen(P2D);
   orientation(LANDSCAPE);
   //pixelDensity(displayDensity());
 

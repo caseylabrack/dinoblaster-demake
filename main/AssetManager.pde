@@ -22,6 +22,8 @@ class AssetManager {
 
     playerStuff.dethSVG = loadShape("bronto-death.svg");
     playerStuff.dethSVG.disableStyle();
+    playerStuff.brontoSVG = loadShape("bronto-idle.svg");
+    playerStuff.brontoSVG.disableStyle();
     
     trexStuff.trexIdle = loadImage("trex-idle.png");
     trexStuff.trexRun1 = loadImage("trex-run1.png");
@@ -52,6 +54,7 @@ class AssetManager {
 
   class PlayerStuff {
     PShape dethSVG;
+    PShape brontoSVG;
   }
   
   class TrexStuff {
