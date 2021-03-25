@@ -26,12 +26,14 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
   boolean extralifeAnimating = false;
   float extralifeAnimationDuration = 5e3;
 
-  PImage letterbox;
-
   float highscore = 85;
   boolean newHighScore = false;
 
   final String SCORE_DATA_FILENAME = "dino.dat";
+  StringList motds;
+  int motdIndex = 0;
+  float motdStart;
+  final float MOTD_DURATION = 4e3;
 
   UIStory (EventManager _eventManager, Time t, ColorDecider _currentColor, int lvl) {
     eventManager = _eventManager;
@@ -52,8 +54,13 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
     extralifeSheet = loadImage("bronto-abduction-sheet.png");
     extralifeIcons = utils.sheetToSprites(extralifeSheet, 3, 3);
 
-    //letterbox = loadImage("letterboxes.png");
-    letterbox = loadImage("letterboxes2.png");
+    motds = new StringList();
+    motds.append("Real Winners Say No to Drugs");
+    motds.append("This is Fine");
+    motds.append("Life Finds a Way");
+    motds.append("Tough Out There for Sauropods"); 
+    motds.shuffle();
+    motdStart = millis();
 
     byte[] scoreData = loadBytes(SCORE_DATA_FILENAME);
     if (scoreData==null) {
@@ -64,7 +71,7 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
         highscore += float(n + 128);
       }
     }
-    
+    println("highscore: " + highscore);
   }
 
   void gameOverHandle() {
@@ -176,8 +183,7 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
     pushStyle();
     imageMode(CENTER);
     pushMatrix();
-    image(letterbox, 0, 0, 2678 / 2, HEIGHT_REFERENCE);
-    //image(letterbox, width/2, height/2, letterbox.width * height/letterbox.height, height);
+    image(assets.uiStuff.letterbox, 0, 0, 2678 / 2, HEIGHT_REFERENCE);
     popMatrix();
     popStyle();
 
@@ -197,6 +203,16 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
       }
       image(extralifeIcons[index], 1024 - 128 + 64, 64 + i * 48);
     }
+
+    if (millis() - motdStart < MOTD_DURATION) {
+      pushStyle();
+      textFont(assets.uiStuff.MOTD);
+      textAlign(CENTER, CENTER);
+      text(motds.get(0), 0, -HEIGHT_REF_HALF + 50);
+      popStyle();
+    }
+
+
 
     if (isGameOver) {
       pushStyle();

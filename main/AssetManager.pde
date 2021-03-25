@@ -14,6 +14,8 @@ class AssetManager {
     ufostuff.ufoSVG.disableStyle();
 
     uiStuff.extinctSign = loadImage("gameover-lettering.png");
+    uiStuff.letterbox = loadImage("letterboxes2.png");
+    uiStuff.MOTD = createFont("Hyperspace.otf", 32);
 
     volcanoStuff.volcanoFrames = utils.sheetToSprites(loadImage("volcanos.png"), 4, 1);
     roidStuff.explosionFrames = utils.sheetToSprites(loadImage("explosion.png"), 3, 1);
@@ -24,7 +26,7 @@ class AssetManager {
     playerStuff.dethSVG.disableStyle();
     playerStuff.brontoSVG = loadShape("bronto-idle.svg");
     playerStuff.brontoSVG.disableStyle();
-    
+
     trexStuff.trexIdle = loadImage("trex-idle.png");
     trexStuff.trexRun1 = loadImage("trex-run1.png");
     trexStuff.trexRun2 = loadImage("trex-run2.png");
@@ -40,6 +42,8 @@ class AssetManager {
 
   class UIStuff {
     PImage extinctSign;
+    PImage letterbox;
+    PFont MOTD;
   }
 
   class VolcanoStuff {
@@ -56,7 +60,7 @@ class AssetManager {
     PShape dethSVG;
     PShape brontoSVG;
   }
-  
+
   class TrexStuff {
     PImage trexIdle;
     PImage trexRun1;
