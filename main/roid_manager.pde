@@ -81,7 +81,7 @@ class RoidManager implements updateable, renderable {
       r.y += r.dy * time.getTimeScale();
       r.r += Roid.dr * time.getTimeScale();
 
-      if (PVector.dist(r.globalPos(), earth.globalPos()) < earth.radius ) {
+      if (PVector.dist(r.globalPos(), earth.globalPos()) < Earth.EARTH_RADIUS ) {
         r.enabled = false;
         Explosion splode = splodes[splodeindex++ % splodes.length]; // increment splode index and wrap to length of pool
         events.dispatchRoidImpact(r.globalPos());
@@ -90,7 +90,7 @@ class RoidManager implements updateable, renderable {
         splode.start = time.getClock();
         float angle = utils.angleOfRadians(earth.globalPos(), r.globalPos());
         float offset = 20;
-        PVector adjustedPosition = new PVector(earth.x + cos(angle) * (earth.radius + offset), earth.y + sin(angle) * (earth.radius + offset));
+        PVector adjustedPosition = new PVector(earth.x + cos(angle) * (Earth.EARTH_RADIUS + offset), earth.y + sin(angle) * (Earth.EARTH_RADIUS + offset));
         splode.setPosition(earth.globalToLocalPos(adjustedPosition));
         splode.r = utils.angleOf(earth.localPos(), splode.localPos()) + 90;
       }

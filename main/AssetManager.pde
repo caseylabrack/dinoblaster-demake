@@ -6,6 +6,7 @@ class AssetManager {
   RoidStuff roidStuff = new RoidStuff();
   PlayerStuff playerStuff = new PlayerStuff();
   TrexStuff trexStuff = new TrexStuff();
+  EarthStuff earthStuff = new EarthStuff();
 
   void load () {
     ufostuff.ufoFrames = utils.sheetToSprites(loadImage("ufo-resizing-sheet.png"), 3, 3);
@@ -32,6 +33,8 @@ class AssetManager {
     trexStuff.trexRun2 = loadImage("trex-run2.png");
     trexStuff.eggCracked = loadImage("egg-cracked.png");
     trexStuff.eggBurst = loadImage("egg-burst.png");
+    
+    earthStuff.earth = loadImage("earth.png");
   }
 
   class UFOstuff {
@@ -67,5 +70,10 @@ class AssetManager {
     PImage trexRun2;
     PImage eggCracked;
     PImage eggBurst;
+  }
+  
+  class EarthStuff {
+    PImage earth;
+    PImage tarpitMask;
   }
 }

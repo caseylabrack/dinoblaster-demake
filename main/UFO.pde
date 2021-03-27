@@ -392,7 +392,7 @@ class UFOrespawn extends Entity {
         state = ANTISNATCHING;
         snatchStart = millis();
         float snatchAngle = atan2(y - earth.y, x - earth.x);
-        snatchTarget = new PVector(earth.x + cos(snatchAngle) * (earth.radius + 30), earth.y + sin(snatchAngle) * (earth.radius + 30));
+        snatchTarget = new PVector(earth.x + cos(snatchAngle) * (Earth.EARTH_RADIUS + 30), earth.y + sin(snatchAngle) * (Earth.EARTH_RADIUS + 30));
         lilBrontoAngle = atan2(earth.y - snatchTarget.y, earth.x - snatchTarget.x) + radians(-90);
       }
       break;

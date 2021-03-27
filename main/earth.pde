@@ -1,7 +1,4 @@
 class Earth extends Entity implements updateable, renderable {
-  PImage model;
-  PShape modelV;
-  float radius;
 
   float shakeAngle;
   boolean shake = false;
@@ -13,6 +10,7 @@ class Earth extends Entity implements updateable, renderable {
   float shakingStart;
   
   final static float DEFAULT_EARTH_ROTATION = 2.3;
+  final static float EARTH_RADIUS = 167;
 
   Time time;
 
@@ -24,9 +22,6 @@ class Earth extends Entity implements updateable, renderable {
     dx = 0;
     dy = 0;
     dr = settings.getFloat("earthRotationSpeed", DEFAULT_EARTH_ROTATION);
-
-    model = loadImage("earth-fill.png");
-    radius = model.width/2;
   }
 
   void shake (float _mag) {
@@ -72,14 +67,6 @@ class Earth extends Entity implements updateable, renderable {
   }
 
   void render () {
-    pushMatrix();
-    pushStyle();
-    //tint(0,0,100,.5);
-    PVector trans = globalPos();
-    translate(trans.x, trans.y);
-    rotate(radians(globalRote()));
-    image(model, 0, 0, model.width, model.height);
-    popStyle();
-    popMatrix();
+    simpleRenderImage(assets.earthStuff.earth);
   }
 }

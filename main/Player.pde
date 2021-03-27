@@ -63,7 +63,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
         extralives--;
         float incomingAngle = utils.angleOf(earth.globalPos(), impact);
         float offset = -20;
-        PVector adjustedPosition = new PVector(earth.globalPos().x + cos(radians(incomingAngle)) * (earth.radius + offset), earth.globalPos().y + sin(radians(incomingAngle)) * (earth.radius + offset));
+        PVector adjustedPosition = new PVector(earth.globalPos().x + cos(radians(incomingAngle)) * (Earth.EARTH_RADIUS + offset), earth.globalPos().y + sin(radians(incomingAngle)) * (Earth.EARTH_RADIUS + offset));
 
         deathAnim = new PlayerDeath(time, player.globalPos(), player.globalRote(), player.direction, player.globalToLocalPos(adjustedPosition));
         if (extralives<0) {

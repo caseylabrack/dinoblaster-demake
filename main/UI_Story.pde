@@ -183,7 +183,7 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
     pushStyle();
     imageMode(CENTER);
     pushMatrix();
-    image(assets.uiStuff.letterbox, 0, 0, 2678 / 2, HEIGHT_REFERENCE);
+    image(assets.uiStuff.letterbox, 0, 0, assets.uiStuff.letterbox.width, HEIGHT_REFERENCE);
     popMatrix();
     popStyle();
 
