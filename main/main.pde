@@ -174,7 +174,7 @@ void draw () {
   //} else {
   //  keys.setKey(touches[0].x < width/2 ? Keys.LEFT : Keys.RIGHT, true);
   //}
-  
+
   if (!paused) {
     background(0,0,0,1);
     //fill(0,0,0,.3);

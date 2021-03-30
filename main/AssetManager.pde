@@ -16,7 +16,8 @@ class AssetManager {
 
     uiStuff.extinctSign = loadImage("gameover-lettering.png");
     uiStuff.letterbox = loadImage("letterboxes2.png");
-    uiStuff.MOTD = createFont("Hyperspace.otf", 32);
+    //uiStuff.MOTD = createFont("Hyperspace.otf", 32);
+    uiStuff.MOTD = createFont("Hyperspace Bold.otf", 32);
 
     volcanoStuff.volcanoFrames = utils.sheetToSprites(loadImage("volcanos.png"), 4, 1);
     roidStuff.explosionFrames = utils.sheetToSprites(loadImage("explosion.png"), 3, 1);
@@ -33,8 +34,11 @@ class AssetManager {
     trexStuff.trexRun2 = loadImage("trex-run2.png");
     trexStuff.eggCracked = loadImage("egg-cracked.png");
     trexStuff.eggBurst = loadImage("egg-burst.png");
-    
+
     earthStuff.earth = loadImage("earth.png");
+    earthStuff.tarpitMask = loadImage("earth-mask-test.png");
+    earthStuff.mask = loadShader("pixelmask.glsl");
+    //earthStuff.mask.set("mask", earthStuff.tarpitMask);
   }
 
   class UFOstuff {
@@ -71,9 +75,10 @@ class AssetManager {
     PImage eggCracked;
     PImage eggBurst;
   }
-  
+
   class EarthStuff {
     PImage earth;
     PImage tarpitMask;
+    PShader mask;
   }
 }
