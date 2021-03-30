@@ -1,7 +1,7 @@
 {
 	"roidsEnabled": false,
-	"hypercubesEnabled": true,
-	"ufosEnabled": true,
+	"hypercubesEnabled": false,
+	"ufosEnabled": false,
 	"defaultTimeScale": 1,
 	"extraLives": 0,
 	"earthRotationSpeed": 0,

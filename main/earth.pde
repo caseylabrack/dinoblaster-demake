@@ -119,24 +119,32 @@ class Earth extends Entity implements updateable, renderable {
     //noFill();
     beginShape();
     // arc
-    vertex(cos(radians(tarpitArcCenter)) * (EARTH_RADIUS-10), sin(radians(tarpitArcCenter)) * (EARTH_RADIUS-10));
-    float x, y, dist, t;
-    for (int i = (int)tarpitArcCenter+10; i < tarpitArcCenter + TARPIT_ARC - 10; i+=10) {
-      //t = (float)i/
-      dist = (EARTH_RADIUS - 20) + (sin(i + time.getClock()/1e3) * 10);
-      x = cos(radians(i)) * dist;
-      y = sin(radians(i)) * dist;
-      //circle(x, y, 20);
+    float arcDist = EARTH_RADIUS-10;
+    vertex(cos(radians(tarpitArcCenter)) * (arcDist), sin(radians(tarpitArcCenter)) * (arcDist));
+    float x, y, t, dist;
+    //float amp = 5;
+    //float amp = map(mouseY, 0, height, 1, 20);
+    //float step = map(mouseX, 0, width, 1, 20);
+    float amp = 12;
+    float step = 12;
+    //println("amp: " + amp + "step: " + step);
+    for (int i = (int)tarpitArcCenter+10; i < tarpitArcCenter + TARPIT_ARC - 10; i+=step) {
+      //float dist = (EARTH_RADIUS - 20) + (sin(i + time.getClock()/1e3) * 10);
+      x = cos(radians(i)) * (arcDist - 5);
+      y = sin(radians(i)) * (arcDist - 5);
+      //circle(x, y, 6);
+      x += cos(i + time.getClock()/1e3) * amp;
+      y += sin(i + time.getClock()/1e3) * amp;
+      //circle(x, y, 2);
       vertex(x, y);
     }
-    vertex(cos(radians(tarpitArcCenter + TARPIT_ARC)) * (EARTH_RADIUS - 10), sin(radians(tarpitArcCenter + TARPIT_ARC)) * (EARTH_RADIUS - 10));
+    vertex(cos(radians(tarpitArcCenter + TARPIT_ARC)) * (arcDist), sin(radians(tarpitArcCenter + TARPIT_ARC)) * (arcDist));
 
     float pit = EARTH_RADIUS - 70; 
     // chord
     vertex(cos(radians(tarpitArcCenter + TARPIT_ARC)) * (pit), sin(radians(tarpitArcCenter + TARPIT_ARC)) * (pit));
     vertex(cos(radians(tarpitArcCenter)) * (pit), sin(radians(tarpitArcCenter)) * (pit));
     endShape(CLOSE);
-
 
     float rippleDist1 = EARTH_RADIUS - 40;
     float rippleDist2 = EARTH_RADIUS - 60;
@@ -170,8 +178,6 @@ class Earth extends Entity implements updateable, renderable {
     }
     endShape();
 
-    //ripple(cos(radians(tarpitArcCenter + TARPIT_ARC/2)) * (EARTH_RADIUS-30), sin(radians(tarpitArcCenter + TARPIT_ARC/2)) * (EARTH_RADIUS-30));
-    //ripple(cos(radians(tarpitArcCenter + TARPIT_ARC/2)) * (EARTH_RADIUS-30), sin(radians(tarpitArcCenter + TARPIT_ARC/2)) * (EARTH_RADIUS-30));
     popMatrix();
     popStyle();
   }
