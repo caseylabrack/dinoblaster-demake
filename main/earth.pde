@@ -2,7 +2,7 @@ class Earth extends Entity implements updateable, renderable {
 
   PGraphics tarpitDynamicMask;
   final float TARPIT_AMPLITUDE = 20;
-  final float TARPIT_ARC = 60;
+  final float TARPIT_ARC = 45;
   float tarpitArcCenter;
 
   float shakeAngle;
@@ -142,12 +142,19 @@ class Earth extends Entity implements updateable, renderable {
 
     float pit = EARTH_RADIUS - 70; 
     // chord
-    vertex(cos(radians(tarpitArcCenter + TARPIT_ARC)) * (pit), sin(radians(tarpitArcCenter + TARPIT_ARC)) * (pit));
-    vertex(cos(radians(tarpitArcCenter)) * (pit), sin(radians(tarpitArcCenter)) * (pit));
+    float cx = cos(radians(tarpitArcCenter + TARPIT_ARC/2)) * (arcDist * .75);
+    float cy = sin(radians(tarpitArcCenter + TARPIT_ARC/2)) * (arcDist * .75);
+    float offset = tarpitArcCenter + TARPIT_ARC * 2;
+    for (int i = 0; i < 200; i+=35) { 
+      vertex(cx + cos(radians(i + offset)) * 50, cy + sin(radians(i + offset)) * 50);
+    }
+    //vertex(cos(radians(tarpitArcCenter + TARPIT_ARC)) * (pit), sin(radians(tarpitArcCenter + TARPIT_ARC)) * (pit));
+    //vertex(cos(radians(tarpitArcCenter)) * (pit), sin(radians(tarpitArcCenter)) * (pit));
     endShape(CLOSE);
+    //endShape();
 
     float rippleDist1 = EARTH_RADIUS - 40;
-    float rippleDist2 = EARTH_RADIUS - 60;
+    float rippleDist2 = EARTH_RADIUS - 70;
     beginShape();
     for (int i = (int)tarpitArcCenter+5; i < tarpitArcCenter + 20; i+=4) {
       //dist = (EARTH_RADIUS - 20) + (sin(i + time.getClock()/1e3) * 5);
