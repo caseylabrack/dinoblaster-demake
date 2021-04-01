@@ -21,7 +21,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
   final static float respawnReadyFlickerRate = 50;
   float flickerRate = 250;
   float respawningY = -100;
-  float respawningYTarget = -197;
+  float respawningYTarget = -Player.DIST_FROM_EARTH;//-197;
   float respawningDuration = 3e3;
   float respawningStart = 0;
   float progress = 0;
@@ -249,7 +249,7 @@ class Player extends Entity implements updateable, renderable {
   int direction = 1;
   int playerNum = 1;
   int framesTotal = 8;
-  final static float DIST_FROM_EARTH = 197;
+  final static float DIST_FROM_EARTH = 190;//197;
   final static float DEFAULT_RUNSPEED = 5;
 
   EventManager eventManager;

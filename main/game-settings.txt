@@ -4,7 +4,7 @@
 	"ufosEnabled": false,
 	"defaultTimeScale": 1,
 	"extraLives": 0,
-	"earthRotationSpeed": 0,
+	"earthRotationSpeed": 2.3,
 	"playerSpeed": 5.0,
 	"roidImpactRateInMilliseconds": 300,
 	"roidImpactRateVariation": 100,

@@ -39,6 +39,10 @@ class AssetManager {
     earthStuff.tarpitMask = loadImage("earth-mask-test.png");
     earthStuff.mask = loadShader("pixelmask.glsl");
     //earthStuff.mask.set("mask", earthStuff.tarpitMask);
+    earthStuff.doodadBone = loadImage("doodad-bone.png");
+    earthStuff.doodadFemur = loadImage("doodad-femur.png");
+    earthStuff.doodadHead = loadImage("doodad-head.png");
+    earthStuff.doodadRibs = loadImage("doodad-ribcage.png");
   }
 
   class UFOstuff {
@@ -80,5 +84,9 @@ class AssetManager {
     PImage earth;
     PImage tarpitMask;
     PShader mask;
+    PImage doodadBone;
+    PImage doodadFemur;
+    PImage doodadHead;
+    PImage doodadRibs;
   }
 }
