@@ -21,7 +21,7 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
 
   PImage extralifeSheet;
   PImage[] extralifeIcons;
-  int extralives = 0;
+  int extralives;
   float extralifeAnimationStart = 0;
   boolean extralifeAnimating = false;
   float extralifeAnimationDuration = 5e3;
@@ -53,6 +53,8 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
 
     extralifeSheet = loadImage("bronto-abduction-sheet.png");
     extralifeIcons = utils.sheetToSprites(extralifeSheet, 3, 3);
+
+    extralives = settings.getInt("extraLives", 0);
 
     motds = new StringList();
     motds.append("Real Winners Say No to Drugs");
@@ -146,38 +148,54 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
   void render () {
 
     //  acrylics transparent portions bg
-    pushStyle();
-    fill(0, 0, 0);
-    noStroke();
-    rect(-WIDTH_REF_HALF, -HEIGHT_REF_HALF, 128, HEIGHT_REFERENCE);
-    rect(WIDTH_REF_HALF - 128, -HEIGHT_REF_HALF, 128, HEIGHT_REFERENCE);
-    //rect(0, 0, 128, height);
-    //rect(1024 - 128, 0, 128, height);
-    popStyle();
+    //pushStyle();
+    //fill(0, 0, 0);
+    //noStroke();
+    //rect(-WIDTH_REF_HALF, -HEIGHT_REF_HALF, 128, HEIGHT_REFERENCE);
+    ////rect(WIDTH_REF_HALF - 128, -HEIGHT_REF_HALF, 128, HEIGHT_REFERENCE);
+    ////rect(0, 0, 128, height);
+    ////rect(1024 - 128, 0, 128, height);
+    //popStyle();
+
+    push();
+    imageMode(CORNER);
+    image(assets.uiStuff.progressBG, -WIDTH_REF_HALF + 40, -HEIGHT_REF_HALF);
+    image(assets.uiStuff.extraDinosBG, WIDTH_REF_HALF - 100, -HEIGHT_REF_HALF);
+    pop();
 
     // score tracker 
     // highscore
-    pushStyle();
-    stroke(0, 0, 100);
-    noFill();
-    strokeWeight(1);
-    pushMatrix();
-    rectMode(CENTER);
-    translate(-WIDTH_REF_HALF + 64, -HEIGHT_REF_HALF + 40 + (highscore/300.0) * (HEIGHT_REFERENCE - 80));
-    rotate(PI/4);
-    rect(0, 0, 8, 8);
-    popMatrix();
-    // current score
-    pushMatrix();
-    int endpoint = 40 + round(score/300 * (HEIGHT_REFERENCE - 80));
-    translate(-WIDTH_REF_HALF + 64, -HEIGHT_REF_HALF + endpoint);
-    rotate(PI/4);
-    if (newHighScore) stroke(currentColor.getColor());
-    rectMode(CENTER);
-    rect(0, 0, 16, 16);
-    //image(assets.ufostuff.brontoAbductionFrames[5], 0,0);
-    popMatrix();
-    popStyle();
+    //pushStyle();
+    //stroke(0, 0, 100);
+    //noFill();
+    //strokeWeight(1);
+    //pushMatrix();
+    //rectMode(CENTER);
+    //translate(-WIDTH_REF_HALF + 64, -HEIGHT_REF_HALF + 40 + (highscore/300.0) * (HEIGHT_REFERENCE - 80));
+    //rotate(PI/4);
+    //rect(0, 0, 8, 8);
+    //popMatrix();
+    //// current score
+    //pushMatrix();
+    //int endpoint = 40 + round(score/300 * (HEIGHT_REFERENCE - 80));
+    //translate(-WIDTH_REF_HALF + 64, -HEIGHT_REF_HALF + endpoint);
+    //rotate(PI/4);
+    //if (newHighScore) stroke(currentColor.getColor());
+    //rectMode(CENTER);
+    //rect(0, 0, 16, 16);
+    //popMatrix();
+    //popStyle();
+
+    push();
+    imageMode(CENTER);
+    float p = ((float)score)/300.0;
+    float totalpixels = HEIGHT_REFERENCE - 80;
+    float fillupto = p * totalpixels;
+    float tickheight = 10;//assets.uiStuff.tick.height;
+    for (int i = 0; i < fillupto; i+=tickheight) {
+      image(assets.uiStuff.tick, -WIDTH_REF_HALF + 64, -HEIGHT_REF_HALF + 40 + i);
+    }
+    pop();
 
     // acrylics
     pushStyle();
@@ -187,22 +205,25 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
     popMatrix();
     popStyle();
 
-    if (extralives > 0) {
-      int i = 0;
-      for (i = 0; i < extralives-1; i++) {
-        image(extralifeIcons[4], 1024 - 128 + 64, 64 + i * 48);
-      }
-      int index = 4;
-      if (extralifeAnimating) {
-        float progress = (time.getClock() - extralifeAnimationStart)/extralifeAnimationDuration;
-        if (progress < 1) {
-          index = 4 + floor((1 - progress - .0001) * 5);
-        } else {
-          extralifeAnimating = false;
-        }
-      }
-      image(extralifeIcons[index], 1024 - 128 + 64, 64 + i * 48);
-    }
+    image(extralives>=1 ? assets.uiStuff.extraDinoActive : assets.uiStuff.extraDinoInactive, WIDTH_REF_HALF - 65, -HEIGHT_REF_HALF + 75);
+    image(extralives>=2 ? assets.uiStuff.extraDinoActive : assets.uiStuff.extraDinoInactive, WIDTH_REF_HALF - 65, -HEIGHT_REF_HALF + 75 + 75);
+    image(extralives>=3 ? assets.uiStuff.extraDinoActive : assets.uiStuff.extraDinoInactive, WIDTH_REF_HALF - 65, -HEIGHT_REF_HALF + 75 + 75 + 75);
+    //if (extralives > 0) {
+    //  int i = 0;
+    //  for (i = 0; i < extralives-1; i++) {
+    //    image(extralifeIcons[4], 1024 - 128 + 64, 64 + i * 48);
+    //  }
+    //  int index = 4;
+    //  if (extralifeAnimating) {
+    //    float progress = (time.getClock() - extralifeAnimationStart)/extralifeAnimationDuration;
+    //    if (progress < 1) {
+    //      index = 4 + floor((1 - progress - .0001) * 5);
+    //    } else {
+    //      extralifeAnimating = false;
+    //    }
+    //  }
+    //  image(extralifeIcons[index], 1024 - 128 + 64, 64 + i * 48);
+    //}
 
     if (millis() - motdStart < MOTD_DURATION) {
       pushStyle();

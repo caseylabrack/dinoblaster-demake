@@ -8,7 +8,7 @@ class UFOManager implements updateable, renderable, abductionEvent, playerDiedEv
   EventManager eventManager;
   Time time;
 
-  int extralives = 0;
+  int extralives;
 
   float spawnCountDown;
   boolean playerAlive = true;
@@ -24,6 +24,8 @@ class UFOManager implements updateable, renderable, abductionEvent, playerDiedEv
     eventManager.abductionSubscribers.add(this);
     eventManager.playerDiedSubscribers.add(this);
     eventManager.playerRespawnedSubscribers.add(this);
+
+    extralives = settings.getInt("extraLives", 0);
 
     spawnCountDown = random(5, 90) * 1000;
   }
@@ -461,7 +463,7 @@ class UFOrespawn extends Entity {
           flickerStart = millis();
         }
       }
-      if(display) shape(assets.playerStuff.brontoSVG, 0, 0, lilBrontoSize, lilBrontoSize * (assets.playerStuff.brontoSVG.height/assets.playerStuff.brontoSVG.width));
+      if (display) shape(assets.playerStuff.brontoSVG, 0, 0, lilBrontoSize, lilBrontoSize * (assets.playerStuff.brontoSVG.height/assets.playerStuff.brontoSVG.width));
       popStyle();
       popMatrix();
 

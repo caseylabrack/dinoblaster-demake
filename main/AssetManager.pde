@@ -17,6 +17,11 @@ class AssetManager {
     uiStuff.extinctSign = loadImage("gameover-lettering.png");
     uiStuff.letterbox = loadImage("letterboxes2.png");
     uiStuff.MOTD = createFont("Hyperspace.otf", 32);
+    uiStuff.progressBG = loadImage("progress-bg.png");
+    uiStuff.extraDinosBG = loadImage("extra-life-bg.png");
+    uiStuff.tick = loadImage("progress-tick.png");
+    uiStuff.extraDinoActive = loadImage("extra-dino-active.png");
+    uiStuff.extraDinoInactive = loadImage("extra-dino-deactive.png");
 
     volcanoStuff.volcanoFrames = utils.sheetToSprites(loadImage("volcanos.png"), 4, 1);
     roidStuff.explosionFrames = utils.sheetToSprites(loadImage("explosion.png"), 3, 1);
@@ -47,6 +52,11 @@ class AssetManager {
     PImage extinctSign;
     PImage letterbox;
     PFont MOTD;
+    PImage progressBG;
+    PImage extraDinosBG;
+    PImage tick;
+    PImage extraDinoActive;
+    PImage extraDinoInactive;
   }
 
   class VolcanoStuff {

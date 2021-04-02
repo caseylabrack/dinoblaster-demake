@@ -11,7 +11,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
   PlayerDeath deathAnim = null;
 
   PImage model;
-  int extralives = 0;
+  int extralives;
 
   boolean display = true;
   float flickerStart = 0;
@@ -41,6 +41,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
     cam = c;
 
     model = utils.sheetToSprites(loadImage("bronto-frames.png"), 3, 1)[0];
+    extralives = settings.getInt("extraLives", 0);
 
     spawningStart = millis();
     progress = 0;
