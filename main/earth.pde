@@ -91,15 +91,6 @@ class Earth extends Entity implements updateable, renderable {
     r += dr * time.getTimeScale();
   }
 
-  void ripple (float x, float y) {
-    float amp = 10;
-    beginShape();
-    vertex(x, y);
-    vertex(x - amp, y - amp);
-    vertex(x - amp - amp, y);
-    endShape();
-  }
-
   void render () {
     shader(assets.earthStuff.mask);
     simpleRenderImage(assets.earthStuff.earth);
@@ -115,21 +106,15 @@ class Earth extends Entity implements updateable, renderable {
     // tarpit surface
     float arcDist = EARTH_RADIUS - 10;
     vertex(cos(radians(tarpitArcStart)) * (arcDist), sin(radians(tarpitArcStart)) * (arcDist));
-    float x, y, t, dist;
-    float amp = 9.613;
-    float step = 12;
+    float x, y;
+    float amp = 4;
+    float step = 6;
     float phase = 1.822;
-    //float phase = map(mouseX, 0, width, .1, 5.0);
-    //float phase = map(mouseX, 0, width, 0, TWO_PI);
-    //amp = map(mouseY, 0, height, .1, 12);
-    //println("phase: " + phase + " amp: " + amp);
-    for (int i = (int)tarpitArcStart+10; i < tarpitArcStart + TARPIT_ARC - 10; i+=step) {
-      //float dist = (EARTH_RADIUS - 20) + (sin(i + time.getClock()/1e3) * 10);
+    for (int i = (int)tarpitArcStart+(int)step; i < tarpitArcStart + TARPIT_ARC - step; i+=step) {
       x = cos(radians(i)) * (arcDist);
       y = sin(radians(i)) * (arcDist);
-      //circle(x, y, 6);
-      x += cos(i * phase + time.getClock()/1e3) * amp;
-      y += sin(i * phase + time.getClock()/1e3) * amp;
+      x += cos(i * phase + time.getClock()/500) * amp;
+      y += sin(i * phase + time.getClock()/500) * amp;
       //circle(x, y, 2);
       vertex(x, y);
     }
@@ -168,36 +153,6 @@ class Earth extends Entity implements updateable, renderable {
     rotate(radians(tarpitArcStart + 180));
     image(assets.earthStuff.doodadBone, 0, 0);
     popMatrix();
-
-    //ang = tarpitArcStart + 10;
-    //d = (EARTH_RADIUS - 50) + (floor(sin(radians(180) + time.getClock()/1e3)) * 5); // bob up and down in a square wave
-    //pushMatrix();
-    //translate(cos(radians(ang)) * d, sin(radians(ang)) * d);
-    //rotate(radians(tarpitArcStart + 90));
-    //image(assets.earthStuff.doodadFemur, 0, 0);
-    //popMatrix();
-
-    //float rippleDist1 = EARTH_RADIUS - 30;
-    //float rippleDist2 = EARTH_RADIUS - 40;
-    //beginShape();
-    //for (int i = (int)tarpitArcStart+5; i < tarpitArcStart + 20; i+=4) {
-    //  //dist = (EARTH_RADIUS - 20) + (sin(i + time.getClock()/1e3) * 5);
-    //  dist = (rippleDist1 + floor(sin(time.getClock()/1e3)) * 6) + (sin(i) * 5);
-    //  x = cos(radians(i)) * dist;
-    //  y = sin(radians(i)) * dist;
-    //  vertex(x, y);
-    //}
-    //endShape();
-
-    //beginShape();
-    //for (int i = (int)tarpitArcStart+30; i < tarpitArcStart + TARPIT_ARC - 5; i+=4) {
-    //  //dist = (EARTH_RADIUS - 20) + (sin(i + time.getClock()/1e3) * 5);
-    //  dist = (rippleDist1 + floor(cos(time.getClock()/1e3)) * 6) + (sin(i) * 5);
-    //  x = cos(radians(i)) * dist;
-    //  y = sin(radians(i)) * dist;
-    //  vertex(x, y);
-    //}
-    //endShape();
 
     popMatrix();
     popStyle();
