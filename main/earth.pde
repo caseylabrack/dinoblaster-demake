@@ -19,7 +19,6 @@ class Earth extends Entity implements updateable, renderable {
 
   Time time;
 
-
   Earth (Time t) {
     time = t;
 
@@ -117,15 +116,20 @@ class Earth extends Entity implements updateable, renderable {
     float arcDist = EARTH_RADIUS - 10;
     vertex(cos(radians(tarpitArcStart)) * (arcDist), sin(radians(tarpitArcStart)) * (arcDist));
     float x, y, t, dist;
-    float amp = 12;
+    float amp = 9.613;
     float step = 12;
+    float phase = 1.822;
+    //float phase = map(mouseX, 0, width, .1, 5.0);
+    //float phase = map(mouseX, 0, width, 0, TWO_PI);
+    //amp = map(mouseY, 0, height, .1, 12);
+    //println("phase: " + phase + " amp: " + amp);
     for (int i = (int)tarpitArcStart+10; i < tarpitArcStart + TARPIT_ARC - 10; i+=step) {
       //float dist = (EARTH_RADIUS - 20) + (sin(i + time.getClock()/1e3) * 10);
       x = cos(radians(i)) * (arcDist);
       y = sin(radians(i)) * (arcDist);
       //circle(x, y, 6);
-      x += cos(i + time.getClock()/1e3) * amp;
-      y += sin(i + time.getClock()/1e3) * amp;
+      x += cos(i * phase + time.getClock()/1e3) * amp;
+      y += sin(i * phase + time.getClock()/1e3) * amp;
       //circle(x, y, 2);
       vertex(x, y);
     }
