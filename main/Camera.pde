@@ -61,6 +61,7 @@ class Time implements updateable, playerDiedEvent, gameOverEvent, nebulaEvents {
   private long lastNanos;
   private float delta;
   private int tick;
+  private float elapsed;
 
   private boolean dying = false;
   private float dyingStartTime;
@@ -87,7 +88,9 @@ class Time implements updateable, playerDiedEvent, gameOverEvent, nebulaEvents {
 
     tick++;
 
-    clock += (millis() - lastmillis) * timeScale;
+    elapsed = millis() - lastmillis;
+    clock += elapsed * timeScale;
+    //clock += (millis() - lastmillis) * timeScale;
     lastmillis = millis();
 
     delta = min((frameRateLastNanos - lastNanos)/1e6/16.666, 2);
@@ -141,5 +144,13 @@ class Time implements updateable, playerDiedEvent, gameOverEvent, nebulaEvents {
   }
   public float getTick() {
     return tick;
+  }
+  
+  public float getElapsed () {
+     return elapsed;
+  }
+  
+  public float getScaledElapsed () {
+     return elapsed * timeScale; 
   }
 }

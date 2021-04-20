@@ -49,6 +49,8 @@ void setup () {
     output.println("{");
     settings.setBoolean("roidsEnabled", true);
     output.println("\t\"roidsEnabled\": true,");
+    settings.setBoolean("trexEnabled", true);
+    output.println("\t\"trexEnabled\": true,");
     settings.setBoolean("hypercubesEnabled", true);
     output.println("\t\"hypercubesEnabled\": true,");
     settings.setBoolean("ufosEnabled", true);
@@ -174,7 +176,7 @@ void draw () {
   //} else {
   //  keys.setKey(touches[0].x < width/2 ? Keys.LEFT : Keys.RIGHT, true);
   //}
-  
+
   if (!paused) {
     background(0,0,0,1);
     //fill(0,0,0,.3);

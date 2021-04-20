@@ -1,5 +1,7 @@
 static class utils {
 
+  static final PVector ZERO_VECTOR = new PVector(0,0);
+  
   static float angleOf(PVector from, PVector to) {
 
     return degrees(atan2(to.y - from.y, to.x - from.x));

@@ -43,7 +43,7 @@ class SinglePlayer extends Scene {
 
     eventManager = new EventManager();
     time = new Time(eventManager);
-    earth = new Earth(time);
+    earth = new Earth(time, eventManager, lvl);
     camera = new Camera(0, 0);
     roids = new RoidManager(earth, eventManager, time);
     currentColor = new ColorDecider();
@@ -143,7 +143,7 @@ class testScene extends Scene {
 
     eventManager = new EventManager();
     time = new Time(eventManager);
-    earth = new Earth(time);
+    earth = new Earth(time, eventManager, lvl);
     //earth.dr = 0;
 
     camera = new Camera(0, 0);
