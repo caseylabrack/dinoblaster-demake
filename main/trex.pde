@@ -18,6 +18,8 @@ class TrexManager implements updateable, renderable, levelChangeEvent {
     currentColor = c;
     playerManager = pm;
 
+    if (!settings.getBoolean("trexEnabled", true)) return;
+
     if (lvl==UIStory.CRETACEOUS) spawnSchedule = SPAWN_DELAY; //spawn();
     events.levelChangeSubscribers.add(this);
   }
@@ -50,7 +52,12 @@ class TrexManager implements updateable, renderable, levelChangeEvent {
       }
     }
 
-    if (trex!=null) trex.update();
+    if (trex!=null) {
+      trex.update();
+      if (trex.state == Trex.DONE) {
+        trex = null;
+      }
+    }
   }
 
   void render() {
@@ -66,7 +73,7 @@ class EggTrex extends Entity implements updateable, renderable {
   ColorDecider currentColor;
 
   final float startY = 115;
-  final float endY = 190;
+  final static float EARTH_DIST_FINAL = 190;
   final float risingDuration = 1e3;
   final float idleDuration = 1e3;
   final float crackedDuration = 3e3;
@@ -97,12 +104,9 @@ class EggTrex extends Entity implements updateable, renderable {
     model = assets.trexStuff.eggCracked;
 
     earth.addChild(this);
-    x = 0;
-    y = -100;
 
-    // emerge from random place
-    angle = random(360);
-    setPosition(utils.rotateAroundPoint(localPos(), new PVector(0, 0), angle));
+    angle = earth.getTarpitAngleDegrees() + 180;
+    setPosition(new PVector(cos(radians(angle)), sin(radians(angle))));
     r = angle + 90;
     uprightR = r;
 
@@ -121,7 +125,7 @@ class EggTrex extends Entity implements updateable, renderable {
         //float dist = utils.easeLinear(progress,startY,endY-startY,1);
         float t = utils.easeOutBounce(progress);
         //float t = utils.easeOutElastic(progress);
-        float dist = startY + (endY - startY) * t;
+        float dist = startY + (EARTH_DIST_FINAL - startY) * t;
         x = cos(radians(angle)) * dist;
         y = sin(radians(angle)) * dist;
       } else {
@@ -189,18 +193,25 @@ class Trex extends Entity implements gameOverEvent, updateable, renderable {
   float runSpeed = .75;
   boolean chasing = true;
   float attackAngle = 110;
+  final float HITBOX_ANGLE = 16;
+
   Earth earth;
   PlayerManager playerManager;
   Time time;
 
-  final float HITBOX_ANGLE = 16;
+  boolean alive = true;
+  final float TARPIT_BOTTOM_DIST = 110;
+  float tarpitSink = 0;
+
+  final static int WALKING = 0;
+  final static int SINKING = 1;
+  final static int DONE = 2;
+  int state = WALKING;
 
   Trex (Earth _earth, PlayerManager pm, Time t, PVector pos) {
     earth = _earth; 
     playerManager = pm;
     time = t;
-    //PImage sheet = loadImage("trex.png");
-    //PImage[] frames = utils.sheetToSprites(sheet, 3, 1);
     idle = assets.trexStuff.trexIdle;//frames[0];
     runFrames[0] = assets.trexStuff.trexRun1;//frames[1];
     runFrames[1] = assets.trexStuff.trexRun2;//frames[2];
@@ -217,35 +228,52 @@ class Trex extends Entity implements gameOverEvent, updateable, renderable {
 
   void update () {
 
-    float playerDist = playerManager.player!=null ? utils.signedAngleDiff(r, playerManager.player.r) : 1e9;
+    switch(state) {
 
-    if (abs(playerDist) < HITBOX_ANGLE) {
-      playerManager.roidImpactHandle(this.globalPos());
+    case WALKING:
+      float playerDist = playerManager.player!=null ? utils.signedAngleDiff(r, playerManager.player.r) : 1e9;
+
+      if (abs(playerDist) < HITBOX_ANGLE) {
+        playerManager.roidImpactHandle(this.globalPos());
+      }
+
+      if (abs(playerDist) < attackAngle) {
+        chasing = true;
+        facing = playerDist > 0 ? 1 : -1;
+      } else {
+        chasing = false;
+      }
+
+      if (chasing) {
+        model = runFrames[utils.cycleRangeWithDelay(runFrames.length, 12, frameCount)];
+        if (model==runFrames[1]) earth.shake(2.5);
+        setPosition(utils.rotateAroundPoint(localPos(), new PVector(0, 0), runSpeed * time.getTimeScale() * facing));
+        dr += runSpeed * time.getTimeScale() * facing;
+      } else {
+        model = idle;
+      }
+
+      x += dx;
+      y += dy;
+      r += dr;
+
+      dx = 0;
+      dy = 0;
+      dr = 0;
+
+      if (earth.isInTarpit(localPos())) state = SINKING;
+
+      break;
+
+    case SINKING: 
+      tarpitSink += time.getScaledElapsed() / Earth.TARPIT_SINK_DURATION;
+      float sink = EggTrex.EARTH_DIST_FINAL - (EggTrex.EARTH_DIST_FINAL - TARPIT_BOTTOM_DIST) * tarpitSink;
+      PVector tarpitAdjusted = new PVector(cos(radians(utils.angleOf(utils.ZERO_VECTOR, localPos()))) * sink, sin(radians(utils.angleOf(utils.ZERO_VECTOR, localPos()))) * sink);
+      setPosition(tarpitAdjusted);
+
+      if (tarpitSink > 1) state = DONE;
+      break;
     }
-
-    if (abs(playerDist) < attackAngle) {
-      chasing = true;
-      facing = playerDist > 0 ? 1 : -1;
-    } else {
-      chasing = false;
-    }
-
-    if (chasing) {
-      model = runFrames[utils.cycleRangeWithDelay(runFrames.length, 12, frameCount)];
-      if (model==runFrames[1]) earth.shake(2.5);
-      setPosition(utils.rotateAroundPoint(localPos(), new PVector(0, 0), runSpeed * time.getTimeScale() * facing));
-      dr += runSpeed * time.getTimeScale() * facing;
-    } else {
-      model = idle;
-    }
-
-    x += dx;
-    y += dy;
-    r += dr;
-
-    dx = 0;
-    dy = 0;
-    dr = 0;
   }
 
   void render () {

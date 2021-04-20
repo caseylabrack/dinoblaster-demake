@@ -12,6 +12,7 @@ class UFOManager implements updateable, renderable, abductionEvent, playerDiedEv
 
   float spawnCountDown;
   boolean playerAlive = true;
+  boolean enabled;
 
   UFOManager (ColorDecider _color, Earth _earth, PlayerManager _pm, EventManager _ev, Time t) {
 
@@ -21,11 +22,13 @@ class UFOManager implements updateable, renderable, abductionEvent, playerDiedEv
     eventManager = _ev;
     time = t;
 
-    eventManager.abductionSubscribers.add(this);
     eventManager.playerDiedSubscribers.add(this);
     eventManager.playerRespawnedSubscribers.add(this);
 
+    eventManager.abductionSubscribers.add(this);
     spawnCountDown = random(5, 90) * 1000;
+
+    enabled = settings.getBoolean("ufosEnabled", true);
   }
 
   void abductionHandle(PVector p) {
@@ -47,7 +50,7 @@ class UFOManager implements updateable, renderable, abductionEvent, playerDiedEv
 
   void update () {
 
-    if (playerAlive) {
+    if (playerAlive && enabled) {
       spawnCountDown -= (1e3/60) * time.getTimeScale();
       if (spawnCountDown < 0) {
         spawnCountDown = random(40, 90) * 1000;
@@ -461,7 +464,7 @@ class UFOrespawn extends Entity {
           flickerStart = millis();
         }
       }
-      if(display) shape(assets.playerStuff.brontoSVG, 0, 0, lilBrontoSize, lilBrontoSize * (assets.playerStuff.brontoSVG.height/assets.playerStuff.brontoSVG.width));
+      if (display) shape(assets.playerStuff.brontoSVG, 0, 0, lilBrontoSize, lilBrontoSize * (assets.playerStuff.brontoSVG.height/assets.playerStuff.brontoSVG.width));
       popStyle();
       popMatrix();
 

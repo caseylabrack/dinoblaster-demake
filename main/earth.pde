@@ -1,9 +1,13 @@
-class Earth extends Entity implements updateable, renderable {
+class Earth extends Entity implements levelChangeEvent, updateable, renderable {
 
   PGraphics tarpitDynamicMask;
   final float TARPIT_AMPLITUDE = 20;
   final float TARPIT_ARC = 45;
+  final float TARPIT_MARGIN = 5;
+  final static float TARPIT_SINK_DURATION = 4e3;
   float tarpitArcStart;
+  float tarpitAngle;
+  boolean tarpitEnabled = false;
 
   float shakeAngle;
   boolean shake = false;
@@ -18,15 +22,18 @@ class Earth extends Entity implements updateable, renderable {
   final static float EARTH_RADIUS = 167;
 
   Time time;
+  EventManager events;
 
-  Earth (Time t) {
+  Earth (Time t, EventManager e, int lvl) {
     time = t;
+    events = e;
 
     x = 0;
     y = 0;
     dx = 0;
     dy = 0;
     dr = settings.getFloat("earthRotationSpeed", DEFAULT_EARTH_ROTATION);
+
 
     tarpitArcStart = random(360-TARPIT_ARC);
 
@@ -47,6 +54,16 @@ class Earth extends Entity implements updateable, renderable {
     tarpitDynamicMask.endShape();
     tarpitDynamicMask.endDraw();
     assets.earthStuff.mask.set("mask", tarpitDynamicMask);
+
+
+    PVector mypoint = new PVector(cos(radians(tarpitArcStart + TARPIT_ARC/2)), sin(radians(tarpitArcStart + TARPIT_ARC/2)));
+    tarpitAngle = utils.angleOf(new PVector(0, 0), mypoint);
+
+    if (lvl==UIStory.CRETACEOUS) {
+      tarpitEnabled = true;
+    }
+
+    events.levelChangeSubscribers.add(this);
   }
 
   void shake (float _mag) {
@@ -91,10 +108,34 @@ class Earth extends Entity implements updateable, renderable {
     r += dr * time.getTimeScale();
   }
 
+  void levelChangeHandle(int stage) {
+
+    if (stage==UIStory.CRETACEOUS) {
+      tarpitEnabled = true;
+    }
+  }
+
+  boolean isInTarpit (PVector pos) {
+
+    if (!tarpitEnabled) return false;
+
+    float tangle = utils.angleOf(utils.ZERO_VECTOR, pos);
+    float diff = utils.unsignedAngleDiff(tarpitAngle, tangle);
+    return diff < TARPIT_ARC / 2 - TARPIT_MARGIN;
+  }
+  
+  float getTarpitAngleDegrees () {
+    
+    return tarpitAngle;
+  }
+
   void render () {
-    shader(assets.earthStuff.mask);
+
+    if (tarpitEnabled) shader(assets.earthStuff.mask);
     simpleRenderImage(assets.earthStuff.earth);
-    resetShader();
+    if (tarpitEnabled) resetShader();
+
+    if (!tarpitEnabled) return;
 
     pushTransforms();
     pushStyle();

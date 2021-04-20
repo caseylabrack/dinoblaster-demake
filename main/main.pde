@@ -49,6 +49,8 @@ void setup () {
     output.println("{");
     settings.setBoolean("roidsEnabled", true);
     output.println("\t\"roidsEnabled\": true,");
+    settings.setBoolean("trexEnabled", true);
+    output.println("\t\"trexEnabled\": true,");
     settings.setBoolean("hypercubesEnabled", true);
     output.println("\t\"hypercubesEnabled\": true,");
     settings.setBoolean("ufosEnabled", true);
