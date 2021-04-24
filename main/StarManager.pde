@@ -94,6 +94,7 @@ class StarManager implements updateable, renderable, renderableScreen, nebulaEve
 
     pushStyle();
     for (int i = 0; i < stars.length; i++) {
+      pushMatrix();
       if (abs(stars[i].x - x) < width && abs(stars[i].y - y) < height) {
         if (hyperspace) {
           fill(currentColor.getColor());
@@ -102,14 +103,15 @@ class StarManager implements updateable, renderable, renderableScreen, nebulaEve
             line(stars[i].x - x, stars[i].y - y, stars[i].x - x2, stars[i].y - y2);
           } else {
             noStroke();
-            square(stars[i].x - x, stars[i].y - y, 2);
+            square(stars[i].x - x, stars[i].y - y, 3);
           }
         } else {
           noStroke();
           fill(0, 0, 100);
-          square(stars[i].x - x, stars[i].y - y, 2);
+          square(stars[i].x - x, stars[i].y - y, 3);
         }
       }
+      popMatrix();
     }
     popStyle();
 

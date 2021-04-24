@@ -51,7 +51,7 @@ class Hypercube implements updateable, renderable {
     pg.pushMatrix();
     pg.pushStyle();
     pg.stroke(colors.getColor());
-    pg.strokeWeight(1.25);
+    pg.strokeWeight(assets.STROKE_WIDTH);
     pg.noFill();
     pg.clear();
 

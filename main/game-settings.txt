@@ -4,7 +4,7 @@
 	"hypercubesEnabled": true,
 	"ufosEnabled": true,
 	"defaultTimeScale": 1,
-	"extraLives": 0,
+	"extraLives": 3,
 	"earthRotationSpeed": 2.3,
 	"playerSpeed": 5.0,
 	"roidImpactRateInMilliseconds": 600,

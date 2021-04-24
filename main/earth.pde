@@ -139,7 +139,7 @@ class Earth extends Entity implements levelChangeEvent, updateable, renderable {
 
     pushTransforms();
     pushStyle();
-    strokeWeight(.75);
+    strokeWeight(assets.STROKE_WIDTH);
     stroke(0, 0, 100, 1);
     fill(0, 0, 0, 1);
     beginShape();

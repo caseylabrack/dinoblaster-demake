@@ -121,7 +121,7 @@ class RoidManager implements updateable, renderable {
 
       pushMatrix();
       rotate(radians(r.angle+90));
-      image(assets.roidStuff.trail, 0, -25, assets.roidStuff.trail.width/2, assets.roidStuff.trail.height/2);
+      image(assets.roidStuff.trail, 0, -25);
       popMatrix();
 
       rotate(r.r);

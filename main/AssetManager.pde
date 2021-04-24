@@ -1,5 +1,7 @@
 class AssetManager {
 
+  final float STROKE_WIDTH = 2;
+  
   UFOstuff ufostuff = new UFOstuff();
   UIStuff uiStuff = new UIStuff();
   VolcanoStuff volcanoStuff = new VolcanoStuff();
@@ -16,7 +18,7 @@ class AssetManager {
 
     uiStuff.extinctSign = loadImage("gameover-lettering.png");
     uiStuff.letterbox = loadImage("letterboxes2.png");
-    uiStuff.MOTD = createFont("Hyperspace.otf", 32);
+    uiStuff.MOTD = createFont("Hyperspace Bold.otf", 32);
     uiStuff.progressBG = loadImage("progress-bg.png");
     uiStuff.extraDinosBG = loadImage("extra-life-bg.png");
     uiStuff.tick = loadImage("progress-tick.png");
@@ -24,6 +26,7 @@ class AssetManager {
     uiStuff.extraDinoInactive = loadImage("extra-dino-deactive.png");
 
     volcanoStuff.volcanoFrames = utils.sheetToSprites(loadImage("volcanos.png"), 4, 1);
+    
     roidStuff.explosionFrames = utils.sheetToSprites(loadImage("explosion.png"), 3, 1);
     roidStuff.roidFrames = utils.sheetToSprites(loadImage("roids.png"), 2, 2);
     roidStuff.trail = loadImage("roid-trail.png");
@@ -32,6 +35,8 @@ class AssetManager {
     playerStuff.dethSVG.disableStyle();
     playerStuff.brontoSVG = loadShape("bronto-idle.svg");
     playerStuff.brontoSVG.disableStyle();
+    playerStuff.brontoFrames = utils.sheetToSprites(loadImage("bronto-frames.png"), 3, 1);
+    playerStuff.oviFrames = utils.sheetToSprites(loadImage("oviraptor-frames.png"), 2, 2, 1);
 
     trexStuff.trexIdle = loadImage("trex-idle.png");
     trexStuff.trexRun1 = loadImage("trex-run1.png");
@@ -40,7 +45,6 @@ class AssetManager {
     trexStuff.eggBurst = loadImage("egg-burst.png");
 
     earthStuff.earth = loadImage("earth.png");
-    earthStuff.tarpitMask = loadImage("earth-mask-test.png");
     earthStuff.mask = loadShader("pixelmask.glsl");
     //earthStuff.mask.set("mask", earthStuff.tarpitMask);
     earthStuff.doodadBone = loadImage("doodad-bone.png");
@@ -79,6 +83,8 @@ class AssetManager {
   class PlayerStuff {
     PShape dethSVG;
     PShape brontoSVG;
+    PImage[] brontoFrames;
+    PImage[] oviFrames;
   }
 
   class TrexStuff {

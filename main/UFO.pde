@@ -105,7 +105,7 @@ class UFO extends Entity implements updateable, renderable {
   final static int initialSpeed = 3;
   final static float initialRotate = .5;
 
-  final float normalSize = 64;
+  final static float NORMAL_SIZE = 64;
   final float startSize = 500;
   final float startDist = 530;
   final static float finalDist = 300;
@@ -178,7 +178,7 @@ class UFO extends Entity implements updateable, renderable {
     case APPROACHING:
       progress = (millis() - startApproach)  / approachTime;
       if (progress < 1) {
-        currentSize = utils.easeInOutExpo(progress * 100, startSize, normalSize - startSize, 100);
+        currentSize = utils.easeInOutExpo(progress * 100, startSize, NORMAL_SIZE - startSize, 100);
         //model = ufoFrames[floor(utils.easeInQuad(progress, 0, 9, 1))];
         setPosition(utils.rotateAroundPoint(globalPos(), earth.globalPos(), (progress * circlingMaxSpeed + initialRotate) * -1));
         angle = (float)Math.atan2(y - earth.y, x - earth.x);
@@ -260,6 +260,7 @@ class UFO extends Entity implements updateable, renderable {
 
     if (state==SCANNING) {
       pushStyle();
+      strokeWeight(assets.STROKE_WIDTH);
       stroke(currentColor.getColor());
       float angle = degrees(atan2(earth.y - y, earth.x - x));
       float scantime = millis() - scanstart;
@@ -286,6 +287,7 @@ class UFO extends Entity implements updateable, renderable {
     if (state==SNATCHING) {
       pushStyle();
       noFill();
+      strokeWeight(assets.STROKE_WIDTH);
       stroke(currentColor.getColor());
       float angle = degrees(atan2(earth.y - y, earth.x - x));
       line(x, y, x + cos(radians(angle + maxBeamWidth)) * 250, y + sin(radians(angle + maxBeamWidth)) * 250);
@@ -296,7 +298,7 @@ class UFO extends Entity implements updateable, renderable {
       pushStyle();
       noFill();
       stroke(0, 0, 100, 1);
-      strokeWeight(1 * assets.playerStuff.brontoSVG.width/lilBrontoSize);
+      strokeWeight(assets.STROKE_WIDTH * assets.playerStuff.brontoSVG.width/lilBrontoSize);
       scale(lilBrontoFacingDirection, 1);
       translate(lilBrontoPos.x * lilBrontoFacingDirection, lilBrontoPos.y);
       rotate(radians(lilBrontoAngle  * lilBrontoFacingDirection));
@@ -318,7 +320,7 @@ class UFO extends Entity implements updateable, renderable {
 
     pushStyle();
     noFill();
-    strokeWeight(1 * assets.ufostuff.ufoSVG.width/currentSize);
+    strokeWeight(assets.STROKE_WIDTH * assets.ufostuff.ufoSVG.width/currentSize);
     stroke(currentColor.getColor());
     //tint(currentColor.getColor());
     pushMatrix();
@@ -445,6 +447,7 @@ class UFOrespawn extends Entity {
     if (state==ANTISNATCHING || state==WAITING) {
       pushStyle();
       noFill();
+      strokeWeight(assets.STROKE_WIDTH);
       stroke(currentColor.getColor());
       float angle = degrees(atan2(earth.y - y, earth.x - x));
       line(x, y, x + cos(radians(angle + UFO.maxBeamWidth)) * 250, y + sin(radians(angle + UFO.maxBeamWidth)) * 250);
@@ -455,7 +458,7 @@ class UFOrespawn extends Entity {
       pushStyle();
       noFill();
       stroke(0, 0, 100, 1);
-      strokeWeight(1 * assets.playerStuff.brontoSVG.width/lilBrontoSize);
+      strokeWeight(assets.STROKE_WIDTH * assets.playerStuff.brontoSVG.width/lilBrontoSize);
       scale(lilBrontoFacingDirection, 1);
       translate(lilBrontoPos.x * lilBrontoFacingDirection, lilBrontoPos.y);
       rotate(lilBrontoAngle  * lilBrontoFacingDirection);
@@ -489,12 +492,23 @@ class UFOrespawn extends Entity {
 
     pushStyle();
     noFill();
-    tint(currentColor.getColor());
+    strokeWeight(assets.STROKE_WIDTH * assets.ufostuff.ufoSVG.width/UFO.NORMAL_SIZE);
+    stroke(currentColor.getColor());
     pushMatrix();
     fill(0, 0, 0);
-    imageMode(CENTER);
-    image(assets.ufostuff.ufoFrames[8], x, y);
+    shapeMode(CENTER);
+    shape(assets.ufostuff.ufoSVG, x, y, UFO.NORMAL_SIZE, UFO.NORMAL_SIZE * (assets.ufostuff.ufoSVG.height/assets.ufostuff.ufoSVG.width));
     popMatrix();
     popStyle();
+
+    //pushStyle();
+    //noFill();
+    //tint(currentColor.getColor());
+    //pushMatrix();
+    //fill(0, 0, 0);
+    //imageMode(CENTER);
+    //image(assets.ufostuff.ufoFrames[8], x, y);
+    //popMatrix();
+    //popStyle();
   }
 }

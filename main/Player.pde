@@ -160,7 +160,7 @@ class Player extends Entity implements updateable, renderable {
   int direction = 1;
   int playerNum = 1;
   int framesTotal = 8;
-  final static float DIST_FROM_EARTH = 190;//197;
+  final static float DIST_FROM_EARTH = 194;//197;
   final static float DEFAULT_RUNSPEED = 5;
   final static float TARPIT_SLOW_FACTOR = .25;
   final static float TARPIT_BOTTOM_DIST = 110;
@@ -183,8 +183,8 @@ class Player extends Entity implements updateable, renderable {
 
     runSpeed = settings.getFloat("playerSpeed", DEFAULT_RUNSPEED);
 
-    PImage sheet = whichPlayer==1 ? loadImage("bronto-frames.png") : loadImage("oviraptor-frames.png");
-    PImage[] frames = whichPlayer==1 ? utils.sheetToSprites(sheet, 3, 1) : utils.sheetToSprites(sheet, 2, 2, 1);
+    PImage[] frames = whichPlayer==1 ? assets.playerStuff.brontoFrames : assets.playerStuff.oviFrames;
+    
     idle = frames[0];
     runFrames[0] = frames[1];
     runFrames[1] = frames[2];
@@ -340,7 +340,7 @@ class PlayerDeath extends Entity {
     pushTransforms();
     pushStyle();
     stroke(0, 0, 100);
-    strokeWeight(1);
+    strokeWeight(assets.STROKE_WIDTH);
 
     for (DinoGib g : gibs) {
       if (!g.enabled) continue;
