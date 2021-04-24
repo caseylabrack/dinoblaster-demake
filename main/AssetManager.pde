@@ -16,7 +16,8 @@ class AssetManager {
     ufostuff.ufoSVG = loadShape("UFO.svg");
     ufostuff.ufoSVG.disableStyle();
 
-    uiStuff.extinctSign = loadImage("gameover-lettering.png");
+    uiStuff.extinctType = createFont("Hyperspace.otf", 150);
+    //uiStuff.extinctSign = loadImage("gameover-lettering.png");
     uiStuff.letterbox = loadImage("letterboxes2.png");
     uiStuff.MOTD = createFont("Hyperspace Bold.otf", 32);
     uiStuff.progressBG = loadImage("progress-bg.png");
@@ -60,7 +61,7 @@ class AssetManager {
   }
 
   class UIStuff {
-    PImage extinctSign;
+    //PImage extinctSign;
     PImage letterbox;
     PFont MOTD;
     PImage progressBG;
@@ -68,6 +69,7 @@ class AssetManager {
     PImage tick;
     PImage extraDinoActive;
     PImage extraDinoInactive;
+    PFont extinctType;
   }
 
   class VolcanoStuff {

@@ -1,6 +1,4 @@
 class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerSpawnedEvent, playerRespawnedEvent, updateable, renderableScreen {
-  PFont EXTINCT;
-  PFont body;
   boolean isGameOver = false;
   float gameOverGracePeriodStart;
   final float gameOverGracePeriodDuration = 4e3;
@@ -19,8 +17,6 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
   ColorDecider currentColor;
   Time time;
 
-  PImage extralifeSheet;
-  PImage[] extralifeIcons;
   int extralives;
   float extralifeAnimationStart = 0;
   boolean extralifeAnimating = false;
@@ -34,6 +30,12 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
   int motdIndex = 0;
   float motdStart;
   final float MOTD_DURATION = 4e3;
+  
+  boolean extinctDisplay = true;
+  final float EXTINCT_FLICKER_RATE_START = 100;
+  float extinctFlickerRate = 100;
+  final float EXTINCT_FLICKERING_DURATION = 3e3;
+  float extinctFlickeringStart;
 
   UIStory (EventManager _eventManager, Time t, ColorDecider _currentColor, int lvl) {
     eventManager = _eventManager;
@@ -50,9 +52,6 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
     eventManager.playerDiedSubscribers.add(this);
     eventManager.playerSpawnedSubscribers.add(this);
     eventManager.playerRespawnedSubscribers.add(this);
-
-    extralifeSheet = loadImage("bronto-abduction-sheet.png");
-    extralifeIcons = utils.sheetToSprites(extralifeSheet, 3, 3);
 
     extralives = settings.getInt("extraLives", 0);
 
@@ -79,6 +78,7 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
   void gameOverHandle() {
     isGameOver = true;
     gameOverGracePeriodStart = millis();
+    extinctFlickeringStart = millis();
     if (score > highscore) {
       byte[] nums = new byte[score > 255 ? 2 : 1];
       nums[0] = byte(highscore > 255 ? 127 : floor(score) - 128);
@@ -163,30 +163,9 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
     image(assets.uiStuff.extraDinosBG, WIDTH_REF_HALF - 100, -HEIGHT_REF_HALF);
     pop();
 
-    // score tracker 
-    // highscore
-    //pushStyle();
-    //stroke(0, 0, 100);
-    //noFill();
-    //strokeWeight(1);
-    //pushMatrix();
-    //rectMode(CENTER);
-    //translate(-WIDTH_REF_HALF + 64, -HEIGHT_REF_HALF + 40 + (highscore/300.0) * (HEIGHT_REFERENCE - 80));
-    //rotate(PI/4);
-    //rect(0, 0, 8, 8);
-    //popMatrix();
-    //// current score
-    //pushMatrix();
-    //int endpoint = 40 + round(score/300 * (HEIGHT_REFERENCE - 80));
-    //translate(-WIDTH_REF_HALF + 64, -HEIGHT_REF_HALF + endpoint);
-    //rotate(PI/4);
-    //if (newHighScore) stroke(currentColor.getColor());
-    //rectMode(CENTER);
-    //rect(0, 0, 16, 16);
-    //popMatrix();
-    //popStyle();
-
+    // score tracker
     push();
+    //tint(0,60,99,1);
     imageMode(CENTER);
     float p = ((float)score)/300.0;
     float totalpixels = HEIGHT_REFERENCE - 80;
@@ -233,16 +212,33 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
       popStyle();
     }
 
-
-
     if (isGameOver) {
       pushStyle();
-      pushMatrix();
-      imageMode(CENTER);
-      tint(currentColor.getColor()); 
-      image(assets.uiStuff.extinctSign, 0, 0);
-      popMatrix();
-      popStyle();
+      fill(currentColor.getColor());
+      textFont(assets.uiStuff.extinctType);
+      textAlign(CENTER, CENTER);
+
+      if(millis() - extinctFlickeringStart < EXTINCT_FLICKERING_DURATION) {
+        extinctDisplay = !extinctDisplay;
+        if(extinctDisplay) {
+          text("EXTINCT", 
+          15, // optical margin adjustment 
+          0);
+        }
+      } else {
+       text("EXTINCT", 
+        15, // optical margin adjustment 
+        0); 
+      }
+            popStyle();
+
+      //pushStyle();
+      //pushMatrix();
+      //imageMode(CENTER);
+      //tint(currentColor.getColor()); 
+      //image(assets.uiStuff.extinctSign, 0, 0);
+      //popMatrix();
+      //popStyle();
     }
   }
 } 
