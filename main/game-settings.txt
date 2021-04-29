@@ -3,13 +3,14 @@
 	"trexEnabled": true,
 	"hypercubesEnabled": true,
 	"ufosEnabled": true,
-	"defaultTimeScale": .1,
+	"defaultTimeScale": 1,
 	"extraLives": 0,
 	"earthRotationSpeed": 2.3,
 	"playerSpeed": 5.0,
-	"roidImpactRateInMilliseconds": 50,
+	"roidImpactRateInMilliseconds": 300,
 	"roidImpactRateVariation": 100,
 	"JurassicUnlocked": true,
 	"CretaceousUnlocked": true,
+	"blurriness": 7,
 	"hideHelpButton": true
 }

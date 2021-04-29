@@ -1,7 +1,11 @@
 class AssetManager {
 
   final float STROKE_WIDTH = 2;
-  
+  final int DEFAULT_BLURINESS = 7;
+
+  PShader blur;
+  boolean blurring = true;
+
   UFOstuff ufostuff = new UFOstuff();
   UIStuff uiStuff = new UIStuff();
   VolcanoStuff volcanoStuff = new VolcanoStuff();
@@ -11,6 +15,9 @@ class AssetManager {
   EarthStuff earthStuff = new EarthStuff();
 
   void load () {
+
+    blur = loadShader("blur.glsl");
+
     ufostuff.ufoFrames = utils.sheetToSprites(loadImage("ufo-resizing-sheet.png"), 3, 3);
     ufostuff.brontoAbductionFrames = utils.sheetToSprites(loadImage("bronto-abduction-sheet.png"), 3, 3);    
     ufostuff.ufoSVG = loadShape("UFO.svg");
@@ -27,7 +34,7 @@ class AssetManager {
     uiStuff.extraDinoInactive = loadImage("extra-dino-deactive.png");
 
     volcanoStuff.volcanoFrames = utils.sheetToSprites(loadImage("volcanos.png"), 4, 1);
-    
+
     roidStuff.explosionFrames = utils.sheetToSprites(loadImage("explosion.png"), 3, 1);
     roidStuff.roidFrames = utils.sheetToSprites(loadImage("roids.png"), 2, 2);
     roidStuff.trail = loadImage("roid-trail.png");
@@ -52,6 +59,24 @@ class AssetManager {
     earthStuff.doodadFemur = loadImage("doodad-femur.png");
     earthStuff.doodadHead = loadImage("doodad-head.png");
     earthStuff.doodadRibs = loadImage("doodad-ribcage.png");
+  }
+
+  void setBlur (int blurriness) {
+    if (blurriness != 0) {
+      assets.blur.set("blurSize", blurriness);
+      assets.blur.set("sigma", (float)blurriness/2);
+      blurring = true;
+    } else {
+      blurring = false;
+    }
+  }
+
+  void applyBlur () {
+    if (!blurring) return;
+    blur.set("horizontalPass", 0);
+    filter(blur);
+    blur.set("horizontalPass", 1);
+    filter(blur);
   }
 
   class UFOstuff {

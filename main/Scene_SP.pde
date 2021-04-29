@@ -85,8 +85,6 @@ class SinglePlayer extends Scene {
 
   void update () {
 
-    //if (time.getTick()==20) ufoManager.spawnUFOAbducting();
-
     for (updateable u : updaters) u.update();
   }
 
@@ -97,7 +95,8 @@ class SinglePlayer extends Scene {
     scale(SCALE);
     for (renderable r : renderers) r.render();
     popMatrix(); 
-    
+    assets.applyBlur();
+
     pushMatrix(); // screen-space (UI)
     translate(width/2, height/2);
     scale(SCALE);

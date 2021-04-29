@@ -2,7 +2,7 @@ import processing.sound.*;
 
 boolean paused = false;
 Scene currentScene;
-PShader glow;
+boolean usingBlur = true;
 
 // recording
 int fcount = 0;
@@ -29,7 +29,7 @@ void setup () {
   //pixelDensity(displayDensity());
 
   SCALE = (float)height / HEIGHT_REFERENCE;
-  
+
   //surface.setTitle("DinoBlaster DX");
 
   colorMode(HSB, 360, 100, 100, 1);
@@ -37,7 +37,6 @@ void setup () {
 
   //noCursor();
   assets.load();
-  glow = loadShader("glow.glsl");
 
   try {
     settings = loadJSONObject("game-settings.txt");
@@ -71,6 +70,8 @@ void setup () {
     output.println("\t\"JurassicUnlocked\": true,");
     settings.setBoolean("CretaceousUnlocked", true);
     output.println("\t\"CretaceousUnlocked\": true,");
+    settings.setInt("blurriness", assets.DEFAULT_BLURINESS);
+    output.println("\t\"blurriness\": " + assets.DEFAULT_BLURINESS + ",");
     settings.setBoolean("hideHelpButton", true);
     output.println("\t\"hideHelpButton\": true");
     output.println("}");
@@ -107,6 +108,8 @@ void setup () {
     output.close();
   }
 
+  assets.setBlur(settings.getInt("blurriness", assets.DEFAULT_BLURINESS));
+
   jurassicUnlocked = settings.getBoolean("JurassicUnlocked", false);
   cretaceousUnlocked = settings.getBoolean("CretaceousUnlocked", false);
   leftkey = inputs.getString("player1LeftKey", "a").charAt(0);
@@ -141,7 +144,6 @@ void keyPressed() {
 
 void touchStarted() {
   //println("touch started");
-  
 }
 
 void keyReleased() {
@@ -160,7 +162,7 @@ void keyReleased() {
 }
 
 void mousePressed () {
-//  frameRate(5);
+  //  frameRate(5);
 }
 
 //void mouseReleased () {
@@ -169,7 +171,7 @@ void mousePressed () {
 //}
 
 void draw () {
-  
+
   //if(touches.length==0) {
   //  keys.setKey(Keys.LEFT, false);
   //  keys.setKey(Keys.RIGHT, false);
@@ -177,8 +179,9 @@ void draw () {
   //  keys.setKey(touches[0].x < width/2 ? Keys.LEFT : Keys.RIGHT, true);
   //}
 
+  //src.background();
   if (!paused) {
-    background(0,0,0,1);
+    background(0, 0, 0, 1);
     //fill(0,0,0,.3);
     //rect(0,0,width,height);
     if (currentScene.status==Scene.DONE) {
@@ -188,6 +191,31 @@ void draw () {
     currentScene.render();
   }
   //filter(glow);
+  //src = get();
+  //blur.set("horizontalPass", 0);
+  //filter(blur);
+  //blur.set("horizontalPass", 1);
+  //filter(blur);
+  //fill(30, 60, 90, 1);
+  //rect(200, 200, 300, 300);
+
+  //blur.set("horizontalPass", 0);
+  //pass1.beginDraw();            
+  //pass1.shader(blur);  
+  //pass1.image(src, 0, 0);
+  //pass1.endDraw();
+
+  //// Applying the blur shader along the horizontal direction      
+  //blur.set("horizontalPass", 1);
+  //pass2.beginDraw();            
+  //pass2.shader(blur);  
+  //pass2.image(pass1, 0, 0);
+  //pass2.endDraw();    
+
+  //push();
+  //imageMode(CORNER);
+  //image(pass2, 0, 0);
+  //pop();
 
   if (rec) {
     if (frameCount % 1 == 0) {
