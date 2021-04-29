@@ -33,9 +33,10 @@ class SinglePlayer extends Scene {
   Time time;
   Camera camera;
   TrexManager trexManager;
+  GameScreenMessages gameText;
 
   ArrayList<updateable> updaters = new ArrayList<updateable>();
-  ArrayList<renderableScreen> screeenRenderers = new ArrayList<renderableScreen>();
+  ArrayList<renderableScreen> screenRenderers = new ArrayList<renderableScreen>();
   ArrayList<renderable> renderers =  new ArrayList<renderable>();
 
   SinglePlayer(int lvl) {
@@ -49,6 +50,7 @@ class SinglePlayer extends Scene {
     currentColor = new ColorDecider();
     volcanoManager = new VolcanoManager(eventManager, time, currentColor, earth, lvl);
     starManager = new StarManager(currentColor, time, eventManager, lvl);
+    gameText = new GameScreenMessages(eventManager, currentColor);
 
     //soundManager = new SoundManager(main, eventManager);
 
@@ -78,7 +80,8 @@ class SinglePlayer extends Scene {
     renderers.add(roids);
     renderers.add(starManager);
 
-    screeenRenderers.add(ui);
+    screenRenderers.add(gameText);
+    screenRenderers.add(ui);
 
     status = RUNNING;
   }
@@ -95,12 +98,13 @@ class SinglePlayer extends Scene {
     scale(SCALE);
     for (renderable r : renderers) r.render();
     popMatrix(); 
-    assets.applyBlur();
 
     pushMatrix(); // screen-space (UI)
     translate(width/2, height/2);
     scale(SCALE);
-    for (renderableScreen rs : screeenRenderers) rs.render(); 
+    gameText.render();
+    assets.applyBlur();
+    ui.render();
     popMatrix();
 
     pushMatrix(); // pillarboxing (for high aspect ratios)

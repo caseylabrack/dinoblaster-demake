@@ -1,10 +1,13 @@
 class AssetManager {
 
   final float STROKE_WIDTH = 2;
-  final int DEFAULT_BLURINESS = 7;
+  final int DEFAULT_BLURINESS = 6;
 
   PShader blur;
   boolean blurring = true;
+
+  StringList motds;
+  int motdsIndex;
 
   UFOstuff ufostuff = new UFOstuff();
   UIStuff uiStuff = new UIStuff();
@@ -17,6 +20,15 @@ class AssetManager {
   void load () {
 
     blur = loadShader("blur.glsl");
+
+    motds = new StringList();
+    motds.append("Real Winners Say No to Drugs");
+    motds.append("This is Fine");
+    motds.append("Life Finds a Way");
+    motds.append("Tough Out There for Sauropods"); 
+    motds.append("rawr");
+    motds.append("hold on to your butts");
+    motds.shuffle();
 
     ufostuff.ufoFrames = utils.sheetToSprites(loadImage("ufo-resizing-sheet.png"), 3, 3);
     ufostuff.brontoAbductionFrames = utils.sheetToSprites(loadImage("bronto-abduction-sheet.png"), 3, 3);    
@@ -77,6 +89,19 @@ class AssetManager {
     filter(blur);
     blur.set("horizontalPass", 1);
     filter(blur);
+  }
+
+  String getMOTD () {
+
+    String m = motds.get(motdsIndex);
+    
+    motdsIndex++;
+    if (motdsIndex > motds.size() - 1) {
+      motds.shuffle();
+      motdsIndex = 0;
+    }
+    
+    return m;
   }
 
   class UFOstuff {

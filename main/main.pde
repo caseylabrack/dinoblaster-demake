@@ -23,8 +23,8 @@ float HEIGHT_REFERENCE = 768;
 float HEIGHT_REF_HALF = HEIGHT_REFERENCE/2;
 
 void setup () {
-  size(1024, 768, P2D);
-  //fullScreen(P2D);
+  //size(1024, 768, P2D);
+  fullScreen(P2D);
   orientation(LANDSCAPE);
   //pixelDensity(displayDensity());
 

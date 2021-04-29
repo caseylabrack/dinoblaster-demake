@@ -1,3 +1,67 @@
+class GameScreenMessages implements gameOverEvent, renderableScreen {
+
+  ColorDecider currentColor;
+  EventManager eventManager;
+
+  boolean isGameOver = false;
+  float gameOverGracePeriodStart;
+  boolean extinctDisplay = true;
+  final float EXTINCT_FLICKER_RATE_START = 100;
+  float extinctFlickerRate = 100;
+  final float EXTINCT_FLICKERING_DURATION = 3e3;
+  float extinctFlickeringStart;
+
+  String motd;
+  float motdStart;
+  final float MOTD_DURATION = 4e3;
+
+  GameScreenMessages (EventManager e, ColorDecider c) {
+    eventManager = e;
+    currentColor = c;
+    eventManager.gameOverSubscribers.add(this);
+
+    motd = assets.getMOTD();
+    motdStart = millis();
+  }
+
+  void gameOverHandle() {
+    isGameOver = true;
+    extinctFlickeringStart = millis();
+  }
+
+  void render () {
+
+    if (millis() - motdStart < MOTD_DURATION) {
+      pushStyle();
+      textFont(assets.uiStuff.MOTD);
+      textAlign(CENTER, CENTER);
+      text(motd, 0, -HEIGHT_REF_HALF + 50);
+      popStyle();
+    }
+
+    if (isGameOver) {
+      pushStyle();
+      fill(currentColor.getColor());
+      textFont(assets.uiStuff.extinctType);
+      textAlign(CENTER, CENTER);
+
+      if (millis() - extinctFlickeringStart < EXTINCT_FLICKERING_DURATION) {
+        extinctDisplay = !extinctDisplay;
+        if (extinctDisplay) {
+          text("EXTINCT", 
+            15, // optical margin adjustment 
+            -15);
+        }
+      } else {
+        text("EXTINCT", 
+          15, // optical margin adjustment 
+          -15);
+      }
+      popStyle();
+    }
+  }
+}
+
 class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerSpawnedEvent, playerRespawnedEvent, updateable, renderableScreen {
   boolean isGameOver = false;
   float gameOverGracePeriodStart;
@@ -30,7 +94,7 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
   int motdIndex = 0;
   float motdStart;
   final float MOTD_DURATION = 4e3;
-  
+
   boolean extinctDisplay = true;
   final float EXTINCT_FLICKER_RATE_START = 100;
   float extinctFlickerRate = 100;
@@ -55,12 +119,7 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
 
     extralives = settings.getInt("extraLives", 0);
 
-    motds = new StringList();
-    motds.append("Real Winners Say No to Drugs");
-    motds.append("This is Fine");
-    motds.append("Life Finds a Way");
-    motds.append("Tough Out There for Sauropods"); 
-    motds.shuffle();
+
     motdStart = millis();
 
     byte[] scoreData = loadBytes(SCORE_DATA_FILENAME);
@@ -78,7 +137,6 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
   void gameOverHandle() {
     isGameOver = true;
     gameOverGracePeriodStart = millis();
-    extinctFlickeringStart = millis();
     if (score > highscore) {
       byte[] nums = new byte[score > 255 ? 2 : 1];
       nums[0] = byte(highscore > 255 ? 127 : floor(score) - 128);
@@ -147,16 +205,6 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
 
   void render () {
 
-    //  acrylics transparent portions bg
-    //pushStyle();
-    //fill(0, 0, 0);
-    //noStroke();
-    //rect(-WIDTH_REF_HALF, -HEIGHT_REF_HALF, 128, HEIGHT_REFERENCE);
-    ////rect(WIDTH_REF_HALF - 128, -HEIGHT_REF_HALF, 128, HEIGHT_REFERENCE);
-    ////rect(0, 0, 128, height);
-    ////rect(1024 - 128, 0, 128, height);
-    //popStyle();
-
     push();
     imageMode(CORNER);
     image(assets.uiStuff.progressBG, -WIDTH_REF_HALF + 40, -HEIGHT_REF_HALF);
@@ -187,58 +235,5 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
     image(extralives>=1 ? assets.uiStuff.extraDinoActive : assets.uiStuff.extraDinoInactive, WIDTH_REF_HALF - 65, -HEIGHT_REF_HALF + 75);
     image(extralives>=2 ? assets.uiStuff.extraDinoActive : assets.uiStuff.extraDinoInactive, WIDTH_REF_HALF - 65, -HEIGHT_REF_HALF + 75 + 75);
     image(extralives>=3 ? assets.uiStuff.extraDinoActive : assets.uiStuff.extraDinoInactive, WIDTH_REF_HALF - 65, -HEIGHT_REF_HALF + 75 + 75 + 75);
-    //if (extralives > 0) {
-    //  int i = 0;
-    //  for (i = 0; i < extralives-1; i++) {
-    //    image(extralifeIcons[4], 1024 - 128 + 64, 64 + i * 48);
-    //  }
-    //  int index = 4;
-    //  if (extralifeAnimating) {
-    //    float progress = (time.getClock() - extralifeAnimationStart)/extralifeAnimationDuration;
-    //    if (progress < 1) {
-    //      index = 4 + floor((1 - progress - .0001) * 5);
-    //    } else {
-    //      extralifeAnimating = false;
-    //    }
-    //  }
-    //  image(extralifeIcons[index], 1024 - 128 + 64, 64 + i * 48);
-    //}
-
-    if (millis() - motdStart < MOTD_DURATION) {
-      pushStyle();
-      textFont(assets.uiStuff.MOTD);
-      textAlign(CENTER, CENTER);
-      text(motds.get(0), 0, -HEIGHT_REF_HALF + 50);
-      popStyle();
-    }
-
-    if (isGameOver) {
-      pushStyle();
-      fill(currentColor.getColor());
-      textFont(assets.uiStuff.extinctType);
-      textAlign(CENTER, CENTER);
-
-      if(millis() - extinctFlickeringStart < EXTINCT_FLICKERING_DURATION) {
-        extinctDisplay = !extinctDisplay;
-        if(extinctDisplay) {
-          text("EXTINCT", 
-          15, // optical margin adjustment 
-          0);
-        }
-      } else {
-       text("EXTINCT", 
-        15, // optical margin adjustment 
-        0); 
-      }
-            popStyle();
-
-      //pushStyle();
-      //pushMatrix();
-      //imageMode(CENTER);
-      //tint(currentColor.getColor()); 
-      //image(assets.uiStuff.extinctSign, 0, 0);
-      //popMatrix();
-      //popStyle();
-    }
   }
 } 
