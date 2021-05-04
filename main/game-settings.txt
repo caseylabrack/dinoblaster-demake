@@ -11,6 +11,6 @@
 	"roidImpactRateVariation": 100,
 	"JurassicUnlocked": true,
 	"CretaceousUnlocked": true,
-	"blurriness": 7,
+	"blurriness": 0,
 	"hideHelpButton": true
 }
