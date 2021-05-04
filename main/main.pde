@@ -35,7 +35,7 @@ void setup () {
   colorMode(HSB, 360, 100, 100, 1);
   imageMode(CENTER);
 
-  //noCursor();
+  noCursor();
   assets.load();
 
   try {
@@ -123,7 +123,7 @@ void setup () {
 
 void keyPressed() {
 
-  //println(key, keyCode);
+  println(key, keyCode);
   //println(key==CODED);
 
   if (key==CODED) {
