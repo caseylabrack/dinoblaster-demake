@@ -25,7 +25,7 @@ class SinglePlayer extends Scene {
   StarManager starManager;
   RoidManager roids;
   VolcanoManager volcanoManager;
-  SoundManager soundManager;
+  //SoundManager soundManager;
   ColorDecider currentColor;
   UIStory ui;
   UFOManager ufoManager;

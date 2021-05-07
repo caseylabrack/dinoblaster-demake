@@ -50,6 +50,7 @@ class AssetManager {
     roidStuff.explosionFrames = utils.sheetToSprites(loadImage("explosion.png"), 3, 1);
     roidStuff.roidFrames = utils.sheetToSprites(loadImage("roids.png"), 2, 2);
     roidStuff.trail = loadImage("roid-trail.png");
+    for(int i = 0; i < 4; i++) roidStuff.sounds[i] = minim.loadFile("impact" + (i + 1) + ".wav");
 
     playerStuff.dethSVG = loadShape("bronto-death.svg");
     playerStuff.dethSVG.disableStyle();
@@ -130,6 +131,7 @@ class AssetManager {
     PImage[] explosionFrames;
     PImage[] roidFrames;
     PImage trail;
+    AudioPlayer[] sounds = new AudioPlayer[5];    
   }
 
   class PlayerStuff {
