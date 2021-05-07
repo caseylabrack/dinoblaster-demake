@@ -45,7 +45,7 @@ void setup () {
   
   minim = new Minim(this);
 
-  //noCursor();
+  noCursor();
   assets.load();
 
   try {
@@ -133,7 +133,7 @@ void setup () {
 
 void keyPressed() {
 
-  //println(key, keyCode);
+  println(key, keyCode);
   //println(key==CODED);
 
   if (key==CODED) {

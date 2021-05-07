@@ -4,7 +4,7 @@
 	"player2LeftKey": "k",
 	"player2RightKey": "l",
 	"player2UsesArrowKeys": false,
-	"triassicSelect": "1",
-	"jurassicSelect": "2",
-	"cretaceousSelect": "3"
+	"triassicSelect": "f",
+	"jurassicSelect": "z",
+	"cretaceousSelect": "x"
 }
