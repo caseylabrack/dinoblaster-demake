@@ -7,7 +7,7 @@
 	"extraLives": 0,
 	"earthRotationSpeed": 2.3,
 	"playerSpeed": 5.0,
-	"roidImpactRateInMilliseconds": 300,
+	"roidImpactRateInMilliseconds": 200,
 	"roidImpactRateVariation": 100,
 	"JurassicUnlocked": true,
 	"CretaceousUnlocked": true,

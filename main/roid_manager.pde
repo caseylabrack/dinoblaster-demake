@@ -93,6 +93,13 @@ class RoidManager implements updateable, renderable {
         PVector adjustedPosition = new PVector(earth.x + cos(angle) * (Earth.EARTH_RADIUS + offset), earth.y + sin(angle) * (Earth.EARTH_RADIUS + offset));
         splode.setPosition(earth.globalToLocalPos(adjustedPosition));
         splode.r = utils.angleOf(earth.localPos(), splode.localPos()) + 90;
+        
+        println("sound pls");
+        int w = (int)random(0,4);
+        assets.roidStuff.sounds[w].rewind();
+        assets.roidStuff.sounds[w].play();
+        //assets.roidStuff.roid1.rewind();
+        //assets.roidStuff.roid1.play();
       }
     }
 

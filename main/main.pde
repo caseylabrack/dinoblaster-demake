@@ -1,4 +1,12 @@
-import processing.sound.*;
+import ddf.minim.*;
+import ddf.minim.analysis.*;
+import ddf.minim.effects.*;
+import ddf.minim.signals.*;
+import ddf.minim.spi.*;
+import ddf.minim.ugens.*;
+
+Minim minim;
+AudioPlayer player;
 
 boolean paused = false;
 Scene currentScene;
@@ -23,8 +31,8 @@ float HEIGHT_REFERENCE = 768;
 float HEIGHT_REF_HALF = HEIGHT_REFERENCE/2;
 
 void setup () {
-  //size(1024, 768, P2D);
-  fullScreen(P2D);
+  size(1024, 768, P2D);
+  //fullScreen(P2D);
   orientation(LANDSCAPE);
   //pixelDensity(displayDensity());
 
@@ -34,6 +42,8 @@ void setup () {
 
   colorMode(HSB, 360, 100, 100, 1);
   imageMode(CENTER);
+  
+  minim = new Minim(this);
 
   //noCursor();
   assets.load();
