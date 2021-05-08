@@ -17,7 +17,7 @@ class AssetManager {
   TrexStuff trexStuff = new TrexStuff();
   EarthStuff earthStuff = new EarthStuff();
 
-  void load () {
+  void load (PApplet main) {
 
     blur = loadShader("blur.glsl");
 
@@ -50,7 +50,8 @@ class AssetManager {
     roidStuff.explosionFrames = utils.sheetToSprites(loadImage("explosion.png"), 3, 1);
     roidStuff.roidFrames = utils.sheetToSprites(loadImage("roids.png"), 2, 2);
     roidStuff.trail = loadImage("roid-trail.png");
-
+    for(int i = 0; i < 4; i++) roidStuff.sounds[i] = new SoundFile(main, "impact"+(i+1)+".wav");
+    
     playerStuff.dethSVG = loadShape("bronto-death.svg");
     playerStuff.dethSVG.disableStyle();
     playerStuff.brontoSVG = loadShape("bronto-idle.svg");
@@ -130,6 +131,7 @@ class AssetManager {
     PImage[] explosionFrames;
     PImage[] roidFrames;
     PImage trail;
+    SoundFile[] sounds = new SoundFile[5];
   }
 
   class PlayerStuff {

@@ -36,7 +36,7 @@ void setup () {
   imageMode(CENTER);
 
   //noCursor();
-  assets.load();
+  assets.load(this);
 
   try {
     settings = loadJSONObject("game-settings.txt");
