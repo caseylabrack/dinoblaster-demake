@@ -50,7 +50,10 @@ class AssetManager {
     roidStuff.explosionFrames = utils.sheetToSprites(loadImage("explosion.png"), 3, 1);
     roidStuff.roidFrames = utils.sheetToSprites(loadImage("roids.png"), 2, 2);
     roidStuff.trail = loadImage("roid-trail.png");
-    for(int i = 0; i < 4; i++) roidStuff.sounds[i] = minim.loadFile("impact" + (i + 1) + ".wav");
+    for (int i = 0; i < 4; i++) {
+      roidStuff.sounds[i] = minim.loadFile("impact" + (i + 1) + ".wav");
+      roidStuff.sounds[i].setVolume(.1);
+    };
 
     playerStuff.dethSVG = loadShape("bronto-death.svg");
     playerStuff.dethSVG.disableStyle();
@@ -95,13 +98,13 @@ class AssetManager {
   String getMOTD () {
 
     String m = motds.get(motdsIndex);
-    
+
     motdsIndex++;
     if (motdsIndex > motds.size() - 1) {
       motds.shuffle();
       motdsIndex = 0;
     }
-    
+
     return m;
   }
 
@@ -131,7 +134,7 @@ class AssetManager {
     PImage[] explosionFrames;
     PImage[] roidFrames;
     PImage trail;
-    AudioPlayer[] sounds = new AudioPlayer[5];    
+    AudioPlayer[] sounds = new AudioPlayer[5];
   }
 
   class PlayerStuff {

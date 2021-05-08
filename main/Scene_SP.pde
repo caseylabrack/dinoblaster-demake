@@ -25,7 +25,6 @@ class SinglePlayer extends Scene {
   StarManager starManager;
   RoidManager roids;
   VolcanoManager volcanoManager;
-  //SoundManager soundManager;
   ColorDecider currentColor;
   UIStory ui;
   UFOManager ufoManager;
@@ -51,8 +50,6 @@ class SinglePlayer extends Scene {
     volcanoManager = new VolcanoManager(eventManager, time, currentColor, earth, lvl);
     starManager = new StarManager(currentColor, time, eventManager, lvl);
     gameText = new GameScreenMessages(eventManager, currentColor);
-
-    //soundManager = new SoundManager(main, eventManager);
 
     playerManager = new PlayerManager(eventManager, earth, time, volcanoManager, starManager, camera);
     trexManager = new TrexManager(eventManager, time, earth, playerManager, currentColor, lvl);
