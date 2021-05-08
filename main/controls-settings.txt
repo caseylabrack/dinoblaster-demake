@@ -6,5 +6,7 @@
 	"player2UsesArrowKeys": false,
 	"triassicSelect": "1",
 	"jurassicSelect": "2",
-	"cretaceousSelect": "3"
+	"cretaceousSelect": "3",
+	"sfxVolume": 100,
+	"musicVolume": 100
 }

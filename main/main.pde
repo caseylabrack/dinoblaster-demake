@@ -1,5 +1,3 @@
-import processing.sound.*;
-
 boolean paused = false;
 Scene currentScene;
 boolean usingBlur = true;
@@ -102,7 +100,11 @@ void setup () {
     inputs.setString("jurassicSelect", "2");
     output.println("\t\"jurassicSelect\": \"2\",");
     inputs.setString("cretaceousSelect", "3");
-    output.println("\t\"cretaceousSelect\": \"3\"");    
+    output.println("\t\"cretaceousSelect\": \"3\",");
+    inputs.setFloat("sfxVolume", 100);
+    output.println("\t\"sfxVolume\": 100,");
+    inputs.setFloat("musicVolume", 100);
+    output.println("\t\"musicVolume\": 100");
     output.println("}");
     output.flush();
     output.close();
