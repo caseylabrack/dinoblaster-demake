@@ -17,7 +17,7 @@ class AssetManager {
   TrexStuff trexStuff = new TrexStuff();
   EarthStuff earthStuff = new EarthStuff();
 
-  void load () {
+  void load (PApplet context) {
 
     blur = loadShader("blur.glsl");
 
@@ -50,6 +50,7 @@ class AssetManager {
     roidStuff.explosionFrames = utils.sheetToSprites(loadImage("explosion.png"), 3, 1);
     roidStuff.roidFrames = utils.sheetToSprites(loadImage("roids.png"), 2, 2);
     roidStuff.trail = loadImage("roid-trail.png");
+    for(int i = 0; i < roidStuff.hits.length; i++) roidStuff.hits[i] = raspi ? new SoundM("impact" + (i + 1) + ".wav") : new SoundP("impact" + (i + 1) + ".wav", context);
 
     playerStuff.dethSVG = loadShape("bronto-death.svg");
     playerStuff.dethSVG.disableStyle();
@@ -94,13 +95,13 @@ class AssetManager {
   String getMOTD () {
 
     String m = motds.get(motdsIndex);
-    
+
     motdsIndex++;
     if (motdsIndex > motds.size() - 1) {
       motds.shuffle();
       motdsIndex = 0;
     }
-    
+
     return m;
   }
 
@@ -130,6 +131,7 @@ class AssetManager {
     PImage[] explosionFrames;
     PImage[] roidFrames;
     PImage trail;
+    SoundPlayable[] hits = new SoundPlayable[5];
   }
 
   class PlayerStuff {
@@ -155,5 +157,37 @@ class AssetManager {
     PImage doodadFemur;
     PImage doodadHead;
     PImage doodadRibs;
+  }
+}
+
+interface SoundPlayable {
+
+  void play();
+}
+
+class SoundM implements SoundPlayable {
+
+  AudioPlayer player;
+
+  SoundM (String file) {
+    player = minim.loadFile(file);
+  }
+
+  void play() {
+    player.rewind();
+    player.play();
+  }
+}
+
+class SoundP implements SoundPlayable {
+
+  SoundFile player;
+
+  SoundP (String file, PApplet context) {
+    player = new SoundFile(context, file);
+  }
+
+  void play() {
+    player.play();
   }
 }
