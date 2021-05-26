@@ -72,14 +72,12 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
         } else {
           eventManager.dispatchPlayerDied(player.globalPos());
         }
-        player.cleanup();
         player = null;
       }
     }
   }
 
   void abductionHandle(PVector p) {
-    player.cleanup();
     player = null;
     extralives++;
     respawning = true;
@@ -256,10 +254,6 @@ class Player extends Entity implements updateable, renderable {
     image(model, 0, 0);
     popStyle();
     popMatrix();
-  }
-
-  void cleanup () {
-    parent.removeChild(this);
   }
 }
 

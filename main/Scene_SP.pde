@@ -212,7 +212,3 @@ interface renderable {
 interface renderableScreen {
   void render();
 }
-
-interface deletable {
-  void cleanupCheck();
-}

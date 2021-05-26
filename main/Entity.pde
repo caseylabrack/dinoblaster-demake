@@ -2,27 +2,12 @@ class Entity {
   float x, y, r, dx, dy, dr;
   int facing = 1;
   Entity parent = null;
-  ArrayList<Entity> children = new ArrayList<Entity>();
 
   void addChild (Entity child) {
-    //float d = dist(x, y, child.x, child.y);
-    //float a = degrees(atan2(child.y - y, child.x - x));
-    //float rote = a - r;
-    //float x = cos(radians(rote)) * d;
-    //float y = sin(radians(rote)) * d;
-
-    //child.x = x;
-    //child.y = y;
-    //child.r = child.r - r;
     child.setPosition(globalToLocalPos(child.globalPos()));
     child.r = child.globalRote() - r;
     child.parent = this;
-    children.add(child);
   } 
-
-  void removeChild (Entity obj) {
-    children.remove(obj);
-  }
 
   public PVector globalToLocalPos (PVector globalPoint) {
     PVector mypos = globalPos();

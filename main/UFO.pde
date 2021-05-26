@@ -41,6 +41,7 @@ class UFOManager implements updateable, renderable, abductionEvent, playerDiedEv
   void playerDiedHandle(PVector position) {
     if (extralives > 0) {
       ufoRespawn = new UFOrespawn(currentColor, earth, eventManager);
+      if (ufo!=null) ufo.state=UFO.LEAVING;
     }
     extralives--;
     playerAlive = false;
