@@ -28,10 +28,13 @@ class TrexManager implements updateable, renderable, levelChangeEvent {
 
     if (stage==UIStory.CRETACEOUS) spawnSchedule = SPAWN_DELAY; //spawn();
   }
-
-  void spawn () {
-
-    egg = new EggTrex(earth, time, currentColor);
+  
+  public void spawnTrex(PVector pos) {
+    trex = new Trex(earth, playerManager, time, pos);
+  }
+  
+  public void spawnTrex() {
+    trex = new Trex(earth, playerManager, time, new PVector(0,-120));
   }
 
   void update () {
@@ -40,14 +43,14 @@ class TrexManager implements updateable, renderable, levelChangeEvent {
       spawnSchedule--;
       if (spawnSchedule==0) {
         spawnSchedule = -1;
-        spawn();
+        egg = new EggTrex(earth, time, currentColor);
       }
     }
 
     if (egg!=null) {
       egg.update();
       if (egg.state==EggTrex.DONE) {
-        trex = new Trex(earth, playerManager, time, egg.localPos());
+        spawnTrex(egg.localPos());
         egg = null;
       }
     }

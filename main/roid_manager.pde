@@ -94,6 +94,7 @@ class RoidManager implements updateable, renderable {
         splode.setPosition(earth.globalToLocalPos(adjustedPosition));
         splode.r = utils.angleOf(earth.localPos(), splode.localPos()) + 90;
         
+        //if(
         assets.roidStuff.hits[floor(random(0,5))].play();
       }
     }

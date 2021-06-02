@@ -107,7 +107,7 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
     time = t;
 
     stage = lvl;
-    score = lvl * 100;
+    score = constrain(lvl * 100, 0, 200);
 
     lastScoreTick = time.getClock();
 
@@ -122,15 +122,14 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
 
     motdStart = millis();
 
-    byte[] scoreData = loadBytes(SCORE_DATA_FILENAME);
-    if (scoreData==null) {
-      highscore = 0;
-    } else {
-      highscore = 0;
-      for (byte n : scoreData) {
-        highscore += float(n + 128);
-      }
-    }
+    highscore = loadHighScore(SCORE_DATA_FILENAME);
+    //highscore = 0;
+    //byte[] scoreData = loadBytes(SCORE_DATA_FILENAME);
+    //if (scoreData!=null) {
+    //  for (byte n : scoreData) {
+    //    highscore += float(n + 128);
+    //  }
+    //}
     println("highscore: " + highscore);
   }
 
@@ -138,10 +137,11 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
     isGameOver = true;
     gameOverGracePeriodStart = millis();
     if (score > highscore) {
-      byte[] nums = new byte[score > 255 ? 2 : 1];
-      nums[0] = byte(highscore > 255 ? 127 : floor(score) - 128);
-      if (highscore > 256) nums[1] = byte(floor(score) - 256 - 127);
-      saveBytes(SCORE_DATA_FILENAME, nums);
+      saveHighScore(score,SCORE_DATA_FILENAME);
+      //byte[] nums = new byte[score > 255 ? 2 : 1];
+      //nums[0] = byte(highscore > 255 ? 127 : floor(score) - 128);
+      //if (highscore > 256) nums[1] = byte(floor(score) - 256 - 127);
+      //saveBytes(SCORE_DATA_FILENAME, nums);
     }
   }
 
@@ -174,7 +174,39 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
     if (isGameOver) {
       if (millis() - gameOverGracePeriodStart > gameOverGracePeriodDuration) {
         if (keys.anykey) {
-          currentScene = new SinglePlayer(stage);
+          int startAt = inputs.getInt("startAtLevel", 1);
+          println("requested start at level: " + startAt);
+          switch(startAt) {
+
+          case 0:
+          case 1: 
+            currentScene = new SinglePlayer(UIStory.TRIASSIC);
+            break;
+
+          case 2: 
+            if (highscore > 100) {                                       // unlocked
+              currentScene = new SinglePlayer(UIStory.JURASSIC);
+            } else if (settings.getBoolean("JurassicUnlocked", false)) { // by-passed
+              currentScene = new SinglePlayer(UIStory.JURASSIC);
+            } else {                                                     // neither unlocked nor by-passed
+              currentScene = new SinglePlayer(UIStory.TRIASSIC);
+            }
+            break;
+
+          case 3:
+            if (highscore > 200) {                                         // unlocked
+              currentScene = new SinglePlayer(UIStory.CRETACEOUS);
+            } else if (settings.getBoolean("CretaceousUnlocked", false)) { // by-passed
+              currentScene = new SinglePlayer(UIStory.CRETACEOUS);
+            } else {                                                       // neither unlocked nor by-passed
+              currentScene = new SinglePlayer(stage);
+            }
+            break;
+
+          default:                                                         // high numbers = last stage unlocked
+            currentScene = new SinglePlayer(int(highscore % 100));
+            break;
+          }
         }
       }
       return;

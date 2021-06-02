@@ -89,7 +89,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
   }
 
   void playerRespawnedHandle(PVector position) {
-    player = new Player(eventManager, time, earth, 1, volcanoManager, position, this);
+    player = new Player(eventManager, time, earth, Player.PLAYER_BRONTO, volcanoManager, position, this);
   }
 
   void update() {
@@ -151,6 +151,8 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
 }
 
 class Player extends Entity implements updateable, renderable { 
+  final static int PLAYER_BRONTO = 1;
+  final static int PLAYER_OVIRAPTOR = 2;
   PImage model;
   PImage[] runFrames = new PImage[2];
   PImage idle;
@@ -182,7 +184,7 @@ class Player extends Entity implements updateable, renderable {
     runSpeed = settings.getFloat("playerSpeed", DEFAULT_RUNSPEED);
 
     PImage[] frames = whichPlayer==1 ? assets.playerStuff.brontoFrames : assets.playerStuff.oviFrames;
-    
+
     idle = frames[0];
     runFrames[0] = frames[1];
     runFrames[1] = frames[2];
@@ -224,14 +226,16 @@ class Player extends Entity implements updateable, renderable {
       model = idle;
     }
 
-    for (Volcano v : volcanoManager.volcanos) {
-      if (v.passable()) continue;
-      float myAngle = utils.angleOf(utils.ZERO_VECTOR, targetPos);
-      float vAngle = utils.angleOf(utils.ZERO_VECTOR, v.localPos());
-      float volcanoDist = utils.signedAngleDiff(myAngle, vAngle);
-      if (abs(volcanoDist) < v.getCurrentMargin()) {
-        int side = volcanoDist > 0 ? -1 : 1;
-        targetPos = utils.rotateAroundPoint(new PVector(cos(radians(vAngle)) * DIST_FROM_EARTH, sin(radians(vAngle)) * DIST_FROM_EARTH), new PVector(0, 0), v.getCurrentMargin() * side);
+    if (volcanoManager!=null) {
+      for (Volcano v : volcanoManager.volcanos) {
+        if (v.passable()) continue;
+        float myAngle = utils.angleOf(utils.ZERO_VECTOR, targetPos);
+        float vAngle = utils.angleOf(utils.ZERO_VECTOR, v.localPos());
+        float volcanoDist = utils.signedAngleDiff(myAngle, vAngle);
+        if (abs(volcanoDist) < v.getCurrentMargin()) {
+          int side = volcanoDist > 0 ? -1 : 1;
+          targetPos = utils.rotateAroundPoint(new PVector(cos(radians(vAngle)) * DIST_FROM_EARTH, sin(radians(vAngle)) * DIST_FROM_EARTH), new PVector(0, 0), v.getCurrentMargin() * side);
+        }
       }
     }
 

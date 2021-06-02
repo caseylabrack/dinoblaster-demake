@@ -7,7 +7,6 @@ import ddf.minim.ugens.*;
 
 import processing.sound.*;
 
-
 Minim minim;
 
 boolean paused = false;
@@ -56,6 +55,7 @@ void setup () {
     settings = loadJSONObject("game-settings.txt");
   }
   catch(Exception e) {
+    println("problem load game settings");
     settings = new JSONObject();
     PrintWriter output;
     output = createWriter("game-settings.txt"); 
@@ -97,32 +97,25 @@ void setup () {
     inputs = loadJSONObject("controls-settings.txt");
   }
   catch(Exception e) {
+    println("problem load inputs");
     inputs = new JSONObject();
-    PrintWriter output;
-    output = createWriter("controls-settings.txt"); 
-    output.println("{");
     inputs.setString("player1LeftKey", "a");
-    output.println("\t\"player1LeftKey\": \"a\",");
     inputs.setString("player1RightKey", "d");
-    output.println("\t\"player1RightKey\": \"d\",");
     inputs.setString("player2LeftKey", "k");
-    output.println("\t\"player2LeftKey\": \"k\",");
     inputs.setString("player2RightKey", "l");
-    output.println("\t\"player2RightKey\": \"l\",");
     inputs.setBoolean("player2UsesArrowKeys", false);
-    output.println("\t\"player2UsesArrowKeys\": false,");
     inputs.setString("triassicSelect", "1");
-    output.println("\t\"triassicSelect\": \"1\",");
     inputs.setString("jurassicSelect", "2");
-    output.println("\t\"jurassicSelect\": \"2\",");
     inputs.setString("cretaceousSelect", "3");
-    output.println("\t\"cretaceousSelect\": \"3\"");    
-    output.println("}");
-    output.flush();
-    output.close();
+    inputs.setInt("sfxVolume", 100);
+    inputs.setInt("musicVolume", 100);
+    inputs.setInt("startAtLevel", 4);
+    writeOutControls();
   }
 
   assets.setBlur(settings.getInt("blurriness", assets.DEFAULT_BLURINESS));
+  if (inputs.getInt("sfxVolume", 100) == 0) assets.muteSFX(true);
+  if (inputs.getInt("musicVolume", 100) == 0) assets.muteMusic(true);
 
   jurassicUnlocked = settings.getBoolean("JurassicUnlocked", false);
   cretaceousUnlocked = settings.getBoolean("CretaceousUnlocked", false);
@@ -133,6 +126,7 @@ void setup () {
   cretaceousSelect = inputs.getString("cretaceousSelect", "3").charAt(0);  
 
   currentScene = new SinglePlayer(UIStory.TRIASSIC);
+  //currentScene = new Oviraptor(Scene.OVIRAPTOR);
 }
 
 void keyPressed() {
@@ -179,10 +173,11 @@ void mousePressed () {
   //  frameRate(5);
 }
 
-//void mouseReleased () {
-//  frameRate(60);
-//  //rec = true;
-//}
+void mouseReleased () {
+  currentScene.mouseUp();
+  //frameRate(60);
+  //rec = true;
+}
 
 void draw () {
 
@@ -204,32 +199,6 @@ void draw () {
     currentScene.update();
     currentScene.render();
   }
-  //filter(glow);
-  //src = get();
-  //blur.set("horizontalPass", 0);
-  //filter(blur);
-  //blur.set("horizontalPass", 1);
-  //filter(blur);
-  //fill(30, 60, 90, 1);
-  //rect(200, 200, 300, 300);
-
-  //blur.set("horizontalPass", 0);
-  //pass1.beginDraw();            
-  //pass1.shader(blur);  
-  //pass1.image(src, 0, 0);
-  //pass1.endDraw();
-
-  //// Applying the blur shader along the horizontal direction      
-  //blur.set("horizontalPass", 1);
-  //pass2.beginDraw();            
-  //pass2.shader(blur);  
-  //pass2.image(pass1, 0, 0);
-  //pass2.endDraw();    
-
-  //push();
-  //imageMode(CORNER);
-  //image(pass2, 0, 0);
-  //pop();
 
   if (rec) {
     if (frameCount % 1 == 0) {
@@ -246,6 +215,46 @@ void draw () {
   }
 }
 
+void writeOutControls () {
+  PrintWriter output;
+  output = createWriter("controls-settings.txt"); 
+  output.println("{");
+  output.println("\t\"player1LeftKey\": " + inputs.getString("player1LeftKey", "a") + ",");
+  output.println("\t\"player1RightKey\": " + inputs.getString("player1RightKey", "d") + ",");
+  output.println("\t\"player2LeftKey\": " + inputs.getString("player2LeftKey", "k") + ",");
+  output.println("\t\"player2RightKey\": " + inputs.getString("player2RightKey", "l") + ",");
+  output.println("\t\"player2UsesArrowKeys\": " + inputs.getBoolean("player2UsesArrowKeys", false) + ",");
+  output.println("\t\"triassicSelect\": " + inputs.getString("triassicSelect", "1") + ",");
+  output.println("\t\"jurassicSelect\": " + inputs.getString("jurassicSelect", "2") + ",");
+  output.println("\t\"cretaceousSelect\": " + inputs.getString("cretaceousSelect", "3") + ",");
+  output.println("\t\"sfxVolume\": " + inputs.getInt("sfxVolume", 100) + ",");    
+  output.println("\t\"musicVolume\": " + inputs.getInt("musicVolume", 100) + ",");
+  output.println("\t\"startAtLevel\": " + inputs.getInt("startAtLevel", 1));
+  output.println("}");
+  output.flush();
+  output.close();
+}
+
+float loadHighScore (String filename) {
+  float h = 0;
+  byte[] scoreData = loadBytes(filename);
+  if (scoreData!=null) {
+    for (byte n : scoreData) {
+      h += float(n + 128);
+    }
+  }
+
+  return h;
+}
+
+void saveHighScore (float score, String filename) {
+  byte[] nums = new byte[score > 255 ? 2 : 1];
+  nums[0] = byte(score > 255 ? 127 : floor(score) - 128);
+  if (score > 256) nums[1] = byte(floor(score) - 256 - 127);
+  saveBytes(filename, nums);
+}
+
+
 class Keys {
 
   // keys on picade console:
@@ -257,6 +266,7 @@ class Keys {
 
   static final int LEFT = 0;
   static final int RIGHT = 1;
+  static final int MOUSEUP = 3;
   boolean left = false;
   boolean right = false;
   boolean anykey = false;

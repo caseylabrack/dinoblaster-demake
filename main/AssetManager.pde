@@ -50,7 +50,7 @@ class AssetManager {
     roidStuff.explosionFrames = utils.sheetToSprites(loadImage("explosion.png"), 3, 1);
     roidStuff.roidFrames = utils.sheetToSprites(loadImage("roids.png"), 2, 2);
     roidStuff.trail = loadImage("roid-trail.png");
-    for(int i = 0; i < roidStuff.hits.length; i++) roidStuff.hits[i] = raspi ? new SoundM("impact" + (i + 1) + ".wav") : new SoundP("impact" + (i + 1) + ".wav", context);
+    for (int i = 0; i < roidStuff.hits.length; i++) roidStuff.hits[i] = raspi ? new SoundM("impact" + (i + 1) + ".wav") : new SoundP("impact" + (i + 1) + ".wav", context);
 
     playerStuff.dethSVG = loadShape("bronto-death.svg");
     playerStuff.dethSVG.disableStyle();
@@ -90,6 +90,14 @@ class AssetManager {
     filter(blur);
     blur.set("horizontalPass", 1);
     filter(blur);
+  }
+
+  void muteSFX (boolean mute) {
+    for (int i = 0; i < roidStuff.hits.length; i++) roidStuff.hits[i].mute(mute);
+  }
+
+  void muteMusic (boolean mute) {
+    // mute
   }
 
   String getMOTD () {
@@ -163,6 +171,7 @@ class AssetManager {
 interface SoundPlayable {
 
   void play();
+  void mute(Boolean m);
 }
 
 class SoundM implements SoundPlayable {
@@ -177,6 +186,14 @@ class SoundM implements SoundPlayable {
     player.rewind();
     player.play();
   }
+
+  void mute(Boolean m) {
+    if (m) {
+      player.mute();
+    } else {
+      player.unmute();
+    }
+  }
 }
 
 class SoundP implements SoundPlayable {
@@ -189,5 +206,13 @@ class SoundP implements SoundPlayable {
 
   void play() {
     player.play();
+  }
+
+  void mute(Boolean m) {
+    if (m) {
+      player.amp(0);
+    } else {
+      player.amp(1);
+    }
   }
 }

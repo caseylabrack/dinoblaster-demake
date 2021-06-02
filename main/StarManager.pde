@@ -97,13 +97,14 @@ class StarManager implements updateable, renderable, renderableScreen, nebulaEve
       pushMatrix();
       if (abs(stars[i].x - x) < width && abs(stars[i].y - y) < height) {
         if (hyperspace) {
+          strokeWeight(4);
           fill(currentColor.getColor());
           if (i % 6 == 0) {
             stroke(currentColor.getColor());
             line(stars[i].x - x, stars[i].y - y, stars[i].x - x2, stars[i].y - y2);
           } else {
             noStroke();
-            square(stars[i].x - x, stars[i].y - y, 3);
+            square(stars[i].x - x, stars[i].y - y, 5);
           }
         } else {
           noStroke();
