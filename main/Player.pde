@@ -28,8 +28,8 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
 
   boolean spawning = true;
   float spawningStart = 0;
-  float spawningDuration = 2e3;
-  float spawningRate = 125;
+  float spawningDuration = 1e3;
+  float spawningRate = 90;//125;
   private float spawningFlickerStart;
 
   PlayerManager (EventManager _ev, Earth _earth, Time t, VolcanoManager volcs, StarManager _stars, Camera c) {
@@ -51,6 +51,8 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
     eventManager.roidImpactSubscribers.add(this);
     eventManager.abductionSubscribers.add(this);
     eventManager.playerRespawnedSubscribers.add(this);
+
+    assets.playerStuff.spawn.play();
   }
 
   void roidImpactHandle(PVector impact) {
@@ -68,6 +70,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
 
         deathAnim = new PlayerDeath(time, player.globalPos(), player.globalRote(), player.direction, player.globalToLocalPos(adjustedPosition));
         if (extralives<0) {
+          assets.playerStuff.extinct.play();
           eventManager.dispatchGameOver();
         } else {
           eventManager.dispatchPlayerDied(player.globalPos());

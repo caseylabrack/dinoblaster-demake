@@ -16,6 +16,9 @@ class AssetManager {
   PlayerStuff playerStuff = new PlayerStuff();
   TrexStuff trexStuff = new TrexStuff();
   EarthStuff earthStuff = new EarthStuff();
+  MusicStuff musicStuff = new MusicStuff();
+  ArrayList<SoundPlayable> sounds = new ArrayList<SoundPlayable>(); 
+  ArrayList<SoundPlayable> musics = new ArrayList<SoundPlayable>(); 
 
   void load (PApplet context) {
 
@@ -50,7 +53,10 @@ class AssetManager {
     roidStuff.explosionFrames = utils.sheetToSprites(loadImage("explosion.png"), 3, 1);
     roidStuff.roidFrames = utils.sheetToSprites(loadImage("roids.png"), 2, 2);
     roidStuff.trail = loadImage("roid-trail.png");
-    for (int i = 0; i < roidStuff.hits.length; i++) roidStuff.hits[i] = raspi ? new SoundM("impact" + (i + 1) + ".wav") : new SoundP("impact" + (i + 1) + ".wav", context);
+    for (int i = 0; i < roidStuff.hits.length; i++) {
+      roidStuff.hits[i] = raspi ? new SoundM("impact" + (i + 1) + ".wav") : new SoundP("impact" + (i + 1) + ".wav", context);
+      sounds.add(roidStuff.hits[i]);
+    }
 
     playerStuff.dethSVG = loadShape("bronto-death.svg");
     playerStuff.dethSVG.disableStyle();
@@ -58,6 +64,10 @@ class AssetManager {
     playerStuff.brontoSVG.disableStyle();
     playerStuff.brontoFrames = utils.sheetToSprites(loadImage("bronto-frames.png"), 3, 1);
     playerStuff.oviFrames = utils.sheetToSprites(loadImage("oviraptor-frames.png"), 2, 2, 1);
+    playerStuff.extinct = raspi ? new SoundM("audio/player/extinct.wav") : new SoundP("audio/player/extinct.wav", context);
+    sounds.add(playerStuff.extinct);
+    playerStuff.spawn = raspi ? new SoundM("audio/player/spawn.wav") : new SoundP("audio/player/spawn.wav", context);
+    sounds.add(playerStuff.spawn);
 
     trexStuff.trexIdle = loadImage("trex-idle.png");
     trexStuff.trexRun1 = loadImage("trex-run1.png");
@@ -72,6 +82,17 @@ class AssetManager {
     earthStuff.doodadFemur = loadImage("doodad-femur.png");
     earthStuff.doodadHead = loadImage("doodad-head.png");
     earthStuff.doodadRibs = loadImage("doodad-ribcage.png");
+
+    musicStuff.lvl1a = raspi ? new SoundM("data/music/Track 1 (Seek Position)_No Fade_DinoBlaster_JoshuaSzweda_031117.wav") : new SoundP("data/music/Track 1 (Seek Position)_No Fade_DinoBlaster_JoshuaSzweda_031117.wav", context);
+    musicStuff.lvl1b = raspi ? new SoundM("data/music/Track 1_No Fade_DinoBlaster_JoshuaSzweda_031117.wav") : new SoundP("data/music/Track 1_No Fade_DinoBlaster_JoshuaSzweda_031117.wav", context);
+    musicStuff.lvl2a = raspi ? new SoundM("data/music/Track 2 (Seek Position)_No Fade_DinoBlaster_JoshuaSzweda_081117.wav") : new SoundP("data/music/Track 2 (Seek Position)_No Fade_DinoBlaster_JoshuaSzweda_081117.wav", context);
+    musicStuff.lvl2b = raspi ? new SoundM("data/music/Track 2_No Fade_DinoBlaster_JoshuaSzweda_071117.wav") : new SoundP("data/music/Track 2_No Fade_DinoBlaster_JoshuaSzweda_071117.wav", context);
+    musicStuff.lvl3 = raspi ? new SoundM("data/music/Track 3_Long Loop_DinoBlaster_JoshuaSzweda_081117.wav") : new SoundP("data/music/Track 3_Long Loop_DinoBlaster_JoshuaSzweda_081117.wav", context);
+    musics.add(musicStuff.lvl1a);
+    musics.add(musicStuff.lvl1b);
+    musics.add(musicStuff.lvl2a);
+    musics.add(musicStuff.lvl2b);
+    musics.add(musicStuff.lvl3);
   }
 
   void setBlur (int blurriness) {
@@ -93,11 +114,15 @@ class AssetManager {
   }
 
   void muteSFX (boolean mute) {
-    for (int i = 0; i < roidStuff.hits.length; i++) roidStuff.hits[i].mute(mute);
+    for (SoundPlayable s : sounds) s.mute(mute);
   }
 
   void muteMusic (boolean mute) {
-    // mute
+    for (SoundPlayable m : musics) m.mute(mute);
+  }
+
+  void stopAllMusic () {
+    for (SoundPlayable s : musics) s.stop_();
   }
 
   String getMOTD () {
@@ -147,6 +172,8 @@ class AssetManager {
     PShape brontoSVG;
     PImage[] brontoFrames;
     PImage[] oviFrames;
+    SoundPlayable extinct;
+    SoundPlayable spawn;
   }
 
   class TrexStuff {
@@ -166,25 +193,49 @@ class AssetManager {
     PImage doodadHead;
     PImage doodadRibs;
   }
+
+  class MusicStuff {
+    SoundPlayable lvl1a;
+    SoundPlayable lvl1b;
+    SoundPlayable lvl2a;
+    SoundPlayable lvl2b;
+    SoundPlayable lvl3;
+  }
 }
 
 interface SoundPlayable {
-
-  void play();
+  void play(boolean loop);
   void mute(Boolean m);
+  void stop_();
+  void rate(float r);
 }
 
+// the Minim library for Processing (Picade needs)
 class SoundM implements SoundPlayable {
 
   AudioPlayer player;
+  TickRate rateControl;
+  FilePlayer filePlayer;
+  AudioOutput out;
 
   SoundM (String file) {
     player = minim.loadFile(file);
   }
 
-  void play() {
+  void play(boolean loop) {
     player.rewind();
-    player.play();
+    if (loop) {
+      player.loop();
+    } else {
+      player.play();
+    }
+  }
+
+  void stop_ () {
+    player.pause();
+  }
+
+  void rate(float r) {
   }
 
   void mute(Boolean m) {
@@ -196,6 +247,7 @@ class SoundM implements SoundPlayable {
   }
 }
 
+// the Processing 3.0 official sound library (Android needs)
 class SoundP implements SoundPlayable {
 
   SoundFile player;
@@ -204,8 +256,20 @@ class SoundP implements SoundPlayable {
     player = new SoundFile(context, file);
   }
 
-  void play() {
-    player.play();
+  void play(boolean loop) {
+    if (loop) {
+      player.loop();
+    } else {
+      player.play();
+    }
+  }
+
+  void stop_ () {
+    player.stop();
+  }
+
+  void rate (float r) {
+    player.rate(r);
   }
 
   void mute(Boolean m) {

@@ -34,6 +34,7 @@ class SinglePlayer extends Scene {
   Camera camera;
   TrexManager trexManager;
   GameScreenMessages gameText;
+  MusicManager musicManager;
 
   boolean options = false;
   Rectangle optionsButton;
@@ -62,6 +63,7 @@ class SinglePlayer extends Scene {
     trexManager = new TrexManager(eventManager, time, earth, playerManager, currentColor, lvl);
     ui = new UIStory(eventManager, time, currentColor, lvl);
     ufoManager = new UFOManager (currentColor, earth, playerManager, eventManager, time);
+    musicManager = new MusicManager(eventManager, lvl);
 
     updaters.add(time);
     updaters.add(ui);
@@ -74,6 +76,7 @@ class SinglePlayer extends Scene {
     updaters.add(playerManager);
     updaters.add(volcanoManager);
     updaters.add(trexManager);
+    updaters.add(musicManager);
 
     renderers.add(ufoManager);
     renderers.add(volcanoManager);

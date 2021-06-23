@@ -145,12 +145,75 @@ class Time implements updateable, playerDiedEvent, gameOverEvent, nebulaEvents {
   public float getTick() {
     return tick;
   }
-  
+
   public float getElapsed () {
-     return elapsed;
+    return elapsed;
   }
-  
+
   public float getScaledElapsed () {
-     return elapsed * timeScale; 
+    return elapsed * timeScale;
+  }
+}
+
+class MusicManager implements updateable, levelChangeEvent, gameOverEvent, nebulaEvents {
+
+  final float START_DELAY = 2e3;
+  float start;
+  boolean playing = false;
+  int lvl;
+  SoundPlayable currentMusic;
+
+  MusicManager (EventManager events, int lvl) {
+    this.lvl = lvl;
+
+    assets.stopAllMusic();
+
+    events.gameOverSubscribers.add(this);
+    events.levelChangeSubscribers.add(this);
+    events.nebulaStartSubscribers.add(this);
+
+    start = millis();
+  }
+
+  void update() {
+    if (playing) return;
+    if (millis() - start > START_DELAY) {
+      playing = true;
+
+      switch(lvl) {
+      case UIStory.TRIASSIC: 
+        if (random(0, 1) < .5) {
+          currentMusic = assets.musicStuff.lvl1a;
+        } else {
+          currentMusic = assets.musicStuff.lvl1b;
+        }
+        break;
+
+      case UIStory.JURASSIC: 
+        if (random(0, 1) < .5) {
+          currentMusic = assets.musicStuff.lvl2a;
+        } else {
+          currentMusic = assets.musicStuff.lvl2b;
+        }
+        break;
+      }
+      currentMusic.play();
+    }
+  }
+
+  void nebulaStartHandle () {
+    println("speed up music now");
+    currentMusic.rate(2);
+  }
+
+  void nebulaStopHandle() {
+  }
+
+  void levelChangeHandle(int stage) {
+    // change track
+  }
+
+  void gameOverHandle() {
+    assets.stopAllMusic();
   }
 }

@@ -11,7 +11,6 @@ Minim minim;
 
 boolean paused = false;
 Scene currentScene;
-boolean usingBlur = true;
 
 boolean raspi = false;
 
