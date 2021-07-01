@@ -69,6 +69,8 @@ void setup () {
     output.println("\t\"ufosEnabled\": true,");
     settings.setFloat("defaultTimeScale", 1);
     output.println("\t\"defaultTimeScale\": 1,");
+    settings.setFloat("hyperspaceTimeScale", 1.75);
+    output.println("\t\"hyperspaceTimeScale\": 1.75,");
     settings.setInt("extraLives", 0);
     output.println("\t\"extraLives\": 0,");
     settings.setFloat("earthRotationSpeed", Earth.DEFAULT_EARTH_ROTATION);
@@ -124,8 +126,9 @@ void setup () {
   jurassicSelect = inputs.getString("jurassicSelect", "2").charAt(0);
   cretaceousSelect = inputs.getString("cretaceousSelect", "3").charAt(0);  
 
-  currentScene = new SinglePlayer(UIStory.TRIASSIC);
+  //currentScene = new SinglePlayer(UIStory.TRIASSIC);
   //currentScene = new Oviraptor(Scene.OVIRAPTOR);
+  currentScene = new SinglePlayer(chooseNextLevel());
 }
 
 void keyPressed() {
@@ -137,6 +140,7 @@ void keyPressed() {
     if (keyCode==LEFT) keys.setKey(Keys.LEFT, true);
     if (keyCode==RIGHT) keys.setKey(Keys.RIGHT, true);
   } else {
+    if (key=='1' || key==triassicSelect || key=='2' || key==jurassicSelect || key=='3' || key==cretaceousSelect) currentScene.cleanup();
     if (key=='1' || key==triassicSelect) currentScene = new SinglePlayer(UIStory.TRIASSIC);
     if (key=='2' || key==jurassicSelect) currentScene = new SinglePlayer(UIStory.JURASSIC);
     if (key=='3' || key==cretaceousSelect) currentScene = new SinglePlayer(UIStory.CRETACEOUS);
@@ -187,13 +191,12 @@ void draw () {
   //  keys.setKey(touches[0].x < width/2 ? Keys.LEFT : Keys.RIGHT, true);
   //}
 
-  //src.background();
   if (!paused) {
     background(0, 0, 0, 1);
     //fill(0,0,0,.3);
     //rect(0,0,width,height);
     if (currentScene.status==Scene.DONE) {
-      println("oh shit");
+      currentScene = new SinglePlayer(chooseNextLevel());
     }
     currentScene.update();
     currentScene.render();
@@ -212,6 +215,50 @@ void draw () {
     circle(width - 20, 20, 20);
     popStyle();
   }
+}
+
+int highestUnlockedLevel () {
+  int nextlvl = UIStory.TRIASSIC;
+  switch(int(loadHighScore(UIStory.SCORE_DATA_FILENAME) / 100)) {
+  case 0:  
+    nextlvl = UIStory.TRIASSIC;
+    break;
+  case 1:  
+    nextlvl = UIStory.JURASSIC;
+    break;
+  case 2:  
+    nextlvl = UIStory.CRETACEOUS;
+    break;
+  }
+
+  if (settings.getBoolean("JurassicUnlocked", false)) nextlvl = max(nextlvl, UIStory.JURASSIC);
+  if (settings.getBoolean("CretaceousUnlocked", false)) nextlvl = max(nextlvl, UIStory.CRETACEOUS);
+
+  return nextlvl;
+}
+
+int chooseNextLevel () {
+
+  int startAt = inputs.getInt("startAtLevel", 4);
+  int unlocked = highestUnlockedLevel();
+  int chosen = unlocked; // default to highest level unlocked. user can choose this with any number 4+
+
+  switch(startAt) {
+  case 0:
+  case 1:
+    chosen = UIStory.TRIASSIC;
+    break;
+
+  case 2: 
+    if (settings.getBoolean("JurassicUnlocked", false) || unlocked >= UIStory.JURASSIC) chosen = UIStory.JURASSIC;
+    break;
+
+  case 3: 
+    if (settings.getBoolean("CretaceousUnlocked", false) || unlocked >= UIStory.CRETACEOUS) chosen = UIStory.CRETACEOUS;
+    break;
+  }
+
+  return chosen;
 }
 
 void writeOutControls () {

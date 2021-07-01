@@ -16,6 +16,7 @@ abstract class Scene {
   abstract void update();
   abstract void render();
   abstract void mouseUp();
+  abstract void cleanup();
   //abstract int nextScene();
 }
 
@@ -103,6 +104,10 @@ class SinglePlayer extends Scene {
       for (updateable u : updaters) u.update();
     } else {
       starManager.update();
+    }
+    
+    if(ui.gameDone) {
+      status = DONE;
     }
   }
 
@@ -225,6 +230,11 @@ class SinglePlayer extends Scene {
         println("restart from somewhere else");
       }
     }
+  }
+
+  void cleanup() {
+    assets.stopAllMusic();
+    assets.stopAllSfx();
   }
 
   PVector screenToScaled (float x, float y) {
@@ -353,6 +363,11 @@ class Oviraptor extends Scene {
     println("somebody clicked");
   }
 
+  void cleanup() {
+    assets.stopAllMusic();
+    assets.stopAllSfx();
+  }
+
   //int nextScene () {
   //  return SINGLEPLAYER;
   //}
@@ -438,6 +453,11 @@ class testScene extends Scene {
 
   void mouseUp() {
     println("somebody clicked");
+  }
+
+  void cleanup() {
+    assets.stopAllMusic();
+    assets.stopAllSfx();
   }
 
   //int nextScene () {

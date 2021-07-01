@@ -68,7 +68,7 @@ class Time implements updateable, playerDiedEvent, gameOverEvent, nebulaEvents {
   final float dyingDuration = 3e3;
 
   private boolean hyperspace = false;
-  final float HYPERSPACE_TIME = 1.75;
+  final static float HYPERSPACE_DEFAULT_TIME = 1.75;
 
   EventManager eventManager;
 
@@ -101,7 +101,7 @@ class Time implements updateable, playerDiedEvent, gameOverEvent, nebulaEvents {
     if (dying) {
       float progress = (millis() - dyingStartTime) / dyingDuration;
       if (progress < 1) {
-        float targetTimeScale = hyperspace ? HYPERSPACE_TIME: 1;
+        float targetTimeScale = hyperspace ? HYPERSPACE_DEFAULT_TIME: 1;
         timeScale = utils.easeInOutExpo(progress, .1, targetTimeScale - .1, targetTimeScale);
       } else {
         dying = false;
@@ -112,7 +112,7 @@ class Time implements updateable, playerDiedEvent, gameOverEvent, nebulaEvents {
   void nebulaStartHandle() {
 
     if (!hyperspace) {
-      timeScale = HYPERSPACE_TIME;
+      timeScale = HYPERSPACE_DEFAULT_TIME;
       hyperspace = true;
     }
   }
@@ -166,7 +166,7 @@ class MusicManager implements updateable, levelChangeEvent, gameOverEvent, nebul
   MusicManager (EventManager events, int lvl) {
     this.lvl = lvl;
 
-    assets.stopAllMusic();
+    //assets.stopAllMusic();
 
     events.gameOverSubscribers.add(this);
     events.levelChangeSubscribers.add(this);
@@ -179,38 +179,48 @@ class MusicManager implements updateable, levelChangeEvent, gameOverEvent, nebul
     if (playing) return;
     if (millis() - start > START_DELAY) {
       playing = true;
-
-      switch(lvl) {
-      case UIStory.TRIASSIC: 
-        if (random(0, 1) < .5) {
-          currentMusic = assets.musicStuff.lvl1a;
-        } else {
-          currentMusic = assets.musicStuff.lvl1b;
-        }
-        break;
-
-      case UIStory.JURASSIC: 
-        if (random(0, 1) < .5) {
-          currentMusic = assets.musicStuff.lvl2a;
-        } else {
-          currentMusic = assets.musicStuff.lvl2b;
-        }
-        break;
-      }
-      currentMusic.play();
+      chooseTrack();
     }
   }
 
+  void chooseTrack () {
+    switch(lvl) {
+    case UIStory.TRIASSIC: 
+      if (random(0, 1) < .5) {
+        currentMusic = assets.musicStuff.lvl1a;
+      } else {
+        currentMusic = assets.musicStuff.lvl1b;
+      }
+      break;
+
+    case UIStory.JURASSIC: 
+      if (random(0, 1) < .5) {
+        currentMusic = assets.musicStuff.lvl2a;
+      } else {
+        currentMusic = assets.musicStuff.lvl2b;
+      }
+      break;
+
+    case UIStory.CRETACEOUS: 
+      currentMusic = assets.musicStuff.lvl3;
+      break;
+    }
+    currentMusic.play(true);
+  }
+
   void nebulaStartHandle () {
-    println("speed up music now");
-    currentMusic.rate(2);
+    currentMusic.rate(settings.getFloat("hyperspaceTimeScale", Time.HYPERSPACE_DEFAULT_TIME));
   }
 
   void nebulaStopHandle() {
+    currentMusic.rate(1);
   }
 
   void levelChangeHandle(int stage) {
-    // change track
+    println("changed level");
+    lvl = stage;
+    currentMusic.stop_();
+    chooseTrack();
   }
 
   void gameOverHandle() {

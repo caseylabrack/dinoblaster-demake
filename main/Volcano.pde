@@ -78,11 +78,12 @@ class VolcanoManager implements levelChangeEvent, updateable, renderable {
 
 class Volcano extends Entity {
 
+  final static int DELAYING = 0;
   final static int ERUPTING = 1;
   final static int ACTIVE = 2;
   final static int ENDING = 3;
   final static int EXTINCT = 4;
-  private int state = ERUPTING;
+  private int state = DELAYING;
 
   final float eruptPassablePeriod = 6e3;
   final static float ERUPT_DURATION = 7e3;
@@ -127,7 +128,6 @@ class Volcano extends Entity {
     earth.addChild(this);
     r = angle + 90;
 
-    eruptStart = time.getClock();
     activeDuration = avgDuration + random(-durationVariation, durationVariation);
   }
 
@@ -136,6 +136,12 @@ class Volcano extends Entity {
     float progress, dist;
 
     switch(state) {
+
+    case DELAYING:
+      state = ERUPTING;
+      eruptStart = time.getClock();
+      assets.volcanoStuff.rumble.play(true);
+      break;
 
     case ERUPTING: 
       progress = (time.getClock() - eruptStart) / ERUPT_DURATION;
@@ -150,6 +156,7 @@ class Volcano extends Entity {
         activeStart = time.getClock();
         flareStart = time.getClock();
         state = ACTIVE;
+        assets.volcanoStuff.rumble.stop_();
       }
       break;
 

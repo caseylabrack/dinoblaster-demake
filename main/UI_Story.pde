@@ -89,7 +89,7 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
   float highscore = 85;
   boolean newHighScore = false;
 
-  final String SCORE_DATA_FILENAME = "dino.dat";
+  final static String SCORE_DATA_FILENAME = "highscore.dat";
   StringList motds;
   int motdIndex = 0;
   float motdStart;
@@ -100,6 +100,8 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
   float extinctFlickerRate = 100;
   final float EXTINCT_FLICKERING_DURATION = 3e3;
   float extinctFlickeringStart;
+  
+  boolean gameDone = false;
 
   UIStory (EventManager _eventManager, Time t, ColorDecider _currentColor, int lvl) {
     eventManager = _eventManager;
@@ -174,39 +176,7 @@ class UIStory implements gameOverEvent, abductionEvent, playerDiedEvent, playerS
     if (isGameOver) {
       if (millis() - gameOverGracePeriodStart > gameOverGracePeriodDuration) {
         if (keys.anykey) {
-          int startAt = inputs.getInt("startAtLevel", 1);
-          println("requested start at level: " + startAt);
-          switch(startAt) {
-
-          case 0:
-          case 1: 
-            currentScene = new SinglePlayer(UIStory.TRIASSIC);
-            break;
-
-          case 2: 
-            if (highscore > 100) {                                       // unlocked
-              currentScene = new SinglePlayer(UIStory.JURASSIC);
-            } else if (settings.getBoolean("JurassicUnlocked", false)) { // by-passed
-              currentScene = new SinglePlayer(UIStory.JURASSIC);
-            } else {                                                     // neither unlocked nor by-passed
-              currentScene = new SinglePlayer(UIStory.TRIASSIC);
-            }
-            break;
-
-          case 3:
-            if (highscore > 200) {                                         // unlocked
-              currentScene = new SinglePlayer(UIStory.CRETACEOUS);
-            } else if (settings.getBoolean("CretaceousUnlocked", false)) { // by-passed
-              currentScene = new SinglePlayer(UIStory.CRETACEOUS);
-            } else {                                                       // neither unlocked nor by-passed
-              currentScene = new SinglePlayer(stage);
-            }
-            break;
-
-          default:                                                         // high numbers = last stage unlocked
-            currentScene = new SinglePlayer(int(highscore % 100));
-            break;
-          }
+          gameDone = true;
         }
       }
       return;

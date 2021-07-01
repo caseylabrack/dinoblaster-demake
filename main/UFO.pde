@@ -29,6 +29,7 @@ class UFOManager implements updateable, renderable, abductionEvent, playerDiedEv
     extralives = settings.getInt("extraLives", 0);
 
     spawnCountDown = random(5, 90) * 1000;
+    //spawnCountDown = 3000;
 
     enabled = settings.getBoolean("ufosEnabled", true);
   }
@@ -102,7 +103,7 @@ class UFO extends Entity implements updateable, renderable {
   final static int DONE = 6;
   int state = INTO_VIEW;
 
-  final static int initialDist = 1000;
+  final static int initialDist = 600;
   final static int initialSpeed = 3;
   final static float initialRotate = .5;
 
@@ -156,6 +157,8 @@ class UFO extends Entity implements updateable, renderable {
     x = earth.x + cos(angle) * initialDist;
     y = earth.y + sin(angle) * initialDist;
     startApproach = millis();
+
+    assets.ufostuff.ufoSound.play(true);
   }
 
   void update() {
@@ -173,7 +176,6 @@ class UFO extends Entity implements updateable, renderable {
         state = APPROACHING;
         startApproach = millis();
       }
-
       break;
 
     case APPROACHING:
@@ -237,6 +239,7 @@ class UFO extends Entity implements updateable, renderable {
         angle = (float)Math.atan2(y - earth.y, x - earth.x);
         x = earth.x + cos(angle) * (dist+initialSpeed);
         y = earth.y + sin(angle) * (dist+initialSpeed);
+        if (x < -HEIGHT_REF_HALF || x > HEIGHT_REF_HALF || y < -HEIGHT_REF_HALF || y > HEIGHT_REF_HALF) assets.ufostuff.ufoSound.stop_(); // it's offscreen
       } else {
         state = DONE;
       }

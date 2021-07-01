@@ -1,4 +1,4 @@
-class PlayerManager implements updateable, renderable, abductionEvent, roidImpactEvent, playerRespawnedEvent {
+class PlayerManager implements updateable, renderable, abductionEvent, roidImpactEvent, playerRespawnedEvent, nebulaEvents {
 
   EventManager eventManager;
   Earth earth;
@@ -32,6 +32,9 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
   float spawningRate = 90;//125;
   private float spawningFlickerStart;
 
+  boolean isHyperspace = false;
+  boolean delayingOneFrame = true;
+
   PlayerManager (EventManager _ev, Earth _earth, Time t, VolcanoManager volcs, StarManager _stars, Camera c) {
     eventManager = _ev;
     earth = _earth;
@@ -51,8 +54,6 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
     eventManager.roidImpactSubscribers.add(this);
     eventManager.abductionSubscribers.add(this);
     eventManager.playerRespawnedSubscribers.add(this);
-
-    assets.playerStuff.spawn.play();
   }
 
   void roidImpactHandle(PVector impact) {
@@ -74,6 +75,7 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
           eventManager.dispatchGameOver();
         } else {
           eventManager.dispatchPlayerDied(player.globalPos());
+          assets.playerStuff.littleDeath.play();
         }
         player = null;
       }
@@ -91,19 +93,32 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
     progress = 0;
   }
 
+  void nebulaStartHandle() {
+  };
+  void nebulaStopHandle() {
+    isHyperspace = false;
+  };
+
   void playerRespawnedHandle(PVector position) {
     player = new Player(eventManager, time, earth, Player.PLAYER_BRONTO, volcanoManager, position, this);
   }
 
   void update() {
+
+    if (delayingOneFrame) {
+      delayingOneFrame = false;
+      assets.playerStuff.spawn.play();
+    }
+
     if (player!=null) player.update();
 
     if (deathAnim!=null) deathAnim.update();
 
-    if (player!=null && stars!=null) {
+    if (player!=null && stars!=null && !isHyperspace) {
       float hypercubeDist = PVector.dist(player.globalPos(), stars.hypercubePosition());
       if (hypercubeDist < 125) {
         eventManager.dispatchNebulaStarted();
+        isHyperspace = true;
       }
     }
   }
@@ -171,6 +186,13 @@ class Player extends Entity implements updateable, renderable {
 
   float tarpitSink = 0;
 
+  final int STATE_IDLE = 0;
+  final int STATE_RUNNING = 1;
+  int state = STATE_IDLE;
+
+  boolean wasInTarpitLastFrame = false;
+
+
   EventManager eventManager;
   Time time;
   VolcanoManager volcanoManager;
@@ -212,6 +234,23 @@ class Player extends Entity implements updateable, renderable {
     PVector targetPos = localPos();
 
     if (keys.left != keys.right) { // xor
+      if (state==STATE_IDLE) {
+        state = STATE_RUNNING;
+        if (inTarpit) {
+          assets.playerStuff.tarStep.play(true);
+        } else {
+          assets.playerStuff.step.play(true);
+        }
+      }
+      if (inTarpit && !wasInTarpitLastFrame) {
+        assets.playerStuff.step.stop_();
+        assets.playerStuff.tarStep.play(true);
+      } 
+      if (!inTarpit && wasInTarpitLastFrame) {
+        assets.playerStuff.step.play(true);
+        assets.playerStuff.tarStep.stop_();
+      }
+
       model = runFrames[utils.cycleRangeWithDelay(runFrames.length, 4, frameCount)];
       direction = keys.left ? -1 : 1;
 
@@ -227,6 +266,9 @@ class Player extends Entity implements updateable, renderable {
       targetPos = utils.rotateAroundPoint(localPos(), utils.ZERO_VECTOR, runSpeed * time.getTimeScale() * direction * tarpitFactor);
     } else {
       model = idle;
+      state = STATE_IDLE;
+      assets.playerStuff.step.stop_();
+      assets.playerStuff.tarStep.stop_();
     }
 
     if (volcanoManager!=null) {
@@ -248,6 +290,8 @@ class Player extends Entity implements updateable, renderable {
     float sink = DIST_FROM_EARTH - (DIST_FROM_EARTH - TARPIT_BOTTOM_DIST) * tarpitSink;
     PVector tarpitAdjusted = new PVector(cos(radians(utils.angleOf(utils.ZERO_VECTOR, localPos()))) * sink, sin(radians(utils.angleOf(utils.ZERO_VECTOR, localPos()))) * sink);
     setPosition(tarpitAdjusted);
+
+    wasInTarpitLastFrame = inTarpit;
   }
 
   void render () {

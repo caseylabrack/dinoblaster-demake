@@ -28,13 +28,13 @@ class TrexManager implements updateable, renderable, levelChangeEvent {
 
     if (stage==UIStory.CRETACEOUS) spawnSchedule = SPAWN_DELAY; //spawn();
   }
-  
+
   public void spawnTrex(PVector pos) {
     trex = new Trex(earth, playerManager, time, pos);
   }
-  
+
   public void spawnTrex() {
-    trex = new Trex(earth, playerManager, time, new PVector(0,-120));
+    trex = new Trex(earth, playerManager, time, new PVector(0, -120));
   }
 
   void update () {
@@ -143,9 +143,11 @@ class EggTrex extends Entity implements updateable, renderable {
       if (progress > 1) {
         if (wiggleCount < WIGGLES_NUM) {
           state = WIGGLES;
+          assets.trexStuff.eggWiggle.play();
         } else {
           state = CRACKED;
           model = assets.trexStuff.eggBurst;
+          assets.trexStuff.eggHatch.play();
         }
         startTime = time.getClock();
       }
@@ -223,6 +225,8 @@ class Trex extends Entity implements gameOverEvent, updateable, renderable {
     earth.addChild(this);
     setPosition(pos);
     r = utils.angleOf(new PVector(0, 0), localPos()) + 90;
+
+    assets.trexStuff.rawr.play();
   }
 
   void gameOverHandle () {
@@ -241,10 +245,14 @@ class Trex extends Entity implements gameOverEvent, updateable, renderable {
       }
 
       if (abs(playerDist) < attackAngle) {
+        if (!chasing) { 
+          assets.trexStuff.stomp.play(true);
+        }
         chasing = true;
         facing = playerDist > 0 ? 1 : -1;
       } else {
         chasing = false;
+        assets.trexStuff.stomp.stop_();
       }
 
       if (chasing) {
@@ -264,7 +272,12 @@ class Trex extends Entity implements gameOverEvent, updateable, renderable {
       dy = 0;
       dr = 0;
 
-      if (earth.isInTarpit(localPos())) state = SINKING;
+      if (earth.isInTarpit(localPos())) {
+        state = SINKING;
+        assets.trexStuff.stomp.stop_();
+        //assets.trexStuff.sinking.play();
+        assets.trexStuff.rawr.play();
+      }
 
       break;
 

@@ -106,7 +106,7 @@ class StarManager implements updateable, renderable, renderableScreen, nebulaEve
             noStroke();
             translate(stars[i].x - x, stars[i].y - y);
             rotate(PI/4);
-            square(0, 0, 5);
+            square(0, 0, 4);
           }
         } else {
           noStroke();
