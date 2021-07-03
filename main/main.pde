@@ -12,8 +12,6 @@ Minim minim;
 boolean paused = false;
 Scene currentScene;
 
-boolean raspi = false;
-
 // recording
 int fcount = 0;
 boolean rec = false;
@@ -22,6 +20,7 @@ Keys keys = new Keys();
 AssetManager assets = new AssetManager();
 JSONObject settings;
 JSONObject inputs;
+JSONObject picadeSettings = null;
 
 boolean jurassicUnlocked, cretaceousUnlocked;
 char leftkey, rightkey, leftkey2p, rightkey2p, triassicSelect, jurassicSelect, cretaceousSelect;
@@ -32,10 +31,13 @@ float WIDTH_REF_HALF = WIDTH_REFERENCE/2;
 float HEIGHT_REFERENCE = 768;
 float HEIGHT_REF_HALF = HEIGHT_REFERENCE/2;
 
+
 void setup () {
-  size(1024, 768, P2D);
-  //fullScreen(P2D);
+  //size(500, 500, P2D);
+  //size(1024, 768, P2D);
+  fullScreen(P2D);
   orientation(LANDSCAPE);
+
   //pixelDensity(displayDensity());
 
   SCALE = (float)height / HEIGHT_REFERENCE;
@@ -46,9 +48,6 @@ void setup () {
   imageMode(CENTER);
 
   minim = new Minim(this);
-
-  //noCursor();
-  assets.load(this);
 
   try {
     settings = loadJSONObject("game-settings.txt");
@@ -113,6 +112,16 @@ void setup () {
     inputs.setInt("startAtLevel", 4);
     writeOutControls();
   }
+  
+  try {
+    picadeSettings = loadJSONObject("picade.txt");
+    noCursor();
+    //frameRate(30);
+  } catch(Exception e) {
+    
+  }
+
+  assets.load(this, picadeSettings);
 
   assets.setBlur(settings.getInt("blurriness", assets.DEFAULT_BLURINESS));
   if (inputs.getInt("sfxVolume", 100) == 0) assets.muteSFX(true);
@@ -128,7 +137,7 @@ void setup () {
 
   //currentScene = new SinglePlayer(UIStory.TRIASSIC);
   //currentScene = new Oviraptor(Scene.OVIRAPTOR);
-  currentScene = new SinglePlayer(chooseNextLevel());
+  //currentScene = new SinglePlayer(chooseNextLevel());
 }
 
 void keyPressed() {
@@ -184,6 +193,11 @@ void mouseReleased () {
 
 void draw () {
 
+  if(frameCount==1) {
+     currentScene = new SinglePlayer(chooseNextLevel()); 
+     return;
+  }
+  
   //if(touches.length==0) {
   //  keys.setKey(Keys.LEFT, false);
   //  keys.setKey(Keys.RIGHT, false);
