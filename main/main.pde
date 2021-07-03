@@ -115,9 +115,19 @@ void setup () {
   }
 
   assets.setBlur(settings.getInt("blurriness", assets.DEFAULT_BLURINESS));
-  if (inputs.getInt("sfxVolume", 100) == 0) assets.muteSFX(true);
-  if (inputs.getInt("musicVolume", 100) == 0) assets.muteMusic(true);
-
+  int vsfx = inputs.getInt("sfxVolume", 100);
+  if (vsfx == 0) {
+    assets.muteSFX(true);
+  } else {
+    assets.volumeSFX(float(vsfx) / 100);
+  }
+  int vmusic = inputs.getInt("musicVolume", 100);
+  if (vmusic == 0) {
+    assets.muteMusic(true);
+  } else {
+    assets.volumeMusic(float(vmusic) / 100);
+  }
+    
   jurassicUnlocked = settings.getBoolean("JurassicUnlocked", false);
   cretaceousUnlocked = settings.getBoolean("CretaceousUnlocked", false);
   leftkey = inputs.getString("player1LeftKey", "a").charAt(0);
@@ -193,7 +203,7 @@ void draw () {
 
   if (!paused) {
     background(0, 0, 0, 1);
-    //fill(0,0,0,.3);
+    //fill(0,0,0,.2);
     //rect(0,0,width,height);
     if (currentScene.status==Scene.DONE) {
       currentScene = new SinglePlayer(chooseNextLevel());

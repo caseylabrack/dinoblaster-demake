@@ -112,7 +112,7 @@ class Time implements updateable, playerDiedEvent, gameOverEvent, nebulaEvents {
   void nebulaStartHandle() {
 
     if (!hyperspace) {
-      timeScale = HYPERSPACE_DEFAULT_TIME;
+      timeScale = settings.getFloat("hyperspaceTimeScale", HYPERSPACE_DEFAULT_TIME);
       hyperspace = true;
     }
   }

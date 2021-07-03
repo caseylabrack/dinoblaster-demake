@@ -65,6 +65,8 @@ class PlayerManager implements updateable, renderable, abductionEvent, roidImpac
 
       if (PVector.dist(player.globalPos(), impact) < 65) {
         extralives--;
+        assets.playerStuff.step.stop_();
+        assets.playerStuff.tarStep.stop_();
         float incomingAngle = utils.angleOf(earth.globalPos(), impact);
         float offset = -20;
         PVector adjustedPosition = new PVector(earth.globalPos().x + cos(radians(incomingAngle)) * (Earth.EARTH_RADIUS + offset), earth.globalPos().y + sin(radians(incomingAngle)) * (Earth.EARTH_RADIUS + offset));

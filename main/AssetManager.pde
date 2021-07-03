@@ -78,7 +78,7 @@ class AssetManager {
     sounds.add(playerStuff.tarStep);
     playerStuff.littleDeath = raspi ? new SoundM("_audio/player/dino little death.wav") : new SoundP("_audio/player/dino little death.wav", context);
     sounds.add(playerStuff.littleDeath);    
-    
+
     trexStuff.trexIdle = loadImage("trex-idle.png");
     trexStuff.trexRun1 = loadImage("trex-run1.png");
     trexStuff.trexRun2 = loadImage("trex-run2.png");
@@ -133,6 +133,14 @@ class AssetManager {
     filter(blur);
   }
 
+  void volumeSFX (float v) {
+    for (SoundPlayable s : sounds) s.vol(v);
+  }
+
+  void volumeMusic (float v) {
+    for (SoundPlayable m : musics) m.vol(v);
+  }
+
   void muteSFX (boolean mute) {
     for (SoundPlayable s : sounds) s.mute(mute);
   }
@@ -142,9 +150,12 @@ class AssetManager {
   }
 
   void stopAllMusic () {
-    for (SoundPlayable s : musics) s.stop_();
+    for (SoundPlayable s : musics) {
+      s.stop_();
+      s.rate(1);
+    }
   }
-  
+
   void stopAllSfx () {
     for (SoundPlayable s : sounds) s.stop_();
   }
@@ -243,6 +254,7 @@ interface SoundPlayable {
   void mute(Boolean m);
   void stop_();
   void rate(float r);
+  void vol(float v);
 }
 
 // the Minim library for Processing (Picade needs)
@@ -298,6 +310,10 @@ class SoundM implements SoundPlayable {
       out.unmute();
     }
   }
+
+  void vol(float v) {
+    out.setVolume(v);
+  }
 }
 
 // the Processing 3.0 official sound library (Android needs)
@@ -342,5 +358,9 @@ class SoundP implements SoundPlayable {
     } else {
       player.amp(1);
     }
+  }
+
+  void vol(float v) {
+    player.amp(v);
   }
 }
