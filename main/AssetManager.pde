@@ -1,7 +1,7 @@
 class AssetManager {
 
   final float STROKE_WIDTH = 2;
-  final int DEFAULT_BLURINESS = 6;
+  final int DEFAULT_BLURINESS = 0;
 
   PShader blur;
   boolean blurring = true;
@@ -20,7 +20,17 @@ class AssetManager {
   ArrayList<SoundPlayable> sounds = new ArrayList<SoundPlayable>(); 
   ArrayList<SoundPlayable> musics = new ArrayList<SoundPlayable>(); 
 
-  void load (PApplet context) {
+  void load (PApplet context, JSONObject picadeSettings) {
+
+    float ngainSFX = 0;
+    float ngainMusic = 0;
+    boolean raspi = false;
+
+    if (picadeSettings!=null) {
+      ngainSFX = picadeSettings.getFloat("negativeGainSFX", 30);
+      ngainMusic = picadeSettings.getFloat("negativeGainMusic", 30);
+      raspi = true;
+    }
 
     blur = loadShader("blur.glsl");
 
@@ -37,7 +47,7 @@ class AssetManager {
     ufostuff.brontoAbductionFrames = utils.sheetToSprites(loadImage("bronto-abduction-sheet.png"), 3, 3);    
     ufostuff.ufoSVG = loadShape("UFO.svg");
     ufostuff.ufoSVG.disableStyle();
-    ufostuff.ufoSound = raspi ? new SoundM("_audio/ufo theme loop-low.wav") : new SoundP("_audio/ufo theme loop-low.wav", context);
+    ufostuff.ufoSound = raspi ? new SoundM("_audio/ufo theme loop-low.wav", ngainSFX) : new SoundP("_audio/ufo theme loop-low.wav", context);
     sounds.add(ufostuff.ufoSound);
 
     uiStuff.extinctType = createFont("Hyperspace.otf", 150);
@@ -51,14 +61,14 @@ class AssetManager {
     uiStuff.extraDinoInactive = loadImage("extra-dino-deactive.png");
 
     volcanoStuff.volcanoFrames = utils.sheetToSprites(loadImage("volcanos.png"), 4, 1);
-    volcanoStuff.rumble = raspi ? new SoundM("_audio/volcano rumble2.wav") : new SoundP("_audio/volcano rumble2.wav", context);
+    volcanoStuff.rumble = raspi ? new SoundM("_audio/volcano rumble2.wav", ngainSFX) : new SoundP("_audio/volcano rumble2.wav", context);
     sounds.add(volcanoStuff.rumble);
 
     roidStuff.explosionFrames = utils.sheetToSprites(loadImage("explosion.png"), 3, 1);
     roidStuff.roidFrames = utils.sheetToSprites(loadImage("roids.png"), 2, 2);
     roidStuff.trail = loadImage("roid-trail.png");
     for (int i = 0; i < roidStuff.hits.length; i++) {
-      roidStuff.hits[i] = raspi ? new SoundM("_audio/roids/impact" + (i + 1) + ".wav") : new SoundP("_audio/roids/impact" + (i + 1) + ".wav", context);
+      roidStuff.hits[i] = raspi ? new SoundM("_audio/roids/impact" + (i + 1) + ".wav", ngainSFX) : new SoundP("_audio/roids/impact" + (i + 1) + ".wav", context);
       sounds.add(roidStuff.hits[i]);
     }
 
@@ -68,15 +78,15 @@ class AssetManager {
     playerStuff.brontoSVG.disableStyle();
     playerStuff.brontoFrames = utils.sheetToSprites(loadImage("bronto-frames.png"), 3, 1);
     playerStuff.oviFrames = utils.sheetToSprites(loadImage("oviraptor-frames.png"), 2, 2, 1);
-    playerStuff.extinct = raspi ? new SoundM("_audio/player/extinct.wav") : new SoundP("_audio/player/extinct.wav", context);
+    playerStuff.extinct = raspi ? new SoundM("_audio/player/extinct.wav", ngainSFX) : new SoundP("_audio/player/extinct.wav", context);
     sounds.add(playerStuff.extinct);
-    playerStuff.spawn = raspi ? new SoundM("_audio/player/spawn.wav") : new SoundP("_audio/player/spawn.wav", context);
+    playerStuff.spawn = raspi ? new SoundM("_audio/player/spawn.wav", ngainSFX) : new SoundP("_audio/player/spawn.wav", context);
     sounds.add(playerStuff.spawn);
-    playerStuff.step = raspi ? new SoundM("_audio/player/walking.wav") : new SoundP("_audio/player/walking.wav", context);
+    playerStuff.step = raspi ? new SoundM("_audio/player/walking.wav", ngainSFX) : new SoundP("_audio/player/walking.wav", context);
     sounds.add(playerStuff.step);
-    playerStuff.tarStep = raspi ? new SoundM("_audio/player/walking-in-tar.wav") : new SoundP("_audio/player/walking-in-tar.wav", context);
+    playerStuff.tarStep = raspi ? new SoundM("_audio/player/walking-in-tar.wav", ngainSFX) : new SoundP("_audio/player/walking-in-tar.wav", context);
     sounds.add(playerStuff.tarStep);
-    playerStuff.littleDeath = raspi ? new SoundM("_audio/player/dino little death.wav") : new SoundP("_audio/player/dino little death.wav", context);
+    playerStuff.littleDeath = raspi ? new SoundM("_audio/player/dino little death.wav", ngainSFX) : new SoundP("_audio/player/dino little death.wav", context);
     sounds.add(playerStuff.littleDeath);    
 
     trexStuff.trexIdle = loadImage("trex-idle.png");
@@ -84,15 +94,15 @@ class AssetManager {
     trexStuff.trexRun2 = loadImage("trex-run2.png");
     trexStuff.eggCracked = loadImage("egg-cracked.png");
     trexStuff.eggBurst = loadImage("egg-burst.png");
-    trexStuff.eggHatch = raspi ? new SoundM("_audio/trex-and-egg/egg-hatch.wav") : new SoundP("_audio/trex-and-egg/egg-hatch.wav", context);
+    trexStuff.eggHatch = raspi ? new SoundM("_audio/trex-and-egg/egg-hatch.wav", ngainSFX) : new SoundP("_audio/trex-and-egg/egg-hatch.wav", context);
     sounds.add(trexStuff.eggHatch);
-    trexStuff.eggWiggle = raspi ? new SoundM("_audio/trex-and-egg/egg-wiggle.wav") : new SoundP("_audio/trex-and-egg/egg-wiggle.wav", context);
+    trexStuff.eggWiggle = raspi ? new SoundM("_audio/trex-and-egg/egg-wiggle.wav", ngainSFX) : new SoundP("_audio/trex-and-egg/egg-wiggle.wav", context);
     sounds.add(trexStuff.eggWiggle);
-    trexStuff.rawr = raspi ? new SoundM("_audio/trex-and-egg/rawr.wav") : new SoundP("_audio/trex-and-egg/rawr.wav", context);
+    trexStuff.rawr = raspi ? new SoundM("_audio/trex-and-egg/rawr.wav", ngainSFX) : new SoundP("_audio/trex-and-egg/rawr.wav", context);
     sounds.add(trexStuff.rawr);
-    trexStuff.stomp = raspi ? new SoundM("_audio/trex-and-egg/trex-walking.wav") : new SoundP("_audio/trex-and-egg/trex-walking.wav", context);
+    trexStuff.stomp = raspi ? new SoundM("_audio/trex-and-egg/trex-walking.wav", ngainSFX) : new SoundP("_audio/trex-and-egg/trex-walking.wav", context);
     sounds.add(trexStuff.stomp);
-    trexStuff.sinking = raspi ? new SoundM("_audio/trex-and-egg/trex-sinking-in-tar.wav") : new SoundP("_audio/trex-and-egg/trex-sinking-in-tar.wav", context);
+    trexStuff.sinking = raspi ? new SoundM("_audio/trex-and-egg/trex-sinking-in-tar.wav", ngainSFX) : new SoundP("_audio/trex-and-egg/trex-sinking-in-tar.wav", context);
     sounds.add(trexStuff.sinking);
 
     earthStuff.earth = loadImage("earth.png");
@@ -103,11 +113,11 @@ class AssetManager {
     earthStuff.doodadHead = loadImage("doodad-head.png");
     earthStuff.doodadRibs = loadImage("doodad-ribcage.png");
 
-    musicStuff.lvl1a = raspi ? new SoundM("_music/lvl1.wav") : new SoundP("_music/lvl1.wav", context);
-    musicStuff.lvl1b = raspi ? new SoundM("_music/lvl1-jump.wav") : new SoundP("_music/lvl1-jump.wav", context);
-    musicStuff.lvl2a = raspi ? new SoundM("_music/lvl2.wav") : new SoundP("_music/lvl2.wav", context);
-    musicStuff.lvl2b = raspi ? new SoundM("_music/lvl2-seek.wav") : new SoundP("_music/lvl2-seek.wav", context);
-    musicStuff.lvl3 = raspi ? new SoundM("_music/lvl3.wav") : new SoundP("_music/lvl3.wav", context);
+    musicStuff.lvl1a = raspi ? new SoundM("_music/lvl1.wav", ngainMusic) : new SoundP("_music/lvl1.wav", context);
+    musicStuff.lvl1b = raspi ? new SoundM("_music/lvl1-jump.wav", ngainMusic) : new SoundP("_music/lvl1-jump.wav", context);
+    musicStuff.lvl2a = raspi ? new SoundM("_music/lvl2.wav", ngainMusic) : new SoundP("_music/lvl2.wav", context);
+    musicStuff.lvl2b = raspi ? new SoundM("_music/lvl2-seek.wav", ngainMusic) : new SoundP("_music/lvl2-seek.wav", context);
+    musicStuff.lvl3 = raspi ? new SoundM("_music/lvl3.wav", ngainMusic) : new SoundP("_music/lvl3.wav", context);
     musics.add(musicStuff.lvl1a);
     musics.add(musicStuff.lvl1b);
     musics.add(musicStuff.lvl2a);
@@ -265,7 +275,7 @@ class SoundM implements SoundPlayable {
   FilePlayer filePlayer;
   AudioOutput out;
 
-  SoundM (String file) {
+  SoundM (String file, float negativeGain) {
     try {
       filePlayer = new FilePlayer(minim.loadFileStream(file));
     } 
@@ -277,6 +287,8 @@ class SoundM implements SoundPlayable {
     rateControl.setInterpolation( true );
 
     out = minim.getLineOut(Minim.MONO, 1024, 44100, 16);
+    out.setGain(-negativeGain);
+    //println("gain? " + out.hasControl(Controller.GAIN));
 
     filePlayer.patch(rateControl).patch(out);
   }
