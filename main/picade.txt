@@ -1,4 +1,0 @@
-{
-	"negativeGainSFX": 40,
-	"negativeGainMusic": 50
-}
