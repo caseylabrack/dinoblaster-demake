@@ -54,6 +54,10 @@ class RoidManager implements updateable, renderable {
     minSpawnInterval = settings.getFloat("roidImpactRateInMilliseconds", DEFAULT_SPAWN_RATE) - settings.getFloat("roidImpactRateVariation", DEFAULT_SPAWN_DEVIATION)/2;
     maxSpawnInterval = settings.getFloat("roidImpactRateInMilliseconds", DEFAULT_SPAWN_RATE) + settings.getFloat("roidImpactRateVariation", DEFAULT_SPAWN_DEVIATION)/2;
 
+    // convert to frames
+    minSpawnInterval = minSpawnInterval / 16.666;
+    maxSpawnInterval = maxSpawnInterval / 16.666;
+
     //roids[roidindex % roids.length].fire();
     //roidindex++;
   }
@@ -62,8 +66,10 @@ class RoidManager implements updateable, renderable {
 
     if (!enabled) return;
 
-    if (time.getClock() - lastFire > spawnInterval) {
-      lastFire = time.getClock();
+      if(frameCount - lastFire > spawnInterval) { // frame instead of timer based
+    //if (time.getClock() - lastFire > spawnInterval) {
+      //lastFire = time.getClock();
+      lastFire = frameCount;
       spawnInterval = random(minSpawnInterval, maxSpawnInterval);
 
       Roid r = roids[roidindex++ % roids.length]; // increment roid index and wrap to length of pool

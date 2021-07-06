@@ -93,7 +93,7 @@ class Time implements updateable, playerDiedEvent, gameOverEvent, nebulaEvents {
     //clock += (millis() - lastmillis) * timeScale;
     lastmillis = millis();
 
-    delta = min((frameRateLastNanos - lastNanos)/1e6/16.6666, 3);
+    delta = min((frameRateLastNanos - lastNanos)/1e6/16.6666, 2.5);
     //println("delta: " + delta);
     lastNanos = frameRateLastNanos;
     eventManager.playerDiedSubscribers.add(this);

@@ -103,8 +103,8 @@ class Earth extends Entity implements levelChangeEvent, updateable, renderable {
       }
     }
 
-    x += dx * time.getTimeScale();
-    y += dy * time.getTimeScale();
+    x += dx;// * time.getTimeScale();
+    y += dy;// * time.getTimeScale();
     r += dr * time.getTimeScale();
   }
 
